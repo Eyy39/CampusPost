@@ -1,7 +1,11 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DATABASE_URL || 'sqlite::memory:', {
-  logging: false,
-});
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, { logging: false })
+  : new Sequelize({
+      dialect: 'sqlite',
+      storage: ':memory:',
+      logging: false,
+    });
 
 module.exports = sequelize;
