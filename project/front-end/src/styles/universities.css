@@ -1,0 +1,250 @@
+/* =============== UNIV PAGE LAYOUT =============== */
+.universities-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #F8FAFC;
+}
+
+.univ-main {
+  flex: 1;
+  padding-top: 96px;
+}
+
+.univ-container {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* =============== HEADER =============== */
+.univ-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding-top: 8px;
+}
+
+.univ-header-left h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 4px;
+}
+
+.univ-header-left p {
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+.univ-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.univ-header-right label {
+  font-size: 0.813rem;
+  font-weight: 500;
+  color: #6B7280;
+  white-space: nowrap;
+}
+
+.univ-sort-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.univ-sort-wrapper select {
+  padding: 9px 36px 9px 14px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 0.813rem;
+  font-weight: 500;
+  color: #1F2937;
+  background: #FFFFFF;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  font-family: inherit;
+  transition: all 0.25s ease;
+  min-width: 160px;
+}
+
+.univ-sort-wrapper select:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.univ-sort-icon {
+  position: absolute;
+  right: 12px;
+  color: #9CA3AF;
+  pointer-events: none;
+}
+
+/* =============== MOBILE FILTER TOGGLE =============== */
+.univ-mobile-filter-btn {
+  display: none;
+  width: 100%;
+  padding: 12px;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1F2937;
+  cursor: pointer;
+  font-family: inherit;
+  margin-bottom: 16px;
+  transition: all 0.25s ease;
+}
+
+.univ-mobile-filter-btn:hover {
+  border-color: #2563EB;
+  color: #2563EB;
+}
+
+/* =============== TWO-COLUMN LAYOUT =============== */
+.univ-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.univ-sidebar-overlay {
+  display: none;
+}
+
+/* =============== CARDS =============== */
+.univ-cards-area {
+  min-width: 0;
+}
+
+.univ-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* =============== PAGINATION =============== */
+.univ-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 40px;
+  padding-bottom: 48px;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: #1F2937;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.page-btn:hover:not(:disabled) {
+  border-color: #2563EB;
+  color: #2563EB;
+}
+
+.page-btn.active {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+}
+
+.page-btn.active:hover {
+  background: #1E3A8A;
+  border-color: #1E3A8A;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-nav {
+  width: 40px;
+}
+
+.page-ellipsis {
+  width: 32px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #9CA3AF;
+}
+
+/* =============== RESPONSIVE =============== */
+@media (max-width: 1100px) {
+  .univ-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .univ-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .univ-sidebar {
+    display: none;
+  }
+
+  .univ-sidebar.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    padding: 24px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .univ-sidebar.open > * {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .univ-sidebar-overlay.open {
+    display: block;
+  }
+
+  .univ-mobile-filter-btn {
+    display: block;
+  }
+
+  .univ-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .univ-header {
+    flex-direction: column;
+  }
+
+  .univ-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .univ-pagination {
+    flex-wrap: wrap;
+  }
+}
