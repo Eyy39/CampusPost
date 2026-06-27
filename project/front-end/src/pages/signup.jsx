@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   User,
   Mail,
@@ -27,6 +28,7 @@ const footerLinks = [
 ];
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [form, setForm] = useState({
@@ -53,12 +55,12 @@ export default function Signup() {
       <nav className="signup-nav">
         <div className="signup-nav-inner">
           <div className="signup-nav-left">
-            <a href="#" className="signup-nav-logo">
+            <Link to="/" className="signup-nav-logo">
               <span className="signup-nav-logo-icon">
                 <GraduationCap size={18} />
               </span>
               CampusPost
-            </a>
+            </Link>
             <ul className="signup-nav-links">
               {navLinks.map((link) => (
                 <li key={link.label}>
@@ -68,7 +70,7 @@ export default function Signup() {
             </ul>
           </div>
           <div className="signup-nav-right">
-            <a href="#" className="signup-nav-signin">Sign In</a>
+            <button className="signup-nav-signin" onClick={() => navigate('/login')}>Sign In</button>
             <button className="signup-nav-register">Create Account</button>
             <button
               className="signup-mobile-btn"
@@ -88,8 +90,8 @@ export default function Signup() {
                 </a>
               </li>
             ))}
-            <li><a href="#" onClick={() => setMobileOpen(false)}>Sign In</a></li>
-            <li><a href="#" onClick={() => setMobileOpen(false)}>Create Account</a></li>
+            <li><Link to="/login" onClick={() => setMobileOpen(false)}>Sign In</Link></li>
+            <li><Link to="/signup" onClick={() => setMobileOpen(false)}>Create Account</Link></li>
           </ul>
         </div>
       </nav>
@@ -222,7 +224,7 @@ export default function Signup() {
             </div>
 
             <p className="signup-bottom-text">
-              Already have an account? <a href="#">Sign In</a>
+              Already have an account? <Link to="/login">Sign In</Link>
             </p>
           </div>
         </div>

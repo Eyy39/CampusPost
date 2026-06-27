@@ -1,0 +1,85 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-box {
+  background-color: #fff;
+  border-radius: 18px;
+  padding: 32px;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+.modal-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #FEF2F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.modal-icon svg {
+  color: #EF4444;
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #243B5A;
+  text-align: center;
+  margin: 0 0 8px;
+}
+.modal-desc {
+  font-size: 14px;
+  color: #6E8098;
+  text-align: center;
+  margin: 0 0 4px;
+  line-height: 1.5;
+}
+.modal-app-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #243B5A;
+  text-align: center;
+  margin: 0 0 24px;
+}
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+.btn-modal-cancel {
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid #D7E4F2;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6E8098;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-modal-cancel:hover {
+  background-color: #F8FAFD;
+}
+.btn-modal-delete {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #EF4444;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-modal-delete:hover {
+  background-color: #DC2626;
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, GraduationCap, ArrowRight } from 'lucide-react';
 import '../styles/login.css';
 
@@ -17,6 +18,7 @@ const footerLinks = [
 ];
 
 export default function Login() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,12 +32,12 @@ export default function Login() {
       <nav className="login-nav">
         <div className="login-nav-inner">
           <div className="login-nav-left">
-            <a href="#" className="login-nav-logo">
+            <Link to="/" className="login-nav-logo">
               <span className="login-nav-logo-icon">
                 <GraduationCap size={18} />
               </span>
               CampusPost
-            </a>
+            </Link>
             <ul className="login-nav-links">
               {navLinks.map((link) => (
                 <li key={link.label}>
@@ -46,7 +48,7 @@ export default function Login() {
           </div>
           <div className="login-nav-right">
             <a href="#" className="login-nav-signin">Sign In</a>
-            <button className="login-nav-register">Create Account</button>
+            <button className="login-nav-register" onClick={() => navigate('/signup')}>Create Account</button>
           </div>
         </div>
       </nav>
@@ -147,7 +149,7 @@ export default function Login() {
             </div>
 
             <p className="login-signup-text">
-              Don't have an account? <a href="#">Create one</a>
+              Don't have an account? <Link to="/signup">Create one</Link>
             </p>
           </div>
         </div>

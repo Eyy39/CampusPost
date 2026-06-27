@@ -1,9 +1,22 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home.jsx";
 import Login from "./pages/login.jsx";
 import Signup from "./pages/signup.jsx";
 import Universities from "./pages/universities.jsx";
-
+import ApplicationDashboard from "./pages/application";
+import MyApplications from "./pages/myapplications";
 export default function App() {
-  return <Universities />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/universities" element={<Universities />} />
+        <Route path="/application" element={<ApplicationDashboard />} />
+        <Route path="/my-applications" element={<MyApplications />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }

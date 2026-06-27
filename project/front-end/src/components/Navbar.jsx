@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { GraduationCap, Search, Menu, X } from 'lucide-react';
 
 const defaultLinks = [
-  { label: 'Find Universities', href: '#' },
-  { label: 'Scholarships', href: '#' },
-  { label: 'Programs', href: '#' },
-  { label: 'About', href: '#' },
-  { label: 'My Applications', href: '#' },
+  { label: 'Find Universities', to: '/universities' },
+  { label: 'Scholarships', to: '/scholarships' },
+  { label: 'Programs', to: '/programs' },
+  { label: 'About', to: '/about' },
+  { label: 'My Applications', to: '/my-applications' },
 ];
 
 export default function Navbar({ links: customLinks, simple, noSearch, rightContent }) {
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navLinks = customLinks || defaultLinks;
@@ -29,17 +31,17 @@ export default function Navbar({ links: customLinks, simple, noSearch, rightCont
     <>
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="navbar-inner">
-          <a href="#" className="navbar-logo">
+          <Link to="/" className="navbar-logo">
             <span className="logo-icon">
               <GraduationCap size={20} />
             </span>
             CampusPost
-          </a>
+          </Link>
 
           <ul className="navbar-links">
             {navLinks.map((link) => (
               <li key={link.label}>
-                <a href={link.href}>{link.label}</a>
+                <Link to={link.to}>{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -53,8 +55,8 @@ export default function Navbar({ links: customLinks, simple, noSearch, rightCont
             )}
             {rightContent || (
               <>
-                <button className="navbar-btn navbar-btn-login">Log In</button>
-                {!simple && <button className="navbar-btn navbar-btn-register">Register</button>}
+                <button className="navbar-btn navbar-btn-login" onClick={() => navigate('/login')}>Log In</button>
+                {!simple && <button className="navbar-btn navbar-btn-register" onClick={() => navigate('/signup')}>Register</button>}
               </>
             )}
             <button
@@ -72,15 +74,15 @@ export default function Navbar({ links: customLinks, simple, noSearch, rightCont
         <ul className="mobile-menu-links">
           {navLinks.map((link) => (
             <li key={link.label}>
-              <a href={link.href} onClick={() => setMobileOpen(false)}>
+              <Link to={link.to} onClick={() => setMobileOpen(false)}>
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
         <div className="mobile-menu-actions">
-          <button className="navbar-btn navbar-btn-login">Log In</button>
-          <button className="navbar-btn navbar-btn-register">Register</button>
+          <button className="navbar-btn navbar-btn-login" onClick={() => navigate('/login')}>Log In</button>
+          <button className="navbar-btn navbar-btn-register" onClick={() => navigate('/signup')}>Register</button>
         </div>
       </div>
     </>
