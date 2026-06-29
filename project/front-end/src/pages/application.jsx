@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar, Footer } from "../components/Layout";
 import ProgressStepper from "../components/ProgressStepper";
 import Sidebar from "../components/Sidebar";
 import { Arrow, BackArrow, DocumentIcon, UploadIcon, CheckCircle } from "../components/Icons";
+import { saveDraftToDB, loadDraftFromDB } from "../utils/draftDB";
 import "./application.css";
 
 function Field({ label, children, fullWidth, error }) {
@@ -18,8 +19,21 @@ function Field({ label, children, fullWidth, error }) {
 
 export default function ApplicationDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRefs = useRef({});
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    const draftId = location.state?.draftId;
+    if (draftId) {
+      loadDraftFromDB(draftId).then((draft) => {
+        if (draft) {
+          const { id, ...rest } = draft;
+          setData((prev) => ({ ...prev, ...rest, draftId: id }));
+        }
+      });
+    }
+  }, []);
   const [data, setData] = useState({
     fullName: "", gender: "", dateOfBirth: "2004-01-01",
     email: "", phone: "", city: "", address: "",
@@ -47,19 +61,65 @@ export default function ApplicationDashboard() {
 
   const [errors, setErrors] = useState({});
   const [saved, setSaved] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const isCADT = data.university === "Cambodia Academy of Digital Technology";
+
+  const cadtFaculties = ["Institute of Digital Technology (IDT)"];
+  const cadtMajors = {
+    "Institute of Digital Technology (IDT)": [
+      "Computer Science (Software Engineering)",
+      "Computer Science (Data Science)",
+      "Telecoms & Networking (Cyber Security)",
+      "Telecoms & Networking (Telecoms & Network Engineering)",
+      "Digital Business (e-Commerce)",
+    ],
+  };
+
+  const serializeDocs = (docs) =>
+    Object.fromEntries(
+      Object.entries(docs).map(([key, val]) => [
+        key,
+        val ? { name: val.name, size: val.size, status: "Uploaded" } : null,
+      ])
+    );
+
+  const buildEntry = (status) => ({
+    id: data.draftId || Date.now(),
+    initials: (data.fullName || "NA").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+    university: data.university || "Not specified",
+    location: data.city || "Not specified",
+    major: data.major || "Not specified",
+    date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+    status,
+    fullName: data.fullName,
+    gender: data.gender,
+    dateOfBirth: data.dateOfBirth,
+    email: data.email,
+    phone: data.phone,
+    city: data.city,
+    address: data.address,
+    highSchool: data.highSchool,
+    graduationYear: data.graduationYear,
+    gpa: data.gpa,
+    grade: data.grade,
+    studyProgram: data.studyProgram,
+    englishProficiency: data.englishProficiency,
+    awards: data.awards,
+    faculty: data.faculty,
+    degreeLevel: data.degreeLevel,
+    intakeYear: data.intakeYear,
+    studyMode: data.studyMode,
+    documents: serializeDocs(data.documents),
+    photo: data.documents.passportPhoto?.file
+      ? URL.createObjectURL(data.documents.passportPhoto.file)
+      : null,
+  });
 
   const handleSaveDraft = () => {
     const drafts = JSON.parse(localStorage.getItem("campuspost_drafts") || "[]");
     const existing = drafts.findIndex((d) => d.id === data.draftId);
-    const entry = {
-      id: data.draftId || Date.now(),
-      initials: (data.fullName || "NA").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
-      university: data.university || "Not specified",
-      location: data.city || "Not specified",
-      major: data.major || "Not specified",
-      date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-      status: "Draft",
-    };
+    const entry = buildEntry("Draft");
     if (existing > -1) {
       drafts[existing] = { ...drafts[existing], ...entry };
     } else {
@@ -69,6 +129,24 @@ export default function ApplicationDashboard() {
     setData((prev) => ({ ...prev, draftId: entry.id }));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+    saveDraftToDB(entry.id, { ...data, id: entry.id });
+  };
+
+  const handleSubmit = () => {
+    if (!validateStep(5)) return;
+    const drafts = JSON.parse(localStorage.getItem("campuspost_drafts") || "[]");
+    const existing = drafts.findIndex((d) => d.id === data.draftId);
+    const entry = { ...buildEntry("Pending Review"), confirmed: true };
+    if (existing > -1) {
+      drafts[existing] = { ...drafts[existing], ...entry };
+    } else {
+      drafts.unshift(entry);
+    }
+    localStorage.setItem("campuspost_drafts", JSON.stringify(drafts));
+    setData((prev) => ({ ...prev, draftId: entry.id }));
+    setSubmitted(true);
+    setStep(6);
+    saveDraftToDB(entry.id, { ...data, id: entry.id, confirmed: true });
   };
 
   const validateStep = (step) => {
@@ -87,7 +165,7 @@ export default function ApplicationDashboard() {
         if (!data.highSchool.trim()) errs.highSchool = "High school name is required";
         if (!data.graduationYear) errs.graduationYear = "Graduation year is required";
         // GPA is optional
-        if (!data.grade) errs.grade = "Grade is required for scholarship eligibility";
+        // Bac II grade — no validation (admin reviews/approves)
         if (!data.studyProgram.trim()) errs.studyProgram = "Study program is required";
         break;
       case 3:
@@ -209,7 +287,7 @@ export default function ApplicationDashboard() {
         <Field label="GPA / Overall Grade (optional)" error={errors.gpa}>
           <input className={`input ${errors.gpa ? "input-error" : ""}`} placeholder="e.g. 3.8 / 4.0" value={data.gpa} onChange={set("gpa")} />
         </Field>
-        <Field label="Scholarship Grade" error={errors.grade}>
+        <Field label="Bac II Grade (A, B, or C only)" error={errors.grade}>
           <select className={`select ${errors.grade ? "input-error" : ""}`} value={data.grade} onChange={set("grade")}>
             <option value="" disabled>Select your grade</option>
             <option value="A">A</option>
@@ -218,7 +296,11 @@ export default function ApplicationDashboard() {
           </select>
         </Field>
         <Field label="Study Program" error={errors.studyProgram}>
-          <input className={`input ${errors.studyProgram ? "input-error" : ""}`} placeholder="e.g. Science, Khmer Literature" value={data.studyProgram} onChange={set("studyProgram")} />
+          <select className={`select ${errors.studyProgram ? "input-error" : ""}`} value={data.studyProgram} onChange={set("studyProgram")}>
+            <option value="" disabled>Select your study program</option>
+            <option value="Science">Science</option>
+            <option value="Khmer Literature">Khmer Literature</option>
+          </select>
         </Field>
         <Field label="English Proficiency (optional)">
           <select className="select" value={data.englishProficiency} onChange={set("englishProficiency")}>
@@ -255,19 +337,40 @@ export default function ApplicationDashboard() {
         <Field label="University" fullWidth error={errors.university}>
           <select className={`select ${errors.university ? "input-error" : ""}`} value={data.university} onChange={set("university")}>
             <option value="" disabled>Select university</option>
+            <option value="Cambodia Academy of Digital Technology">Cambodia Academy of Digital Technology</option>
+            <option value="Institute of Foreign Languages">Institute of Foreign Languages</option>
+            <option value="Institute of Technology of Cambodia">Institute of Technology of Cambodia</option>
             <option value="Paragon International University">Paragon International University</option>
             <option value="Royal University of Phnom Penh">Royal University of Phnom Penh</option>
-            <option value="Institute of Technology of Cambodia">Institute of Technology of Cambodia</option>
             <option value="University of Cambodia">University of Cambodia</option>
             <option value="American University of Phnom Penh">American University of Phnom Penh</option>
           </select>
         </Field>
-        <Field label="Faculty" error={errors.faculty}>
-          <input className={`input ${errors.faculty ? "input-error" : ""}`} placeholder="e.g. Computer Science" value={data.faculty} onChange={set("faculty")} />
-        </Field>
-        <Field label="Major" error={errors.major}>
-          <input className={`input ${errors.major ? "input-error" : ""}`} placeholder="e.g. Software Engineering" value={data.major} onChange={set("major")} />
-        </Field>
+        {isCADT ? (
+          <>
+            <Field label="Faculty" error={errors.faculty}>
+              <select className={`select ${errors.faculty ? "input-error" : ""}`} value={data.faculty} onChange={(e) => { setData((prev) => ({ ...prev, faculty: e.target.value, major: "" })); }}>
+                <option value="" disabled>Select faculty</option>
+                {cadtFaculties.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </Field>
+            <Field label="Major" error={errors.major}>
+              <select className={`select ${errors.major ? "input-error" : ""}`} value={data.major} onChange={set("major")}>
+                <option value="" disabled>Select major</option>
+                {data.faculty && cadtMajors[data.faculty]?.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </Field>
+          </>
+        ) : (
+          <>
+            <Field label="Faculty" error={errors.faculty}>
+              <input className={`input ${errors.faculty ? "input-error" : ""}`} placeholder="e.g. Computer Science" value={data.faculty} onChange={set("faculty")} />
+            </Field>
+            <Field label="Major" error={errors.major}>
+              <input className={`input ${errors.major ? "input-error" : ""}`} placeholder="e.g. Software Engineering" value={data.major} onChange={set("major")} />
+            </Field>
+          </>
+        )}
         <Field label="Degree Level" error={errors.degreeLevel}>
           <select className={`select ${errors.degreeLevel ? "input-error" : ""}`} value={data.degreeLevel} onChange={set("degreeLevel")}>
             <option value="" disabled>Select level</option>
@@ -293,6 +396,7 @@ export default function ApplicationDashboard() {
         <Field label="Compare with another university (optional)" fullWidth>
           <select className="select" value={data.compareUniversity} onChange={set("compareUniversity")}>
             <option value="">None</option>
+            <option value="Cambodia Academy of Digital Technology">Cambodia Academy of Digital Technology</option>
             <option value="Royal University of Phnom Penh">Royal University of Phnom Penh</option>
             <option value="Institute of Technology of Cambodia">Institute of Technology of Cambodia</option>
             <option value="University of Cambodia">University of Cambodia</option>
@@ -400,7 +504,7 @@ export default function ApplicationDashboard() {
           ["High School", data.highSchool || "\u2014"],
           ["Graduation Year", data.graduationYear || "\u2014"],
           ["GPA", data.gpa || "\u2014"],
-          ["Scholarship Grade", data.grade || "\u2014"],
+          ["Bac II Grade", data.grade || "\u2014"],
           ["Study Program", data.studyProgram || "\u2014"],
           ["English Proficiency", data.englishProficiency || "Not specified"],
           ["Awards", data.awards || "None"],
@@ -467,7 +571,7 @@ export default function ApplicationDashboard() {
         <button
           className={`btn-primary ${!data.confirmed ? "btn-primary-disabled" : ""}`}
           disabled={!data.confirmed}
-          onClick={next}
+          onClick={handleSubmit}
         >
           Submit Application
         </button>

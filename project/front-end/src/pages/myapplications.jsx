@@ -4,6 +4,7 @@ import { Navbar, Footer } from "../components/Layout";
 import DeleteModal from "../components/DeleteModal";
 import EmptyState from "../components/EmptyState";
 import { FilterIcon, PlusIcon, TrashIcon } from "../components/Icons";
+import { deleteDraftFromDB } from "../utils/draftDB";
 import "./myapplications.css";
 
 const classMap = {
@@ -52,18 +53,18 @@ const sampleApplications = [
   },
 ];
 
-function ActionButton({ status }) {
+function ActionButton({ status, navigate, app }) {
   if (status === "Approved") {
-    return <button className="action-btn">View Details</button>;
+    return <button className="action-btn" onClick={() => navigate(`/application/${app.id}`, { state: { application: app } })}>View Details</button>;
   }
   if (status === "Pending Review") {
-    return <button className="action-btn">View Details</button>;
+    return <button className="action-btn" onClick={() => navigate(`/application/${app.id}`, { state: { application: app } })}>View Details</button>;
   }
   if (status === "Draft") {
-    return <button className="action-btn-primary">Continue Application</button>;
+    return <button className="action-btn-primary" onClick={() => navigate("/application", { state: { draftId: app.id } })}>Continue Application</button>;
   }
   if (status === "Rejected") {
-    return <button className="action-btn">View Feedback</button>;
+    return <button className="action-btn" onClick={() => navigate(`/application/${app.id}`, { state: { application: app } })}>View Feedback</button>;
   }
   return null;
 }
@@ -84,6 +85,7 @@ export default function MyApplications() {
     const drafts = JSON.parse(localStorage.getItem("campuspost_drafts") || "[]");
     const filtered = drafts.filter((d) => d.id !== app.id);
     localStorage.setItem("campuspost_drafts", JSON.stringify(filtered));
+    deleteDraftFromDB(app.id);
     setDeleteTarget(null);
   };
 
@@ -189,7 +191,7 @@ export default function MyApplications() {
                     </td>
                     <td className="td">
                       <div className="actions-cell">
-                        <ActionButton status={app.status} />
+                        <ActionButton status={app.status} navigate={navigate} app={app} />
                         <button className="btn-delete" title="Delete" onClick={() => setDeleteTarget(app)}>
                           <TrashIcon />
                         </button>

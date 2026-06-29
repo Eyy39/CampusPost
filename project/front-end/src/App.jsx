@@ -6,6 +6,7 @@ import Signup from "./pages/signup.jsx";
 import Universities from "./pages/universities.jsx";
 import ApplicationDashboard from "./pages/application";
 import MyApplications from "./pages/myapplications";
+import ApplicationDetail from "./pages/application-detail";
 export default function App() {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/universities" element={<Universities />} />
         <Route path="/application" element={<ApplicationDashboard />} />
         <Route path="/my-applications" element={<MyApplications />} />
+        <Route path="/application/:id" element={<ApplicationDetail />} />
       </Routes>
     </BrowserRouter>
   );
