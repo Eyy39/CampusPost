@@ -205,6 +205,8 @@ export default function ApplicationDetail() {
                   <Row label="Date of Birth" value={data.dateOfBirth} />
                   <Row label="Email" value={data.email} />
                   <Row label="Phone" value={data.phone} />
+                  <Row label="Parent/Guardian Phone" value={data.parentPhone} />
+                  <Row label="How did you know about us?" value={data.referralSource} />
                   <Row label="City / Province" value={data.city} />
                   <Row label="Address" value={data.address} />
                 </div>

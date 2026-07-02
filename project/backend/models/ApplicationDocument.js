@@ -1,31 +1,27 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Review = sequelize.define('Review', {
-  review_id: {
+const ApplicationDocument = sequelize.define('ApplicationDocument', {
+  document_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  user_id: {
+  application_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  university_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+  document_type: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
   },
-  rating: {
-    type: DataTypes.TINYINT,
-    allowNull: false,
-  },
-  comment: {
+  file_url: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
 }, {
-  tableName: 'Review',
+  tableName: 'ApplicationDocument',
   timestamps: false,
 });
 
-module.exports = Review;
+module.exports = ApplicationDocument;

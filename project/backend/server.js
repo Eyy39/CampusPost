@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const cors = require("cors");
 const { sequelize } = require("./models");
 
 const authRoutes = require("./routes/auth");
@@ -15,6 +16,7 @@ const adminRoutes = require("./routes/admin");
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.json({ message: "CampusPost backend is running" });
@@ -53,7 +55,10 @@ app.use("/api/admin", adminRoutes);
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
-
+app.use((err, req, res, next)=> {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ message: "Internal server error" });
+});
 const port = process.env.PORT || 3000;
 
 async function start() {

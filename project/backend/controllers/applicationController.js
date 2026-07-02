@@ -1,63 +1,181 @@
-const { Application } = require('../models');
+const { Application, ApplicantProfile, AcademicInformation, ApplicationDocument, sequelize } = require('../models');
 
 exports.listApplications = async (req, res) => {
   try {
-    const applications = await Application.findAll({ order: [['updatedAt', 'DESC']] });
+    const applications = await Application.findAll({
+      order: [['updated_at', 'DESC']],
+      include: [
+        { association: 'ApplicantProfile' },
+        { association: 'AcademicInformation' },
+        { association: 'ApplicationDocuments' },
+      ],
+    });
     res.json(applications);
   } catch (error) {
+    console.error('List error:', error.message);
     res.status(500).json({ message: 'Failed to load applications' });
   }
 };
 
 exports.getApplication = async (req, res) => {
   try {
-    const application = await Application.findByPk(req.params.id);
+    const application = await Application.findByPk(req.params.id, {
+      include: [
+        { association: 'ApplicantProfile' },
+        { association: 'AcademicInformation' },
+        { association: 'ApplicationDocuments' },
+      ],
+    });
     if (!application) {
       return res.status(404).json({ message: 'Application not found' });
     }
     res.json(application);
   } catch (error) {
+    console.error('Get error:', error.message);
     res.status(500).json({ message: 'Failed to load application' });
   }
 };
 
 exports.createApplication = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
-    const application = await Application.create(req.body);
-    res.status(201).json(application);
+    const {
+      user_id, university_id, major_id,
+      profile, academic, documents,
+    } = req.body;
+
+    const application = await Application.create({
+      user_id,
+      university_id,
+      major_id,
+      status_id: 1, // default: Pending
+    }, { transaction: t });
+
+    if (profile) {
+      await ApplicantProfile.create({
+        application_id: application.application_id,
+        ...profile,
+      }, { transaction: t });
+    }
+
+    if (academic) {
+      await AcademicInformation.create({
+        application_id: application.application_id,
+        ...academic,
+      }, { transaction: t });
+    }
+
+    if (documents && documents.length) {
+      await ApplicationDocument.bulkCreate(
+        documents.map((d) => ({
+          application_id: application.application_id,
+          ...d,
+        })),
+        { transaction: t }
+      );
+    }
+
+    await t.commit();
+
+    const result = await Application.findByPk(application.application_id, {
+      include: [
+        { association: 'ApplicantProfile' },
+        { association: 'AcademicInformation' },
+        { association: 'ApplicationDocuments' },
+      ],
+    });
+
+    res.status(201).json(result);
   } catch (error) {
-    console.error('Create error:', error.message, error.parent?.sqlMessage);
-    res.status(400).json({ message: error.message, sql: error.parent?.sqlMessage });
+    await t.rollback();
+    console.error('Create error:', error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.updateApplication = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
-    const application = await Application.findByPk(req.params.id);
+    const application = await Application.findByPk(req.params.id, { transaction: t });
     if (!application) {
+      await t.rollback();
       return res.status(404).json({ message: 'Application not found' });
     }
-    await application.update(req.body);
-    res.json(application);
+
+    const { profile, academic, documents, ...appFields } = req.body;
+
+    await application.update(appFields, { transaction: t });
+
+    if (profile) {
+      await ApplicantProfile.upsert(
+        { application_id: application.application_id, ...profile },
+        { transaction: t }
+      );
+    }
+
+    if (academic) {
+      await AcademicInformation.upsert(
+        { application_id: application.application_id, ...academic },
+        { transaction: t }
+      );
+    }
+
+    if (documents && documents.length) {
+      await ApplicationDocument.destroy({
+        where: { application_id: application.application_id },
+        transaction: t,
+      });
+      await ApplicationDocument.bulkCreate(
+        documents.map((d) => ({
+          application_id: application.application_id,
+          ...d,
+        })),
+        { transaction: t }
+      );
+    }
+
+    await t.commit();
+
+    const result = await Application.findByPk(application.application_id, {
+      include: [
+        { association: 'ApplicantProfile' },
+        { association: 'AcademicInformation' },
+        { association: 'ApplicationDocuments' },
+      ],
+    });
+
+    res.json(result);
   } catch (error) {
-    console.error('Update error:', error.message, error.parent?.sqlMessage);
-    res.status(400).json({ message: error.message, sql: error.parent?.sqlMessage });
+    await t.rollback();
+    console.error('Update error:', error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.saveDraft = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
     if (req.params.id === 'new') {
-      const application = await Application.create({ ...req.body, status: 'draft' });
+      const application = await Application.create({
+        ...req.body,
+        status_id: 1,
+        admin_status: 'draft',
+      }, { transaction: t });
+      await t.commit();
       return res.status(201).json(application);
     }
-    const application = await Application.findByPk(req.params.id);
+
+    const application = await Application.findByPk(req.params.id, { transaction: t });
     if (!application) {
+      await t.rollback();
       return res.status(404).json({ message: 'Application not found' });
     }
-    await application.update({ ...req.body, status: 'draft' });
+    await application.update({ ...req.body, admin_status: 'draft' }, { transaction: t });
+    await t.commit();
     res.json(application);
   } catch (error) {
+    await t.rollback();
+    console.error('Save draft error:', error.message);
     res.status(400).json({ message: 'Failed to save draft' });
   }
 };
@@ -71,6 +189,7 @@ exports.deleteApplication = async (req, res) => {
     await application.destroy();
     res.status(204).send();
   } catch (error) {
+    console.error('Delete error:', error.message);
     res.status(500).json({ message: 'Failed to delete application' });
   }
 };

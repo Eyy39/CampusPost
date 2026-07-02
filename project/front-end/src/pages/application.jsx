@@ -7,10 +7,10 @@ import { Arrow, BackArrow, DocumentIcon, UploadIcon, CheckCircle } from "../comp
 import { saveDraftToDB, loadDraftFromDB } from "../utils/draftDB";
 import "./application.css";
 
-function Field({ label, children, fullWidth, error }) {
+function Field({ label, children, fullWidth, error, required }) {
   return (
     <div className={fullWidth ? "field-full" : undefined}>
-      <label className="label">{label}</label>
+      <label className="label">{label}{required && <span className="required-star"> *</span>}</label>
       {children}
       {error && <div className="error-text">{error}</div>}
     </div>
@@ -36,7 +36,7 @@ export default function ApplicationDashboard() {
   }, []);
   const [data, setData] = useState({
     fullName: "", gender: "", dateOfBirth: "2004-01-01",
-    email: "", phone: "", city: "", address: "",
+    email: "", phone: "", parentPhone: "", referralSource: "", city: "", address: "",
     highSchool: "", graduationYear: "", gpa: "", grade: "", studyProgram: "",
     englishProficiency: "", awards: "",
     university: "", faculty: "", major: "", degreeLevel: "",
@@ -97,6 +97,8 @@ export default function ApplicationDashboard() {
     dateOfBirth: data.dateOfBirth,
     email: data.email,
     phone: data.phone,
+    parentPhone: data.parentPhone,
+    referralSource: data.referralSource,
     city: data.city,
     address: data.address,
     highSchool: data.highSchool,
@@ -156,8 +158,8 @@ export default function ApplicationDashboard() {
         if (!data.fullName.trim()) errs.fullName = "Full name is required";
         if (!data.gender) errs.gender = "Gender is required";
         if (!data.dateOfBirth) errs.dateOfBirth = "Date of birth is required";
-        if (!data.email.trim()) errs.email = "Email is required";
         if (!data.phone.trim()) errs.phone = "Phone number is required";
+        if (!data.parentPhone.trim()) errs.parentPhone = "Parent/Guardian phone number is required";
         if (!data.city.trim()) errs.city = "City is required";
         if (!data.address.trim()) errs.address = "Address is required";
         break;
@@ -229,10 +231,13 @@ export default function ApplicationDashboard() {
         <button className="btn-save-draft" onClick={handleSaveDraft}>{saved ? "Saved!" : "Save Draft"}</button>
       </div>
       <div className="form-grid">
-        <Field label="Full Name" error={errors.fullName}>
+        <div className="field-full" style={{ fontSize: 13, color: "#6E8098", marginBottom: -8 }}>
+          Fields marked with <span style={{ color: "#E53E3E" }}>*</span> are required
+        </div>
+        <Field label="Full Name" required error={errors.fullName}>
           <input className={`input ${errors.fullName ? "input-error" : ""}`} placeholder="e.g. Sopheak Vann" value={data.fullName} onChange={set("fullName")} />
         </Field>
-        <Field label="Gender" error={errors.gender}>
+        <Field label="Gender" required error={errors.gender}>
           <select className={`select ${errors.gender ? "input-error" : ""}`} value={data.gender} onChange={set("gender")}>
             <option value="" disabled>Select gender</option>
             <option value="Male">Male</option>
@@ -240,19 +245,32 @@ export default function ApplicationDashboard() {
             <option value="Other">Other</option>
           </select>
         </Field>
-        <Field label="Date of Birth" error={errors.dateOfBirth}>
+        <Field label="Date of Birth" required error={errors.dateOfBirth}>
           <input className={`input ${errors.dateOfBirth ? "input-error" : ""}`} type="date" value={data.dateOfBirth} onChange={set("dateOfBirth")} />
         </Field>
         <Field label="Email Address" error={errors.email}>
           <input className={`input ${errors.email ? "input-error" : ""}`} type="email" placeholder="sopheak@example.com" value={data.email} onChange={set("email")} />
         </Field>
-        <Field label="Phone Number" error={errors.phone}>
+        <Field label="Phone Number" required error={errors.phone}>
           <input className={`input ${errors.phone ? "input-error" : ""}`} type="tel" placeholder="+855 12 345 678" value={data.phone} onChange={set("phone")} />
         </Field>
-        <Field label="City / Province" error={errors.city}>
+        <Field label="Parent/Guardian Phone Number" required error={errors.parentPhone}>
+          <input className={`input ${errors.parentPhone ? "input-error" : ""}`} type="tel" placeholder="+855 12 345 678" value={data.parentPhone} onChange={set("parentPhone")} />
+        </Field>
+        <Field label="How did you know about us?" required error={errors.referralSource}>
+          <select className={`select ${errors.referralSource ? "input-error" : ""}`} value={data.referralSource} onChange={set("referralSource")}>
+            <option value="" disabled>Select an option</option>
+            <option value="Friend / Family">Friend / Family</option>
+            <option value="Social Media">Social Media</option>
+            <option value="School / Teacher">School / Teacher</option>
+            <option value="Advertisement">Advertisement</option>
+            <option value="Other">Other</option>
+          </select>
+        </Field>
+        <Field label="City / Province" required error={errors.city}>
           <input className={`input ${errors.city ? "input-error" : ""}`} placeholder="e.g. Phnom Penh" value={data.city} onChange={set("city")} />
         </Field>
-        <Field label="Permanent Address" fullWidth error={errors.address}>
+        <Field label="Permanent Address" fullWidth required error={errors.address}>
           <input className={`input ${errors.address ? "input-error" : ""}`} placeholder="Street, village, commune, district" value={data.address} onChange={set("address")} />
         </Field>
       </div>
@@ -485,6 +503,8 @@ export default function ApplicationDashboard() {
           ["Date of Birth", data.dateOfBirth],
           ["Email", data.email || "\u2014"],
           ["Phone", data.phone || "\u2014"],
+          ["Parent/Guardian Phone", data.parentPhone || "\u2014"],
+          ["How did you know about us?", data.referralSource || "\u2014"],
           ["City / Province", data.city || "\u2014"],
           ["Address", data.address || "\u2014"],
         ].map(([label, value]) => (

@@ -90,6 +90,9 @@
   color: #243B5A;
   margin-bottom: 6px;
 }
+.required-star {
+  color: #E53E3E;
+}
 .error-text {
   color: #D32F2F;
   font-size: 11px;

@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Scholarship = sequelize.define('Scholarship', {
-  scholarship_id: {
+const Major = sequelize.define('Major', {
+  major_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
@@ -11,20 +11,20 @@ const Scholarship = sequelize.define('Scholarship', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  title: {
+  major_name: {
     type: DataTypes.STRING(150),
     allowNull: false,
   },
-  amount: {
+  degree_level: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+  },
+  duration: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+  },
+  tuition_fee: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: true,
-  },
-  eligibility: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
-  deadline: {
-    type: DataTypes.DATEONLY,
     allowNull: true,
   },
   description: {
@@ -32,8 +32,8 @@ const Scholarship = sequelize.define('Scholarship', {
     allowNull: true,
   },
 }, {
-  tableName: 'Scholarship',
+  tableName: 'Major',
   timestamps: false,
 });
 
-module.exports = Scholarship;
+module.exports = Major;
