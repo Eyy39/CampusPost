@@ -1,74 +1,83 @@
-const sequelize = require('../config/db');
+const sequelize = require("../config/db");
 
-const Role = require('./Role');
-const User = require('./User');
-const University = require('./University');
-const Major = require('./Major');
-const Scholarship = require('./Scholarship');
-const Favorite = require('./Favorite');
-const Application = require('./Application');
-const ApplicationStatus = require('./ApplicationStatus');
-const ApplicantProfile = require('./ApplicantProfile');
-const AcademicInformation = require('./AcademicInformation');
-const ApplicationDocument = require('./ApplicationDocument');
-const Review = require('./Review');
+const Role = require("./Role");
+const User = require("./User");
+const University = require("./University");
+const Major = require("./Major");
+const Scholarship = require("./Scholarship");
+const Favorite = require("./Favorite");
+const Application = require("./Application");
+const ApplicationStatus = require("./ApplicationStatus");
+const ApplicantProfile = require("./ApplicantProfile");
+const AcademicInformation = require("./AcademicInformation");
+const ApplicationDocument = require("./ApplicationDocument");
+const Review = require("./Review");
 
 // Role -> User
-Role.hasMany(User, { foreignKey: 'role_id' });
-User.belongsTo(Role, { foreignKey: 'role_id' });
+Role.hasMany(User, { foreignKey: "role_id" });
+User.belongsTo(Role, { foreignKey: "role_id" });
 
 // User -> Favorite
-User.hasMany(Favorite, { foreignKey: 'user_id' });
-Favorite.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Favorite, { foreignKey: "user_id" });
+Favorite.belongsTo(User, { foreignKey: "user_id" });
 
 // User -> Application
-User.hasMany(Application, { foreignKey: 'user_id' });
-Application.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Application, { foreignKey: "user_id" });
+Application.belongsTo(User, { foreignKey: "user_id" });
 
 // User -> Review
-User.hasMany(Review, { foreignKey: 'user_id' });
-Review.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Review, { foreignKey: "user_id" });
+Review.belongsTo(User, { foreignKey: "user_id" });
 
 // University -> Major
-University.hasMany(Major, { foreignKey: 'university_id' });
-Major.belongsTo(University, { foreignKey: 'university_id' });
+University.hasMany(Major, { foreignKey: "university_id" });
+Major.belongsTo(University, { foreignKey: "university_id" });
 
 // University -> Scholarship
-University.hasMany(Scholarship, { foreignKey: 'university_id' });
-Scholarship.belongsTo(University, { foreignKey: 'university_id' });
+University.hasMany(Scholarship, { foreignKey: "university_id" });
+Scholarship.belongsTo(University, { foreignKey: "university_id" });
 
 // University -> Favorite
-University.hasMany(Favorite, { foreignKey: 'university_id' });
-Favorite.belongsTo(University, { foreignKey: 'university_id' });
+University.hasMany(Favorite, { foreignKey: "university_id" });
+Favorite.belongsTo(University, { foreignKey: "university_id" });
 
 // University -> Review
-University.hasMany(Review, { foreignKey: 'university_id' });
-Review.belongsTo(University, { foreignKey: 'university_id' });
+University.hasMany(Review, { foreignKey: "university_id" });
+Review.belongsTo(University, { foreignKey: "university_id" });
 
 // Application -> University
-Application.belongsTo(University, { foreignKey: 'university_id' });
+Application.belongsTo(University, { foreignKey: "university_id" });
 
 // Application -> Major
-Application.belongsTo(Major, { foreignKey: 'major_id' });
+Application.belongsTo(Major, { foreignKey: "major_id" });
 
 // Application -> Scholarship
-Application.belongsTo(Scholarship, { foreignKey: 'scholarship_id' });
+Application.belongsTo(Scholarship, { foreignKey: "scholarship_id" });
 
 // Application -> ApplicationStatus
-Application.belongsTo(ApplicationStatus, { foreignKey: 'status_id' });
-ApplicationStatus.hasMany(Application, { foreignKey: 'status_id' });
+Application.belongsTo(ApplicationStatus, { foreignKey: "status_id" });
+ApplicationStatus.hasMany(Application, { foreignKey: "status_id" });
 
 // Application -> ApplicantProfile (1:1)
-Application.hasOne(ApplicantProfile, { foreignKey: 'application_id' });
-ApplicantProfile.belongsTo(Application, { foreignKey: 'application_id' });
+Application.hasOne(ApplicantProfile, {
+  foreignKey: "application_id",
+  as: "ApplicantProfile",
+});
+ApplicantProfile.belongsTo(Application, { foreignKey: "application_id" });
 
 // Application -> AcademicInformation (1:1)
-Application.hasOne(AcademicInformation, { foreignKey: 'application_id' });
-AcademicInformation.belongsTo(Application, { foreignKey: 'application_id' });
+Application.hasOne(AcademicInformation, {
+  foreignKey: "application_id",
+  as: "AcademicInformation",
+});
+AcademicInformation.belongsTo(Application, { foreignKey: "application_id" });
 
 // Application -> ApplicationDocument (1:M)
-Application.hasMany(ApplicationDocument, { foreignKey: 'application_id' });
-ApplicationDocument.belongsTo(Application, { foreignKey: 'application_id' });
+Application.hasMany(ApplicationDocument, {
+  foreignKey: "application_id",
+  as: "ApplicationDocuments",
+});
+ApplicationDocument.belongsTo(Application, { foreignKey: "application_id" });
 
 module.exports = {
   sequelize,
