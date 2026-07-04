@@ -12,6 +12,7 @@ const favoriteRoutes = require("./routes/favorites");
 const applicationRoutes = require("./routes/applications");
 const reviewRoutes = require("./routes/reviews");
 const adminRoutes = require("./routes/admin");
+const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 
@@ -44,7 +45,7 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/users", authMiddleware, userRoutes);
 app.use("/api/universities", universityRoutes);
 app.use("/api/scholarships", scholarshipRoutes);
 app.use("/api/favorites", favoriteRoutes);
