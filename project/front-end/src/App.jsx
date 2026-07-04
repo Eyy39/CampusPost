@@ -7,6 +7,7 @@ import Universities from "./pages/universities.jsx";
 import ApplicationDashboard from "./pages/application";
 import MyApplications from "./pages/myapplications";
 import ApplicationDetail from "./pages/application-detail";
+import SystemAdmin from "./pages/system-admin.jsx";
 export default function App() {
   return (
     <BrowserRouter>
@@ -18,6 +19,8 @@ export default function App() {
         <Route path="/application" element={<ApplicationDashboard />} />
         <Route path="/my-applications" element={<MyApplications />} />
         <Route path="/application/:id" element={<ApplicationDetail />} />
+        <Route path="/system-admin/*" element={<SystemAdmin />} />
+        <Route path="/admin/*" element={<SystemAdmin />} />
       </Routes>
     </BrowserRouter>
   );
