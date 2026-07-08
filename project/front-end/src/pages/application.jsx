@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Navbar, Footer } from "../components/Layout";
+import Layout from "../components/Layout";
 import ProgressStepper from "../components/ProgressStepper";
 import Sidebar from "../components/Sidebar";
 import {
@@ -1084,34 +1084,33 @@ export default function ApplicationDashboard() {
   );
 
   return (
-    <div className="page">
-      <div className="bg-deco" />
-      <div className="bg-deco2" />
-      <Navbar activePage="My Applications" />
+    <Layout activePage="My Applications">
+      <div className="page">
+        <div className="bg-deco" />
+        <div className="bg-deco2" />
 
-      {step < 6 && (
-        <div className="main main-padding">
-          <div className="header-section">
-            <h1 className="title">2024 Academic Enrollment</h1>
-            <p className="subtitle">Undergraduate Application</p>
+        {step < 6 && (
+          <div className="main main-padding">
+            <div className="header-section">
+              <h1 className="title">2024 Academic Enrollment</h1>
+              <p className="subtitle">Undergraduate Application</p>
+            </div>
+
+            <ProgressStepper currentStep={step} />
+
+            <div className="layout layout-grid">
+              {renderStep()}
+              <Sidebar currentStep={step} formData={data} />
+            </div>
           </div>
+        )}
 
-          <ProgressStepper currentStep={step} />
-
-          <div className="layout layout-grid">
-            {renderStep()}
-            <Sidebar currentStep={step} formData={data} />
+        {step === 6 && (
+          <div className="main main-padding">
+            <div style={{ maxWidth: 680, margin: "0 auto" }}>{renderStep()}</div>
           </div>
-        </div>
-      )}
-
-      {step === 6 && (
-        <div className="main main-padding">
-          <div style={{ maxWidth: 680, margin: "0 auto" }}>{renderStep()}</div>
-        </div>
-      )}
-
-      <Footer />
-    </div>
+        )}
+      </div>
+    </Layout>
   );
 }

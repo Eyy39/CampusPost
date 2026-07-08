@@ -1,8 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { DocumentIcon } from "./Icons";
 import "./Sidebar.css";
 
 export default function Sidebar({ currentStep, formData }) {
+  const navigate = useNavigate();
   const uploadedCount = Object.values(formData.documents).filter(Boolean).length;
 
   return (
@@ -61,6 +63,15 @@ export default function Sidebar({ currentStep, formData }) {
           ))}
         </div>
         <div className="doc-count">{uploadedCount} of 4 documents uploaded</div>
+      </div>
+
+      <div className="sidebar-card sidebar-actions-card">
+        <button className="sidebar-btn sidebar-btn-login" onClick={() => navigate("/login")}>
+          Login
+        </button>
+        <button className="sidebar-btn sidebar-btn-signup" onClick={() => navigate("/signup")}>
+          Sign Up
+        </button>
       </div>
     </div>
   );

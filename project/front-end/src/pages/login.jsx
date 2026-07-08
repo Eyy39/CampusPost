@@ -1,21 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, GraduationCap, ArrowRight } from 'lucide-react';
+import Layout from '../components/Layout';
 import '../styles/login.css';
-
-const navLinks = [
-  { label: 'Find Universities', href: '#' },
-  { label: 'Scholarships', href: '#' },
-  { label: 'Forum', href: '#' },
-];
-
-const footerLinks = [
-  { label: 'About Us', href: '#' },
-  { label: 'Contact', href: '#' },
-  { label: 'Privacy Policy', href: '#' },
-  { label: 'Terms of Service', href: '#' },
-  { label: 'Help Center', href: '#' },
-];
 
 export default function Login() {
   const navigate = useNavigate();
@@ -28,32 +15,9 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page">
-      <nav className="login-nav">
-        <div className="login-nav-inner">
-          <div className="login-nav-left">
-            <Link to="/" className="login-nav-logo">
-              <span className="login-nav-logo-icon">
-                <GraduationCap size={18} />
-              </span>
-              CampusPost
-            </Link>
-            <ul className="login-nav-links">
-              {navLinks.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href}>{link.label}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="login-nav-right">
-            <a href="#" className="login-nav-signin">Sign In</a>
-            <button className="login-nav-register" onClick={() => navigate('/signup')}>Create Account</button>
-          </div>
-        </div>
-      </nav>
-
-      <main className="login-main">
+    <Layout activePage="Login">
+      <div className="login-page">
+        <main className="login-main">
         <div className="login-left">
           <div
             className="login-left-bg"
@@ -154,27 +118,7 @@ export default function Login() {
           </div>
         </div>
       </main>
-
-      <footer className="login-footer">
-        <div className="login-footer-inner">
-          <div className="login-footer-left">
-            <span className="login-footer-logo">
-              <GraduationCap size={15} />
-              CampusPost
-            </span>
-            <span className="login-footer-copyright">
-              &copy; 2026 CampusPost. Empowering Academic Journeys.
-            </span>
-          </div>
-          <ul className="login-footer-links">
-            {footerLinks.map((link) => (
-              <li key={link.label}>
-                <a href={link.href}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </footer>
     </div>
+    </Layout>
   );
 }

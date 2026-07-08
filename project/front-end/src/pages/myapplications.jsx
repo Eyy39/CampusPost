@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Footer } from "../components/Layout";
+import Layout from "../components/Layout";
 import DeleteModal from "../components/DeleteModal";
 import EmptyState from "../components/EmptyState";
 import { FilterIcon, PlusIcon, TrashIcon } from "../components/Icons";
@@ -94,11 +94,10 @@ export default function MyApplications() {
   const draftCount = applications.filter((a) => a.status === "Draft").length;
 
   return (
-    <div className="page">
-      <Navbar activePage="My Applications" />
-
-      <div className="main">
-        <div className="header-section">
+    <Layout activePage="My Applications">
+      <div className="page">
+        <div className="main">
+          <div className="header-section">
           <div>
             <h1 className="title">My Applications</h1>
             <p className="subtitle">Track and manage your university applications in one place.</p>
@@ -226,8 +225,7 @@ export default function MyApplications() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
-
-      <Footer />
-    </div>
+      </div>
+    </Layout>
   );
 }

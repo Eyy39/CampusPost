@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Navbar, Footer } from "../components/Layout";
+import Layout from "../components/Layout";
 import { User, Mail, Phone, MapPin, Calendar, GraduationCap, BookOpen, Building2, BookMarked, FileText, CheckCircle, Clock, ArrowLeft, Download, Printer } from "lucide-react";
 import html2pdf from "html2pdf.js";
 import "./application-detail.css";
@@ -137,24 +137,24 @@ export default function ApplicationDetail() {
 
   if (!data) {
     return (
-      <div className="ad-page">
-        <Navbar activePage="My Applications" />
-        <div className="ad-empty">
-          <h2>Application not found</h2>
-          <p>The application you're looking for doesn't exist or has been removed.</p>
-          <button className="ad-btn ad-btn-primary" onClick={() => navigate("/my-applications")}>Back to My Applications</button>
+      <Layout activePage="My Applications">
+        <div className="ad-page">
+          <div className="ad-empty">
+            <h2>Application not found</h2>
+            <p>The application you're looking for doesn't exist or has been removed.</p>
+            <button className="ad-btn ad-btn-primary" onClick={() => navigate("/my-applications")}>Back to My Applications</button>
+          </div>
         </div>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   const initials = (data.fullName || "??").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div className="ad-page">
-      <Navbar activePage="My Applications" />
-      <div className="ad-container">
+    <Layout activePage="My Applications">
+      <div className="ad-page">
+        <div className="ad-container">
         <div className="ad-topbar">
           <button className="ad-back" onClick={() => navigate("/my-applications")}>
             <ArrowLeft size={16} />
@@ -280,8 +280,8 @@ export default function ApplicationDetail() {
           </Section>
         </div>
         </div>
+        </div>
       </div>
-      <Footer />
-    </div>
+    </Layout>
   );
 }

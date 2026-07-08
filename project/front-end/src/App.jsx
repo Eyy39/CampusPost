@@ -3,7 +3,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home.jsx";
 import Login from "./pages/login.jsx";
 import Signup from "./pages/signup.jsx";
+import About from "./pages/about.jsx";
 import Universities from "./pages/universities.jsx";
+import Scholarships from "./pages/scholarships.jsx";
+import Forum from "./pages/forum.jsx";
 import ApplicationDashboard from "./pages/application";
 import MyApplications from "./pages/myapplications";
 import ApplicationDetail from "./pages/application-detail";
@@ -15,7 +18,10 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/about" element={<About />} />
         <Route path="/universities" element={<Universities />} />
+        <Route path="/scholarships" element={<Scholarships />} />
+        <Route path="/forum" element={<Forum />} />
         <Route path="/application" element={<ApplicationDashboard />} />
         <Route path="/my-applications" element={<MyApplications />} />
         <Route path="/application/:id" element={<ApplicationDetail />} />

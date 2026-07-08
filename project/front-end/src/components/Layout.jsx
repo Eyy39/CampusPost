@@ -15,21 +15,30 @@ export function Navbar({ activePage }) {
 
   return (
     <nav className="nav nav-padding">
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div
+        style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: -6, cursor: "pointer" }}
+        onClick={() => navigate("/")}
+      >
         <LogoIcon />
         <div className="logo">Campus<span className="logo-accent">Post</span></div>
       </div>
-      <ul className="nav-links">
-        {links.map((link) => (
-          <li
-            key={link.label}
-            className={link.label === activePage ? "nav-link-active" : "nav-link"}
-            onClick={() => navigate(link.path)}
-          >
-            {link.label}
-          </li>
-        ))}
-      </ul>
+      <div className="nav-actions">
+        <ul className="nav-links">
+          {links.map((link) => (
+            <li
+              key={link.label}
+              className={link.label === activePage ? "nav-link-active" : "nav-link"}
+              onClick={() => navigate(link.path)}
+            >
+              {link.label}
+            </li>
+          ))}
+        </ul>
+        <div className="nav-auth-buttons">
+          <button className="nav-auth-btn nav-auth-login" onClick={() => navigate("/login")}>Login</button>
+          <button className="nav-auth-btn nav-auth-signup" onClick={() => navigate("/signup")}>Sign Up</button>
+        </div>
+      </div>
     </nav>
   );
 }
@@ -65,5 +74,15 @@ export function Footer() {
         &copy; {new Date().getFullYear()} CampusPost. All rights reserved.
       </div>
     </footer>
+  );
+}
+
+export default function Layout({ children, activePage = "Home" }) {
+  return (
+    <>
+      <Navbar activePage={activePage} />
+      {children}
+      <Footer />
+    </>
   );
 }

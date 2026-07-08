@@ -8,29 +8,13 @@ import {
   EyeOff,
   GraduationCap,
   ArrowRight,
-  Menu,
-  X,
 } from 'lucide-react';
+import Layout from '../components/Layout';
 import '../styles/signup.css';
-
-const navLinks = [
-  { label: 'Find Universities', href: '#' },
-  { label: 'Scholarships', href: '#' },
-  { label: 'Forum', href: '#' },
-];
-
-const footerLinks = [
-  { label: 'About Us', href: '#' },
-  { label: 'Contact', href: '#' },
-  { label: 'Privacy Policy', href: '#' },
-  { label: 'Terms of Service', href: '#' },
-  { label: 'Help Center', href: '#' },
-];
 
 export default function Signup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -51,52 +35,9 @@ export default function Signup() {
   };
 
   return (
-    <div className="signup-page">
-      <nav className="signup-nav">
-        <div className="signup-nav-inner">
-          <div className="signup-nav-left">
-            <Link to="/" className="signup-nav-logo">
-              <span className="signup-nav-logo-icon">
-                <GraduationCap size={18} />
-              </span>
-              CampusPost
-            </Link>
-            <ul className="signup-nav-links">
-              {navLinks.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href}>{link.label}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="signup-nav-right">
-            <button className="signup-nav-signin" onClick={() => navigate('/login')}>Sign In</button>
-            <button className="signup-nav-register">Create Account</button>
-            <button
-              className="signup-mobile-btn"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </div>
-        <div className={`signup-mobile-menu${mobileOpen ? ' open' : ''}`}>
-          <ul className="signup-mobile-links">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <a href={link.href} onClick={() => setMobileOpen(false)}>
-                  {link.label}
-                </a>
-              </li>
-            ))}
-            <li><Link to="/login" onClick={() => setMobileOpen(false)}>Sign In</Link></li>
-            <li><Link to="/signup" onClick={() => setMobileOpen(false)}>Create Account</Link></li>
-          </ul>
-        </div>
-      </nav>
-
-      <main className="signup-main">
+    <Layout activePage="Sign Up">
+      <div className="signup-page">
+        <main className="signup-main">
         <div className="signup-left">
           <div
             className="signup-left-bg"
@@ -229,27 +170,7 @@ export default function Signup() {
           </div>
         </div>
       </main>
-
-      <footer className="signup-footer">
-        <div className="signup-footer-inner">
-          <div className="signup-footer-left">
-            <span className="signup-footer-logo">
-              <GraduationCap size={14} />
-              CampusPost
-            </span>
-            <span className="signup-footer-copyright">
-              &copy; 2026 CampusPost. Empowering Academic Journeys.
-            </span>
-          </div>
-          <ul className="signup-footer-links">
-            {footerLinks.map((link) => (
-              <li key={link.label}>
-                <a href={link.href}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </footer>
     </div>
+    </Layout>
   );
 }
