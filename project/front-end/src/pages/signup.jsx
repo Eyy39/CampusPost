@@ -10,11 +10,14 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import Layout from '../components/Layout';
+import { registerUser, saveAuthSession } from '../api/auth';
 import '../styles/signup.css';
 
 export default function Signup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -30,9 +33,30 @@ export default function Signup() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/profile');
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const [first_name, ...lastNameParts] = form.name.trim().split(' ');
+      const last_name = lastNameParts.join(' ') || 'User';
+
+      const result = await registerUser({
+        first_name,
+        last_name,
+        email: form.email,
+        password: form.password,
+        phone: '',
+      });
+
+      saveAuthSession(result);
+      navigate('/profile');
+    } catch (err) {
+      setError(err.message || 'Registration failed');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -137,8 +161,10 @@ export default function Signup() {
                 </span>
               </label>
 
-              <button type="submit" className="signup-submit-btn">
-                Create Account
+              {error ? <p className="signup-error">{error}</p> : null}
+
+              <button type="submit" className="signup-submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating Account...' : 'Create Account'}
                 <ArrowRight size={18} />
               </button>
             </form>

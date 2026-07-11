@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogoIcon } from "./Icons";
+import { clearAuthSession } from "../api/auth";
 import "./Layout.css";
 
 export function Navbar({ activePage }) {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const links = [
     { label: "Find Universities", path: "/universities" },
     { label: "Scholarships", path: "/scholarships" },
@@ -12,6 +14,16 @@ export function Navbar({ activePage }) {
     { label: "About", path: "/about" },
     { label: "My Applications", path: "/my-applications" },
   ];
+
+  useEffect(() => {
+    setIsLoggedIn(Boolean(localStorage.getItem("campuspost_token")));
+  }, []);
+
+  const handleLogout = () => {
+    clearAuthSession();
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
 
   return (
     <nav className="nav nav-padding">
@@ -35,8 +47,17 @@ export function Navbar({ activePage }) {
           ))}
         </ul>
         <div className="nav-auth-buttons">
-          <button className="nav-auth-btn nav-auth-login" onClick={() => navigate("/login")}>Login</button>
-          <button className="nav-auth-btn nav-auth-signup" onClick={() => navigate("/signup")}>Sign Up</button>
+          {isLoggedIn ? (
+            <>
+              <button className="nav-auth-btn nav-auth-login" onClick={() => navigate("/profile")}>Profile</button>
+              <button className="nav-auth-btn nav-auth-signup" onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <>
+              <button className="nav-auth-btn nav-auth-login" onClick={() => navigate("/login")}>Login</button>
+              <button className="nav-auth-btn nav-auth-signup" onClick={() => navigate("/signup")}>Sign Up</button>
+            </>
+          )}
         </div>
       </div>
     </nav>

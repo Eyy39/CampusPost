@@ -11,6 +11,7 @@ import ApplicationDashboard from "./pages/application";
 import MyApplications from "./pages/myapplications";
 import ApplicationDetail from "./pages/application-detail";
 import Profile from "./pages/profile.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SystemAdmin from "./pages/system-admin.jsx";
 export default function App() {
   return (
@@ -26,7 +27,7 @@ export default function App() {
         <Route path="/application" element={<ApplicationDashboard />} />
         <Route path="/my-applications" element={<MyApplications />} />
         <Route path="/application/:id" element={<ApplicationDetail />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/system-admin/*" element={<SystemAdmin />} />
         <Route path="/admin/*" element={<SystemAdmin />} />
       </Routes>

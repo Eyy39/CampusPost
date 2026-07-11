@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, GraduationCap, ArrowRight } from 'lucide-react';
 import Layout from '../components/Layout';
+import { loginUser, saveAuthSession } from '../api/auth';
 import '../styles/login.css';
 
 export default function Login() {
@@ -9,10 +10,23 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/profile');
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const result = await loginUser({ email, password });
+      saveAuthSession(result);
+      navigate('/profile');
+    } catch (err) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -85,8 +99,10 @@ export default function Login() {
                 </div>
               </div>
 
-              <button type="submit" className="login-submit-btn">
-                Sign In
+              {error ? <p className="login-error">{error}</p> : null}
+
+              <button type="submit" className="login-submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Signing In...' : 'Sign In'}
                 <ArrowRight size={18} />
               </button>
             </form>
