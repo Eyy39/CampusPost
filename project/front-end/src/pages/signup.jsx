@@ -32,6 +32,7 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    navigate('/profile');
   };
 
   return (
