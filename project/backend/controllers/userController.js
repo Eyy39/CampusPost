@@ -1,10 +1,15 @@
-const { User } = require('../models');
+const { User, Role } = require('../models');
 
 exports.listUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      include: [{ model: Role, attributes: ['role_name'] }],
+      attributes: { exclude: ['password'] },
+      order: [['created_at', 'DESC']],
+    });
     res.json(users);
   } catch (error) {
+    console.error('List users error:', error.message);
     res.status(500).json({ message: 'Failed to load users' });
   }
 };

@@ -31,9 +31,21 @@ const Scholarship = sequelize.define('Scholarship', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  spots: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  registration_url: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  contact_info: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
 }, {
   tableName: 'Scholarship',
-  timestamps: false,
+  timestamps: true,
 });
 
 module.exports = Scholarship;

@@ -34,8 +34,16 @@ exports.register = async (req, res) => {
     const userData = user.toJSON();
     delete userData.password;
 
+    // Create JWT token so user is auto-logged in after signup
+    const token = jwt.sign(
+      { id: user.user_id, role_id: user.role_id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
     res.status(201).json({
       message: "Registration successful",
+      token,
       user: userData,
       role_id: userData.role_id
     });

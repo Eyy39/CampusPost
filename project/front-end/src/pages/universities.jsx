@@ -1,44 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import FilterSidebar from '../components/FilterSidebar';
 import UniversityCard from '../components/UniversityCard';
-import universitiesData from '../data/universities';
+import { api } from '../utils/api';
 import Layout from '../components/Layout';
 import '../styles/home.css';
 import '../styles/universities.css';
 
-const navLinks = [
-  { label: 'Find Universities', href: '#' },
-  { label: 'Scholarships', href: '#' },
-  { label: 'Forum', href: '#' },
-  { label: 'About', href: '#' },
-  { label: 'Help', href: '#' },
-];
-
-const socialLinks = [
-  { icon: 'Globe', href: '#' },
-  { icon: 'MessageCircle', href: '#' },
-  { icon: 'Image', href: '#' },
-  { icon: 'Link2', href: '#' },
-];
-
-const quickLinks = [
-  { label: 'Universities', href: '#' },
-  { label: 'Scholarships', href: '#' },
-  { label: 'Majors', href: '#' },
-];
-
-const supportLinks = [
-  { label: 'About', href: '#' },
-  { label: 'Privacy Policy', href: '#' },
-  { label: 'Contact', href: '#' },
-];
-
 export default function Universities() {
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState('Highest Rated');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const totalPages = 12;
+  const perPage = 6;
+
+  useEffect(() => {
+    api.get('/universities')
+      .then((data) => {
+        const mapped = data.map((u) => ({
+          id: u.university_id,
+          name: u.name,
+          image: u.logo || 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+          location: [u.city, u.country].filter(Boolean).join(', ') || 'Cambodia',
+          rating: u.ranking ? Math.max(1, 6 - u.ranking).toFixed(1) : '4.5',
+          tuition: u.Majors?.length
+            ? `$${Math.min(...u.Majors.map(m => Number(m.tuition_fee) || 0)).toLocaleString()}–${Math.max(...u.Majors.map(m => Number(m.tuition_fee) || 0)).toLocaleString()}/year`
+            : 'Contact for details',
+          topMajor: u.Majors?.[0]?.major_name || 'General Studies',
+          type: 'Public University',
+        }));
+        setUniversities(mapped);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  const sorted = [...universities].sort((a, b) => {
+    if (sortBy === 'Name A-Z') return a.name.localeCompare(b.name);
+    if (sortBy === 'Lowest Tuition') return a.tuition.localeCompare(b.tuition);
+    return b.rating - a.rating;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / perPage));
+  const paged = sorted.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
@@ -89,13 +98,17 @@ export default function Universities() {
           <div className="univ-container">
             <div className="univ-header">
               <div className="univ-header-left">
-                <h1>Universities for &ldquo;IT &amp; Computer Science&rdquo;</h1>
-                <p>Showing {universitiesData.length} results found in Cambodia</p>
+                <h1>Find Universities</h1>
+                <p>
+                  {loading
+                    ? 'Loading...'
+                    : `Showing ${sorted.length} universities found in Cambodia`}
+                </p>
               </div>
               <div className="univ-header-right">
                 <label>Sort By:</label>
                 <div className="univ-sort-wrapper">
-                  <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}>
                     <option value="Highest Rated">Highest Rated</option>
                     <option value="Lowest Tuition">Lowest Tuition</option>
                     <option value="Name A-Z">Name A-Z</option>
@@ -117,34 +130,51 @@ export default function Universities() {
                 <FilterSidebar />
               </div>
 
-              <div className={`univ-sidebar-overlay${mobileFilterOpen ? ' open' : ''}`}
+              <div
+                className={`univ-sidebar-overlay${mobileFilterOpen ? ' open' : ''}`}
                 onClick={() => setMobileFilterOpen(false)}
               />
 
               <div className="univ-cards-area">
-                <div className="univ-cards-grid">
-                  {universitiesData.map((uni) => (
-                    <UniversityCard key={uni.id} university={uni} />
-                  ))}
-                </div>
+                {loading ? (
+                  <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>
+                    Loading universities...
+                  </div>
+                ) : error ? (
+                  <div style={{ padding: 40, textAlign: 'center', color: '#ef4444' }}>
+                    {error}
+                  </div>
+                ) : sorted.length === 0 ? (
+                  <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>
+                    No universities found.
+                  </div>
+                ) : (
+                  <>
+                    <div className="univ-cards-grid">
+                      {paged.map((uni) => (
+                        <UniversityCard key={uni.id} university={uni} />
+                      ))}
+                    </div>
 
-                <div className="univ-pagination">
-                  <button
-                    className="page-btn page-nav"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  {renderPageNumbers()}
-                  <button
-                    className="page-btn page-nav"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
+                    <div className="univ-pagination">
+                      <button
+                        className="page-btn page-nav"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      {renderPageNumbers()}
+                      <button
+                        className="page-btn page-nav"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

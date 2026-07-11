@@ -9,7 +9,7 @@ const Application = sequelize.define('Application', {
   },
   user_id: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
   },
   scholarship_id: {
     type: DataTypes.INTEGER,
@@ -41,7 +41,9 @@ const Application = sequelize.define('Application', {
   },
 }, {
   tableName: 'Application',
-  timestamps: false,
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
 });
 
 module.exports = Application;

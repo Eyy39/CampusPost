@@ -45,7 +45,7 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", authMiddleware, userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/universities", universityRoutes);
 app.use("/api/scholarships", scholarshipRoutes);
 app.use("/api/favorites", favoriteRoutes);
@@ -66,7 +66,7 @@ async function start() {
   try {
     await sequelize.authenticate();
     console.log(`Connected to MySQL database: ${process.env.DB_NAME}`);
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
 
     app.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);

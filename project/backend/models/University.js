@@ -53,7 +53,7 @@ const University = sequelize.define('University', {
   },
 }, {
   tableName: 'University',
-  timestamps: false,
+  timestamps: true,
 });
 
 module.exports = University;

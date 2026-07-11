@@ -7,6 +7,13 @@ export default function Sidebar({ currentStep, formData }) {
   const navigate = useNavigate();
   const uploadedCount = Object.values(formData.documents).filter(Boolean).length;
 
+  const initials = (formData.fullName || "NA")
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <div className="sidebar sidebar-sticky">
       <div className="sidebar-card">
@@ -17,28 +24,28 @@ export default function Sidebar({ currentStep, formData }) {
           {currentStep > 5 ? "Submitted" : "In Progress"}
         </span>
         <div className="uni-row">
-          <div className="uni-logo">PI</div>
+          <div className="uni-logo">{initials}</div>
           <div>
             <div style={{ fontSize: 11, color: "#6E8098", marginBottom: 1 }}>Applying To</div>
-            <div className="uni-name">Paragon International University</div>
+            <div className="uni-name">{formData.university || "Not selected yet"}</div>
           </div>
         </div>
         <div style={{ marginTop: 4 }}>
           <div className="info-row">
             <span className="info-label">Intake Year</span>
-            <span className="info-value">2024</span>
+            <span className="info-value">{formData.intakeYear || "—"}</span>
           </div>
           <div className="info-row">
             <span className="info-label">Degree Level</span>
-            <span className="info-value">Bachelor's</span>
+            <span className="info-value">{formData.degreeLevel || "—"}</span>
           </div>
           <div className="info-row">
-            <span className="info-label">Faculty</span>
-            <span className="info-value">Computer Science</span>
+            <span className="info-label">Major</span>
+            <span className="info-value">{formData.major || "—"}</span>
           </div>
           <div className="info-row-last">
-            <span className="info-label">Application ID</span>
-            <span className="info-value">CP-2024-7F3A</span>
+            <span className="info-label">Name</span>
+            <span className="info-value">{formData.fullName || "—"}</span>
           </div>
         </div>
       </div>
@@ -65,14 +72,22 @@ export default function Sidebar({ currentStep, formData }) {
         <div className="doc-count">{uploadedCount} of 4 documents uploaded</div>
       </div>
 
-      <div className="sidebar-card sidebar-actions-card">
-        <button className="sidebar-btn sidebar-btn-login" onClick={() => navigate("/login")}>
-          Login
-        </button>
-        <button className="sidebar-btn sidebar-btn-signup" onClick={() => navigate("/signup")}>
-          Sign Up
-        </button>
-      </div>
+      {!localStorage.getItem("campuspost_token") && (
+        <div className="sidebar-card sidebar-actions-card">
+          <p style={{ fontSize: 13, color: "#6E8098", margin: "0 0 8px", textAlign: "center" }}>
+            You need an account to submit your application.
+          </p>
+          <button className="sidebar-btn sidebar-btn-signup" onClick={() => navigate("/signup")}>
+            Sign Up to Apply
+          </button>
+          <p style={{ fontSize: 12, color: "#6E8098", margin: "8px 0 0", textAlign: "center" }}>
+            Already have an account?{" "}
+            <span style={{ color: "#2563EB", cursor: "pointer" }} onClick={() => navigate("/login")}>
+              Login
+            </span>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

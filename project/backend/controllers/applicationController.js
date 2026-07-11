@@ -1,13 +1,17 @@
-const { Application, ApplicantProfile, AcademicInformation, ApplicationDocument, sequelize } = require('../models');
+const { Application, ApplicantProfile, AcademicInformation, ApplicationDocument, University, Major, Scholarship, sequelize } = require('../models');
 
 exports.listApplications = async (req, res) => {
   try {
     const applications = await Application.findAll({
-      order: [['updated_at', 'DESC']],
+      where: { user_id: req.user.id },
+      order: [['application_id', 'DESC']],
       include: [
-        { association: 'ApplicantProfile' },
-        { association: 'AcademicInformation' },
-        { association: 'ApplicationDocuments' },
+        { model: ApplicantProfile, as: 'ApplicantProfile' },
+        { model: AcademicInformation, as: 'AcademicInformation' },
+        { model: ApplicationDocument, as: 'ApplicationDocuments' },
+        { model: University, attributes: ['name', 'city', 'country'] },
+        { model: Major, attributes: ['major_name', 'degree_level'] },
+        { model: Scholarship, attributes: ['title'] },
       ],
     });
     res.json(applications);
@@ -21,13 +25,19 @@ exports.getApplication = async (req, res) => {
   try {
     const application = await Application.findByPk(req.params.id, {
       include: [
-        { association: 'ApplicantProfile' },
-        { association: 'AcademicInformation' },
-        { association: 'ApplicationDocuments' },
+        { model: ApplicantProfile, as: 'ApplicantProfile' },
+        { model: AcademicInformation, as: 'AcademicInformation' },
+        { model: ApplicationDocument, as: 'ApplicationDocuments' },
+        { model: University, attributes: ['name', 'city', 'country'] },
+        { model: Major, attributes: ['major_name', 'degree_level'] },
+        { model: Scholarship, attributes: ['title'] },
       ],
     });
     if (!application) {
       return res.status(404).json({ message: 'Application not found' });
+    }
+    if (application.user_id !== req.user.id) {
+      return res.status(403).json({ message: 'Access denied' });
     }
     res.json(application);
   } catch (error) {
@@ -40,15 +50,19 @@ exports.createApplication = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const {
-      user_id, university_id, major_id,
+      scholarship_id, university_id, major_id, admin_status,
       profile, academic, documents,
     } = req.body;
 
+    const user_id = req.user.id;
+
     const application = await Application.create({
       user_id,
+      scholarship_id: scholarship_id || null,
       university_id,
       major_id,
-      status_id: 1, // default: Pending
+      status_id: 1,
+      admin_status: admin_status || 'draft',
     }, { transaction: t });
 
     if (profile) {
@@ -79,9 +93,11 @@ exports.createApplication = async (req, res) => {
 
     const result = await Application.findByPk(application.application_id, {
       include: [
-        { association: 'ApplicantProfile' },
-        { association: 'AcademicInformation' },
-        { association: 'ApplicationDocuments' },
+        { model: ApplicantProfile, as: 'ApplicantProfile' },
+        { model: AcademicInformation, as: 'AcademicInformation' },
+        { model: ApplicationDocument, as: 'ApplicationDocuments' },
+        { model: University, attributes: ['name'] },
+        { model: Major, attributes: ['major_name', 'degree_level'] },
       ],
     });
 
@@ -138,9 +154,11 @@ exports.updateApplication = async (req, res) => {
 
     const result = await Application.findByPk(application.application_id, {
       include: [
-        { association: 'ApplicantProfile' },
-        { association: 'AcademicInformation' },
-        { association: 'ApplicationDocuments' },
+        { model: ApplicantProfile, as: 'ApplicantProfile' },
+        { model: AcademicInformation, as: 'AcademicInformation' },
+        { model: ApplicationDocument, as: 'ApplicationDocuments' },
+        { model: University, attributes: ['name'] },
+        { model: Major, attributes: ['major_name', 'degree_level'] },
       ],
     });
 
@@ -156,8 +174,10 @@ exports.saveDraft = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     if (req.params.id === 'new') {
+      const { user_id, ...rest } = req.body;
       const application = await Application.create({
-        ...req.body,
+        ...rest,
+        user_id: req.user.id,
         status_id: 1,
         admin_status: 'draft',
       }, { transaction: t });

@@ -1,12 +1,19 @@
-const { Review } = require('../models');
+const { Review, User, University } = require('../models');
 
 exports.listReviews = async (req, res) => {
-	try {
-		const reviews = await Review.findAll();
-		res.json(reviews);
-	} catch (error) {
-		res.status(500).json({ message: 'Failed to load reviews' });
-	}
+  try {
+    const reviews = await Review.findAll({
+      include: [
+        { model: User, attributes: ['first_name', 'last_name'] },
+        { model: University, attributes: ['name'] },
+      ],
+      order: [['created_at', 'DESC']],
+    });
+    res.json(reviews);
+  } catch (error) {
+    console.error('List reviews error:', error.message);
+    res.status(500).json({ message: 'Failed to load reviews' });
+  }
 };
 
 exports.createReview = async (req, res) => {

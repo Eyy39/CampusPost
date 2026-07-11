@@ -21,7 +21,7 @@ const AcademicInformation = sequelize.define('AcademicInformation', {
     allowNull: true,
   },
   gpa: {
-    type: DataTypes.STRING(10),
+    type: DataTypes.STRING(50),
     allowNull: true,
   },
   grade: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { api } from "../utils/api";
 import {
   Building2,
   CheckCircle2,
@@ -721,13 +722,63 @@ export default function SystemAdmin() {
   const navigate = useNavigate();
   const section = getSection(location.pathname);
 
-  const [universities, setUniversities] = useState(initialUniversities);
-  const [admins, setAdmins] = useState(initialAdmins);
-  const [students, setStudents] = useState(initialStudents);
-  const [reviews, setReviews] = useState(initialReviews);
+  const [universities, setUniversities] = useState([]);
+  const [admins, setAdmins] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [toasts, setToasts] = useState([]);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const toastTimers = useRef(new Map());
+
+  useEffect(() => {
+    Promise.all([
+      api.get("/universities").catch(() => []),
+      api.get("/users").catch(() => []),
+      api.get("/reviews").catch(() => []),
+      api.get("/admin/applications").catch(() => []),
+    ]).then(([uniData, userData, reviewData, appData]) => {
+      setUniversities(uniData.map((u) => ({
+        id: u.university_id,
+        university: u.name,
+        country: u.country || "Cambodia",
+        majors: u.Majors?.length || 0,
+        admin: "—",
+        status: "Active",
+        updated: u.updated_at ? new Date(u.updated_at).toLocaleDateString() : "—",
+      })));
+
+      const allUsers = Array.isArray(userData) ? userData : [];
+      setAdmins(allUsers.filter((u) => u.role_id === 2 || (u.Role && u.Role.role_name === "admin")).map((u) => ({
+        id: u.user_id,
+        avatar: `${u.first_name[0]}${u.last_name[0]}`.toUpperCase(),
+        name: `${u.first_name} ${u.last_name}`,
+        email: u.email,
+        university: "—",
+        status: "Active",
+        registeredDate: u.created_at ? new Date(u.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—",
+        lastLogin: "—",
+      })));
+      setStudents(allUsers.filter((u) => u.role_id === 1 || (u.Role && u.Role.role_name === "user")).map((u) => ({
+        id: u.user_id,
+        avatar: `${u.first_name[0]}${u.last_name[0]}`.toUpperCase(),
+        name: `${u.first_name} ${u.last_name}`,
+        email: u.email,
+        role: "Student",
+        registeredDate: u.created_at ? new Date(u.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—",
+        status: "Active",
+      })));
+      setReviews((Array.isArray(reviewData) ? reviewData : []).map((r) => ({
+        id: r.review_id,
+        student: r.User ? `${r.User.first_name} ${r.User.last_name}` : "Unknown",
+        university: r.University?.name || "Unknown",
+        rating: r.rating,
+        preview: r.comment || "",
+        reason: "Reported",
+        date: r.created_at ? new Date(r.created_at).toLocaleDateString() : "—",
+        status: "Under Review",
+      })));
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     return () => {

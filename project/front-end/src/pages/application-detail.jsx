@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
+import { api } from "../utils/api";
 import { User, Mail, Phone, MapPin, Calendar, GraduationCap, BookOpen, Building2, BookMarked, FileText, CheckCircle, Clock, ArrowLeft, Download, Printer } from "lucide-react";
 import html2pdf from "html2pdf.js";
 import "./application-detail.css";
-
-function generateRef() {
-  const year = new Date().getFullYear();
-  const seq = String(Math.floor(Math.random() * 900000) + 100000);
-  return `APP-${year}-${seq}`;
-}
 
 function Row({ label, value }) {
   return (
@@ -70,13 +65,12 @@ function Timeline({ status }) {
 
 function StatusBadge({ status }) {
   const map = {
-    pending_review: { label: "Pending Review", icon: Clock, cls: "badge-warning" },
     approved: { label: "Approved", icon: CheckCircle, cls: "badge-success" },
     rejected: { label: "Rejected", icon: Clock, cls: "badge-danger" },
     pending: { label: "Pending Review", icon: Clock, cls: "badge-warning" },
     draft: { label: "Draft", icon: Clock, cls: "badge-muted" },
   };
-  const s = map[status] || map.pending_review;
+  const s = map[status] || map.pending;
   const Icon = s.icon;
   return (
     <span className={`ad-badge ${s.cls}`}>
@@ -91,18 +85,71 @@ export default function ApplicationDetail() {
   const { id } = useParams();
   const location = useLocation();
   const printRef = useRef();
-  const [refNo] = useState(() => generateRef());
-  const [status] = useState("pending_review");
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (location.state?.application) {
-      setData(location.state.application);
+      const app = location.state.application;
+      setData({
+        ...app,
+        fullName: app.fullName || app.ApplicantProfile?.full_name || "",
+        gender: app.gender || app.ApplicantProfile?.gender || "",
+        dateOfBirth: app.dateOfBirth || app.ApplicantProfile?.date_of_birth || "",
+        email: app.email || app.ApplicantProfile?.email || "",
+        phone: app.phone || app.ApplicantProfile?.phone || "",
+        parentPhone: app.parentPhone || "",
+        referralSource: app.referralSource || "",
+        city: app.city || app.ApplicantProfile?.city || "",
+        address: app.address || app.ApplicantProfile?.address || "",
+        highSchool: app.highSchool || app.AcademicInformation?.high_school || "",
+        graduationYear: app.graduationYear || app.AcademicInformation?.graduation_year || "",
+        gpa: app.gpa || app.AcademicInformation?.gpa || "",
+        grade: app.grade || app.AcademicInformation?.grade || "",
+        studyProgram: app.studyProgram || app.AcademicInformation?.study_program || "",
+        englishProficiency: app.englishProficiency || app.AcademicInformation?.english_proficiency || "",
+        awards: app.awards || app.AcademicInformation?.awards || "",
+        university: app.university || app.University?.name || "",
+        major: app.major || app.Major?.major_name || "",
+        degreeLevel: app.degreeLevel || app.Major?.degree_level || "",
+        status: app.admin_status || "pending",
+      });
+      setLoading(false);
       return;
     }
-    const drafts = JSON.parse(localStorage.getItem("campuspost_drafts") || "[]");
-    const app = drafts.find((d) => String(d.id) === id);
-    if (app) setData(app);
+
+    api.get(`/applications/${id}`)
+      .then((app) => {
+        const profile = app.ApplicantProfile || {};
+        const academic = app.AcademicInformation || {};
+        setData({
+          ...app,
+          fullName: profile.full_name || "",
+          gender: profile.gender || "",
+          dateOfBirth: profile.date_of_birth || "",
+          email: profile.email || "",
+          phone: profile.phone || "",
+          city: profile.city || "",
+          address: profile.address || "",
+          highSchool: academic.high_school || "",
+          graduationYear: academic.graduation_year || "",
+          gpa: academic.gpa || "",
+          grade: academic.grade || "",
+          studyProgram: academic.study_program || "",
+          englishProficiency: academic.english_proficiency || "",
+          awards: academic.awards || "",
+          university: app.University?.name || "",
+          major: app.Major?.major_name || "",
+          degreeLevel: app.Major?.degree_level || "",
+          status: app.admin_status || "pending",
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [id, location.state]);
 
   const formatDate = (d) =>
@@ -117,13 +164,9 @@ export default function ApplicationDetail() {
       requestAnimationFrame(() => {
         const opt = {
           margin: [0.5, 0.5],
-          filename: `${refNo || "application"}.pdf`,
+          filename: `${data?.ref_no || "application"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 1,
-            useCORS: true,
-            logging: false,
-          },
+          html2canvas: { scale: 1, useCORS: true, logging: false },
           jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
         };
         html2pdf().set(opt).from(element).save().then(() => {
@@ -135,13 +178,23 @@ export default function ApplicationDetail() {
     });
   };
 
-  if (!data) {
+  if (loading) {
+    return (
+      <Layout activePage="My Applications">
+        <div className="ad-page">
+          <div className="ad-empty"><p>Loading application...</p></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !data) {
     return (
       <Layout activePage="My Applications">
         <div className="ad-page">
           <div className="ad-empty">
             <h2>Application not found</h2>
-            <p>The application you're looking for doesn't exist or has been removed.</p>
+            <p>{error || "The application you're looking for doesn't exist or has been removed."}</p>
             <button className="ad-btn ad-btn-primary" onClick={() => navigate("/my-applications")}>Back to My Applications</button>
           </div>
         </div>
@@ -177,11 +230,11 @@ export default function ApplicationDetail() {
             <div className="ad-header-left">
               <div className="ad-title-row">
                 <h1 className="ad-title">Application for Admission</h1>
-                <StatusBadge status={status} />
+                <StatusBadge status={data.status} />
               </div>
               <div className="ad-meta-row">
-                <span className="ad-ref">Ref: <strong>{refNo}</strong></span>
-                <span className="ad-date">Submitted {formatDate(new Date())}</span>
+                <span className="ad-ref">Ref: <strong>{data.ref_no || "N/A"}</strong></span>
+                <span className="ad-date">Submitted {formatDate(data.created_at)}</span>
               </div>
             </div>
           </div>
@@ -192,11 +245,7 @@ export default function ApplicationDetail() {
               <div className="ad-personal-grid">
                 <div className="ad-photo-col">
                   <div className="ad-photo">
-                    {data.photo ? (
-                      <img src={data.photo} alt="" />
-                    ) : (
-                      <span>{initials}</span>
-                    )}
+                    <span>{initials}</span>
                   </div>
                 </div>
                 <div className="ad-personal-fields">
@@ -205,8 +254,6 @@ export default function ApplicationDetail() {
                   <Row label="Date of Birth" value={data.dateOfBirth} />
                   <Row label="Email" value={data.email} />
                   <Row label="Phone" value={data.phone} />
-                  <Row label="Parent/Guardian Phone" value={data.parentPhone} />
-                  <Row label="How did you know about us?" value={data.referralSource} />
                   <Row label="City / Province" value={data.city} />
                   <Row label="Address" value={data.address} />
                 </div>
@@ -217,14 +264,14 @@ export default function ApplicationDetail() {
               <div className="ad-meta-card">
                 <h4 className="ad-meta-title">Submission Details</h4>
                 <div className="ad-meta-body">
-                  <Row label="Reference No." value={refNo} />
-                  <Row label="Created" value={formatDate(new Date())} />
-                  <Row label="Last Updated" value={formatDate(new Date())} />
+                  <Row label="Reference No." value={data.ref_no} />
+                  <Row label="Created" value={formatDate(data.created_at)} />
+                  <Row label="Last Updated" value={formatDate(data.updated_at)} />
                 </div>
               </div>
               <div className="ad-meta-card">
                 <h4 className="ad-meta-title">Status Timeline</h4>
-                <Timeline status={status} />
+                <Timeline status={data.status} />
               </div>
             </div>
           </div>
@@ -244,11 +291,8 @@ export default function ApplicationDetail() {
           <Section icon={Building2} title="Program Selection">
             <div className="ad-grid-2">
               <Row label="University" value={data.university} />
-              <Row label="Faculty" value={data.faculty} />
               <Row label="Major" value={data.major} />
               <Row label="Degree Level" value={data.degreeLevel} />
-              <Row label="Intake Year" value={data.intakeYear} />
-              <Row label="Study Mode" value={data.studyMode} />
             </div>
           </Section>
 
@@ -273,11 +317,13 @@ export default function ApplicationDetail() {
             </div>
           </Section>
 
-          <Section icon={BookMarked} title="Reviewer Notes">
-            <div className="ad-notes-empty">
-              <p>No review has been completed yet. Check back later.</p>
-            </div>
-          </Section>
+          {data.admin_note && (
+            <Section icon={BookMarked} title="Reviewer Notes">
+              <div className="ad-notes-empty">
+                <p>{data.admin_note}</p>
+              </div>
+            </Section>
+          )}
         </div>
         </div>
         </div>

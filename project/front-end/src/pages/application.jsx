@@ -10,6 +10,7 @@ import {
   UploadIcon,
   CheckCircle,
 } from "../components/Icons";
+import { api } from "../utils/api";
 import { saveDraftToDB, loadDraftFromDB } from "../utils/draftDB";
 import "./application.css";
 
@@ -65,7 +66,7 @@ export default function ApplicationDashboard() {
     faculty: "",
     major: "",
     degreeLevel: "",
-    intakeYear: "2024",
+    intakeYear: "2026",
     studyMode: "Full-time",
     compareUniversity: "",
     documents: {
@@ -78,8 +79,16 @@ export default function ApplicationDashboard() {
     confirmed: false,
   });
 
-  const set = (key) => (e) =>
-    setData((prev) => ({ ...prev, [key]: e.target.value }));
+  const set = (key) => (e) => {
+    const value = e.target.value;
+    setData((prev) => {
+      const updated = { ...prev, [key]: value };
+      if (key === "university") {
+        updated.studyMode = value.includes("CADT") ? "Full-time" : prev.studyMode;
+      }
+      return updated;
+    });
+  };
   const handleFileUpload = (key) => (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -110,17 +119,26 @@ export default function ApplicationDashboard() {
   const [errors, setErrors] = useState({});
   const [saved, setSaved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [serverAppId, setServerAppId] = useState(null);
+  const [serverRefNo, setServerRefNo] = useState(null);
+  const [universitiesList, setUniversitiesList] = useState([]);
+  const [majorsList, setMajorsList] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
 
-  const isCADT = data.university === "Cambodia Academy of Digital Technology";
+  useEffect(() => {
+    api.get("/universities").then((data) => setUniversitiesList(data)).catch(() => {});
+  }, []);
+
+  const isCADT = data.university.includes("CADT");
 
   const cadtFaculties = ["Institute of Digital Technology (IDT)"];
   const cadtMajors = {
     "Institute of Digital Technology (IDT)": [
-      "Computer Science (Software Engineering)",
-      "Computer Science (Data Science)",
-      "Telecoms & Networking (Cyber Security)",
-      "Telecoms & Networking (Telecoms & Network Engineering)",
-      "Digital Business (e-Commerce)",
+      "Software Engineering",
+      "Data Science",
+      "e-Commerce",
+      "Telecommunications and Networking Engineering (Including Satellite)",
+      "Cybersecurity",
     ],
   };
 
@@ -175,7 +193,88 @@ export default function ApplicationDashboard() {
       : null,
   });
 
-  const handleSaveDraft = () => {
+  const findUniId = (name) => {
+    const u = universitiesList.find((u) => u.name === name);
+    return u ? u.university_id : null;
+  };
+
+  const getUserId = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("campuspost_user") || "{}");
+      if (user.user_id) return user.user_id;
+      const token = localStorage.getItem("campuspost_token");
+      if (token) {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.id || null;
+      }
+    } catch { return null; }
+    return null;
+  };
+
+  const [scholarshipsList, setScholarshipsList] = useState([]);
+
+  useEffect(() => {
+    api.get("/scholarships").then((data) => setScholarshipsList(data)).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!data.university || !universitiesList.length) {
+      setMajorsList([]);
+      return;
+    }
+    const uni = universitiesList.find((u) => u.name === data.university);
+    if (uni) {
+      api.get(`/universities/${uni.university_id}/majors`).then((majors) => setMajorsList(majors)).catch(() => setMajorsList([]));
+    }
+  }, [data.university, universitiesList]);
+
+  const findScholarshipId = (uniId) => {
+    if (!uniId || !scholarshipsList.length) return null;
+    const match = scholarshipsList.find((s) => s.university_id === uniId);
+    return match ? match.scholarship_id : null;
+  };
+
+  const buildApiPayload = () => {
+    const uniId = findUniId(data.university);
+    const matchedMajor = majorsList.find((m) => m.major_name === data.major);
+    return {
+      user_id: getUserId(),
+      scholarship_id: findScholarshipId(uniId),
+      university_id: uniId || 1,
+      major_id: matchedMajor ? matchedMajor.major_id : 1,
+      profile: {
+        full_name: data.fullName,
+        gender: data.gender,
+        date_of_birth: data.dateOfBirth,
+        email: data.email,
+        phone: data.phone,
+        city: data.city,
+        address: data.address,
+      },
+      academic: {
+        high_school: data.highSchool,
+        graduation_year: data.graduationYear,
+        gpa: data.gpa || null,
+        grade: data.grade,
+        study_program: data.studyProgram,
+        english_proficiency: data.englishProficiency,
+        awards: data.awards,
+      },
+      documents: Object.entries(data.documents)
+        .filter(([, v]) => v)
+        .map(([key, val]) => ({
+          document_type: key,
+          file_url: val.name || "",
+        })),
+    };
+  };
+
+  const handleSaveDraft = async () => {
+    if (!localStorage.getItem("campuspost_token")) {
+      alert("You need an account to save your draft. Please sign up or login first.");
+      navigate("/signup");
+      return;
+    }
     const drafts = JSON.parse(
       localStorage.getItem("campuspost_drafts") || "[]",
     );
@@ -189,27 +288,77 @@ export default function ApplicationDashboard() {
     localStorage.setItem("campuspost_drafts", JSON.stringify(drafts));
     setData((prev) => ({ ...prev, draftId: entry.id }));
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
     saveDraftToDB(entry.id, { ...data, id: entry.id });
+
+    try {
+      const payload = buildApiPayload();
+      let res;
+      if (serverAppId) {
+        res = await api.put(`/applications/${serverAppId}`, payload);
+      } else {
+        res = await api.post("/applications", payload);
+      }
+      setServerAppId(res.application_id);
+      setServerRefNo(res.ref_no);
+      saveDraftToDB(res.application_id, { ...data, id: res.application_id, draftId: res.application_id });
+      setData((prev) => ({ ...prev, draftId: res.application_id, serverAppId: res.application_id }));
+    } catch (err) {
+      console.error("Failed to save draft to server:", err);
+    }
+
+    setTimeout(() => {
+      setSaved(false);
+      navigate("/my-applications");
+    }, 1500);
   };
 
-  const handleSubmit = () => {
-    if (!validateStep(5)) return;
-    const drafts = JSON.parse(
-      localStorage.getItem("campuspost_drafts") || "[]",
-    );
-    const existing = drafts.findIndex((d) => d.id === data.draftId);
-    const entry = { ...buildEntry("Pending Review"), confirmed: true };
-    if (existing > -1) {
-      drafts[existing] = { ...drafts[existing], ...entry };
-    } else {
-      drafts.unshift(entry);
+  const handleSubmit = async () => {
+    if (!localStorage.getItem("campuspost_token")) {
+      alert("You need an account to submit an application. Please sign up or login first.");
+      navigate("/signup");
+      return;
     }
-    localStorage.setItem("campuspost_drafts", JSON.stringify(drafts));
-    setData((prev) => ({ ...prev, draftId: entry.id }));
-    setSubmitted(true);
-    setStep(6);
-    saveDraftToDB(entry.id, { ...data, id: entry.id, confirmed: true });
+    if (!validateStep(5)) return;
+    setSubmitting(true);
+
+    try {
+      const payload = buildApiPayload();
+      let res;
+      if (serverAppId) {
+        res = await api.put(`/applications/${serverAppId}`, {
+          ...payload,
+          admin_status: "pending",
+        });
+      } else {
+        res = await api.post("/applications", {
+          ...payload,
+          admin_status: "pending",
+        });
+      }
+      setServerAppId(res.application_id);
+      setServerRefNo(res.ref_no);
+
+      const drafts = JSON.parse(
+        localStorage.getItem("campuspost_drafts") || "[]",
+      );
+      const existing = drafts.findIndex((d) => d.id === data.draftId);
+      const entry = { ...buildEntry("Pending Review"), confirmed: true };
+      if (existing > -1) {
+        drafts[existing] = { ...drafts[existing], ...entry };
+      } else {
+        drafts.unshift(entry);
+      }
+      localStorage.setItem("campuspost_drafts", JSON.stringify(drafts));
+      setData((prev) => ({ ...prev, draftId: entry.id }));
+      setSubmitted(true);
+      setStep(6);
+      saveDraftToDB(entry.id, { ...data, id: entry.id, confirmed: true });
+    } catch (err) {
+      console.error("Submit failed:", err);
+      alert("Failed to submit application. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const validateStep = (step) => {
@@ -565,27 +714,11 @@ export default function ApplicationDashboard() {
             <option value="" disabled>
               Select university
             </option>
-            <option value="Cambodia Academy of Digital Technology">
-              Cambodia Academy of Digital Technology
-            </option>
-            <option value="Institute of Foreign Languages">
-              Institute of Foreign Languages
-            </option>
-            <option value="Institute of Technology of Cambodia">
-              Institute of Technology of Cambodia
-            </option>
-            <option value="Paragon International University">
-              Paragon International University
-            </option>
-            <option value="Royal University of Phnom Penh">
-              Royal University of Phnom Penh
-            </option>
-            <option value="University of Cambodia">
-              University of Cambodia
-            </option>
-            <option value="American University of Phnom Penh">
-              American University of Phnom Penh
-            </option>
+            {universitiesList.map((u) => (
+              <option key={u.university_id} value={u.name}>
+                {u.name}
+              </option>
+            ))}
           </select>
         </Field>
         {isCADT ? (
@@ -641,12 +774,20 @@ export default function ApplicationDashboard() {
               />
             </Field>
             <Field label="Major" error={errors.major}>
-              <input
-                className={`input ${errors.major ? "input-error" : ""}`}
-                placeholder="e.g. Software Engineering"
+              <select
+                className={`select ${errors.major ? "input-error" : ""}`}
                 value={data.major}
                 onChange={set("major")}
-              />
+              >
+                <option value="" disabled>
+                  Select major
+                </option>
+                {majorsList.map((m) => (
+                  <option key={m.major_id} value={m.major_name}>
+                    {m.major_name}
+                  </option>
+                ))}
+              </select>
             </Field>
           </>
         )}
@@ -671,7 +812,7 @@ export default function ApplicationDashboard() {
             value={data.intakeYear}
             onChange={set("intakeYear")}
           >
-            {["2024", "2025", "2026"].map((y) => (
+            {["2026", "2027", "2028"].map((y) => (
               <option key={y} value={y}>
                 {y}
               </option>
@@ -679,14 +820,23 @@ export default function ApplicationDashboard() {
           </select>
         </Field>
         <Field label="Study Mode">
-          <select
-            className="select"
-            value={data.studyMode}
-            onChange={set("studyMode")}
-          >
-            <option value="Full-time">Full-time</option>
-            <option value="Part-time">Part-time</option>
-          </select>
+          {isCADT ? (
+            <input
+              className="select"
+              value="Full-time"
+              disabled
+              style={{ background: "#f1f5f9" }}
+            />
+          ) : (
+            <select
+              className="select"
+              value={data.studyMode}
+              onChange={set("studyMode")}
+            >
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+            </select>
+          )}
         </Field>
         <Field label="Compare with another university (optional)" fullWidth>
           <select
@@ -695,18 +845,11 @@ export default function ApplicationDashboard() {
             onChange={set("compareUniversity")}
           >
             <option value="">None</option>
-            <option value="Cambodia Academy of Digital Technology">
-              Cambodia Academy of Digital Technology
-            </option>
-            <option value="Royal University of Phnom Penh">
-              Royal University of Phnom Penh
-            </option>
-            <option value="Institute of Technology of Cambodia">
-              Institute of Technology of Cambodia
-            </option>
-            <option value="University of Cambodia">
-              University of Cambodia
-            </option>
+            {universitiesList.map((u) => (
+              <option key={u.university_id} value={u.name}>
+                {u.name}
+              </option>
+            ))}
           </select>
         </Field>
       </div>
@@ -1037,7 +1180,21 @@ export default function ApplicationDashboard() {
         <div className="success-grid">
           <div className="success-card">
             <div className="success-card-title">Application ID</div>
-            <div className="success-card-value">#CP-984410</div>
+            <div className="success-card-value">#{serverRefNo || data.ref_no || "Pending"}</div>
+          </div>
+          <div className="success-card">
+            <div className="success-card-title">Submitted On</div>
+            <div className="success-card-value">
+              {new Date().toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}{" "}
+              {new Date().toLocaleTimeString("en-GB", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
           </div>
           <div className="success-card">
             <div className="success-card-title">Application Status</div>
@@ -1048,7 +1205,7 @@ export default function ApplicationDashboard() {
           <div className="success-card" style={{ gridColumn: "1 / -1" }}>
             <div className="success-card-title">University</div>
             <div className="success-card-value">
-              Paragon International University
+              {data.university || "Not specified"}
             </div>
           </div>
         </div>
@@ -1092,7 +1249,7 @@ export default function ApplicationDashboard() {
         {step < 6 && (
           <div className="main main-padding">
             <div className="header-section">
-              <h1 className="title">2024 Academic Enrollment</h1>
+              <h1 className="title">2026 Academic Enrollment</h1>
               <p className="subtitle">Undergraduate Application</p>
             </div>
 
