@@ -149,11 +149,11 @@ async function seed() {
     // ==========================================
     await Major.bulkCreate([
       // CADT (200 spots)
-      { major_id: 1, university_id: 1, major_name: "Software Engineering", degree_level: "Bachelor", duration: "4 Years", description: "Software Engineering", tuition_fee: 6500 },
-      { major_id: 2, university_id: 1, major_name: "Data Science", degree_level: "Bachelor", duration: "4 Years", description: "Data Science", tuition_fee: 6500 },
-      { major_id: 3, university_id: 1, major_name: "e-Commerce", degree_level: "Bachelor", duration: "4 Years", description: "e-Commerce", tuition_fee: 6500 },
-      { major_id: 4, university_id: 1, major_name: "Telecommunications and Networking Engineering (Including Satellite)", degree_level: "Bachelor", duration: "4 Years", description: "Telecommunications and Networking Engineering (Including Satellite)", tuition_fee: 6500 },
-      { major_id: 5, university_id: 1, major_name: "Cybersecurity", degree_level: "Bachelor", duration: "4 Years", description: "Cybersecurity", tuition_fee: 6500 },
+      { major_id: 1, university_id: 1, major_name: "Software Engineering", degree_level: "Bachelor", duration: "4 Years", description: "Software Engineering", tuition_fee: 2500 },
+      { major_id: 2, university_id: 1, major_name: "Data Science", degree_level: "Bachelor", duration: "4 Years", description: "Data Science", tuition_fee: 2500 },
+      { major_id: 3, university_id: 1, major_name: "e-Commerce", degree_level: "Bachelor", duration: "4 Years", description: "e-Commerce", tuition_fee: 2500 },
+      { major_id: 4, university_id: 1, major_name: "Telecommunications and Networking Engineering (Including Satellite)", degree_level: "Bachelor", duration: "4 Years", description: "Telecommunications and Networking Engineering (Including Satellite)", tuition_fee: 2500 },
+      { major_id: 5, university_id: 1, major_name: "Cybersecurity", degree_level: "Bachelor", duration: "4 Years", description: "Cybersecurity", tuition_fee: 2500 },
       // AUPP (200 spots)
       { major_id: 6, university_id: 2, major_name: "IT Management / Computer Science", degree_level: "Bachelor", duration: "4 Years", description: "IT Management / Computer Science", tuition_fee: 12000 },
       { major_id: 7, university_id: 2, major_name: "Information and Communication Technology", degree_level: "Bachelor", duration: "4 Years", description: "Information and Communication Technology", tuition_fee: 12000 },
@@ -259,6 +259,50 @@ async function seed() {
       },
     ]);
     console.log("Seeded 7 Techo scholarships (official 2026-2027 data).");
+
+    // ==========================================
+    // SPECIAL SCHOLARSHIP: CADT SECOND CHANCE
+    // ==========================================
+    await Scholarship.create({
+      scholarship_id: 8, university_id: 1,
+      title: "CADT Special Scholarship 2026-2027",
+      amount: 1250.00, spots: 200,
+      deadline: "2026-10-15",
+      description: "A second-chance scholarship provided by the Cambodia Academy of Digital Technology (CADT) for students who did not pass the Techo Digital Talent entrance exam or who finished high school more than 1 year ago.",
+      eligibility: "Students who failed the Techo Digital Talent entrance exam OR finished high school more than 1 year ago. Must have Bacc II grade A-E. Must pass CADT entrance exam (Math, Logic, English + Interview).",
+      registration_url: "https://www.cadt.edu.kh/scholarship",
+      contact_info: "015 335 877 / 077 335 877",
+      exam_subjects: "Math, Logic, English + Oral Interview",
+      benefits: JSON.stringify([
+        { icon: "📝", text: "Entrance exam required (Math, Logic, English + Interview)" },
+        { icon: "👩", text: "Women in the digital technology field have priority and receive a 50% discount on all scholarship packages" },
+        { icon: "💻", text: "Study in top digital technology programs at CADT" },
+        { icon: "💼", text: "Career opportunities in Cambodia's growing tech sector" },
+        { icon: "🏛️", text: "Supported by the Ministry of Post and Telecommunications" },
+      ]),
+      requirements: JSON.stringify([
+        "Did NOT pass the Techo Digital Talent 2026-2027 entrance exam, OR",
+        "Finished high school (Bacc II) more than 1 year ago",
+        "Must have Bacc II with grade A, B, C, D, or E",
+        "Must pass the CADT entrance exam (Math, Logic, English + Oral Interview)",
+        "Must be committed to studying at CADT full-time",
+      ]),
+      programs: JSON.stringify([
+        "Software Engineering",
+        "Data Science",
+        "e-Commerce",
+        "Telecommunications & Networking Engineering (Including Satellite)",
+        "Cybersecurity",
+      ]),
+      tuition_table: JSON.stringify([
+        { program: "Software Engineering", full: "$2,500", coverage: "50-75%" },
+        { program: "Data Science", full: "$2,500", coverage: "50-75%" },
+        { program: "e-Commerce", full: "$2,500", coverage: "50-75%" },
+        { program: "Telecommunications & Networking", full: "$2,500", coverage: "50-75%" },
+        { program: "Cybersecurity", full: "$2,500", coverage: "50-75%" },
+      ]),
+    });
+    console.log("Seeded CADT Special Scholarship.");
 
     // ==========================================
     // USER ACCOUNTS

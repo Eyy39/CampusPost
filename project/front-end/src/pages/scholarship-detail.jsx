@@ -141,6 +141,13 @@ export default function ScholarshipDetail() {
           setLoading(false);
         })
         .catch((err) => { setError(err.message); setLoading(false); });
+    } else if (id === 'special-cadt') {
+      api.get('/scholarships/8')
+        .then((s) => {
+          setApiData({ isSpecial: true, scholarship: s });
+          setLoading(false);
+        })
+        .catch((err) => { setError(err.message); setLoading(false); });
     } else {
       api.get(`/scholarships/${id}`)
         .then((s) => {
@@ -165,6 +172,201 @@ export default function ScholarshipDetail() {
         .catch((err) => { setError(err.message); setLoading(false); });
     }
   }, [id]);
+
+  const renderSpecialCadt = () => {
+    const s = apiData.scholarship;
+    const benefits = typeof s.benefits === 'string' ? JSON.parse(s.benefits) : s.benefits || [];
+    const requirements = typeof s.requirements === 'string' ? JSON.parse(s.requirements) : s.requirements || [];
+    const programs = typeof s.programs === 'string' ? JSON.parse(s.programs) : s.programs || [];
+    const tuitionTable = typeof s.tuition_table === 'string' ? JSON.parse(s.tuition_table) : s.tuition_table || [];
+    const deadlineDate = s.deadline ? new Date(s.deadline) : null;
+    const now = new Date();
+    const daysLeft = deadlineDate ? Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24)) : null;
+
+    return (
+    <div>
+      {/* Hero Banner */}
+      <div style={{
+        background: 'linear-gradient(135deg, #b45309, #f59e0b)',
+        borderRadius: 24, padding: 40, color: '#fff', marginBottom: 32,
+        position: 'relative', overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }} />
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.2)', padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
+          <Award size={14} />
+          Special Opportunity
+        </div>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: 8, lineHeight: 1.2 }}>
+          {s.title}
+        </h1>
+        <p style={{ fontSize: '1.05rem', opacity: 0.9, marginBottom: 0, lineHeight: 1.7 }}>
+          {s.description}
+        </p>
+      </div>
+
+      {/* Quick Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16, marginBottom: 32 }}>
+        <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+          <Users size={24} color="#f59e0b" style={{ marginBottom: 8 }} />
+          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>{s.spots}</div>
+          <div style={{ fontSize: 13, color: '#64748b' }}>Spots Available</div>
+        </div>
+        <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+          <DollarSign size={24} color="#f59e0b" style={{ marginBottom: 8 }} />
+          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>Multiple</div>
+          <div style={{ fontSize: 13, color: '#64748b' }}>Scholarship Tiers</div>
+        </div>
+        <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+          <Award size={24} color="#f59e0b" style={{ marginBottom: 8 }} />
+          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>50% Off</div>
+          <div style={{ fontSize: 13, color: '#64748b' }}>Extra for Women</div>
+        </div>
+        <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+          <CalendarDays size={24} color="#f59e0b" style={{ marginBottom: 8 }} />
+          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>
+            {deadlineDate ? deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'TBD'}
+          </div>
+          <div style={{ fontSize: 13, color: '#64748b' }}>
+            Deadline
+            {daysLeft !== null && daysLeft > 0 && (
+              <span style={{ fontSize: 11, marginLeft: 4, color: daysLeft <= 30 ? '#dc2626' : '#059669' }}>({daysLeft}d)</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Benefits */}
+      {benefits.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#b45309', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Award size={20} /> Scholarship Benefits
+          </h3>
+          <div style={{ display: 'grid', gap: 12 }}>
+            {benefits.map((b, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '12px 16px', background: '#fffbeb', borderRadius: 12 }}>
+                <span style={{ fontSize: 20, lineHeight: 1 }}>{b.icon}</span>
+                <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{b.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Requirements */}
+      {requirements.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#b45309', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Target size={20} /> Eligibility Requirements
+          </h3>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+            {requirements.map((r, i) => (
+              <li key={i} style={{ padding: '10px 0', color: '#334155', display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 14, borderBottom: i < requirements.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                <span style={{ color: '#b45309', fontWeight: 700, minWidth: 20 }}>{i + 1}.</span>
+                {r}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Tuition Info */}
+      {tuitionTable.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#b45309', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <DollarSign size={20} /> Scholarship Packages
+          </h3>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+              <thead>
+                <tr style={{ background: '#fffbeb' }}>
+                  <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 700, color: '#92400e' }}>Program</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 700, color: '#92400e' }}>Tuition</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 700, color: '#92400e' }}>Scholarship Coverage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tuitionTable.map((row, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '10px 12px', color: '#334155', fontWeight: 600 }}>{row.program}</td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center', color: '#64748b' }}>{row.full}</td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center', color: '#b45309', fontWeight: 700 }}>{row.coverage}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 12, lineHeight: 1.6 }}>
+            * Scholarship coverage ranges from 50% to 75% based on merit and need. Women in the digital technology field have priority and receive a <strong>50% extra discount</strong> on all packages.
+          </p>
+        </div>
+      )}
+
+      {/* Programs */}
+      {programs.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#b45309', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BookOpen size={20} /> Available Programs at CADT
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            {programs.map((p, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '8px 12px', background: '#fffbeb', borderRadius: 8, fontSize: 14, color: '#334155' }}>
+                <span style={{ color: '#f59e0b', fontWeight: 700 }}>&#8226;</span>
+                {p}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Exam Info */}
+      {s.exam_subjects && (
+        <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#b45309', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <FileText size={20} /> Entrance Exam
+          </h3>
+          <div style={{ background: '#f8fafc', borderRadius: 14, padding: 18, border: '1px solid #e2e8f0' }}>
+            <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 8, fontSize: 14 }}>CADT Entrance Exam</div>
+            <div style={{ color: '#475569', fontSize: 13, lineHeight: 1.7 }}>
+              <div>Subjects: <strong>{s.exam_subjects}</strong></div>
+              <div style={{ marginTop: 4, color: '#64748b' }}>Contact: {s.contact_info}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CTA */}
+      <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 20, padding: 32, textAlign: 'center' }}>
+        <h3 style={{ color: '#fff', fontSize: '1.15rem', fontWeight: 800, marginBottom: 8 }}>Apply for the Special Scholarship!</h3>
+        <p style={{ color: '#94a3b8', marginBottom: 20, fontSize: 14 }}>
+          Register at <strong>www.cadt.edu.kh/scholarship</strong> before {deadlineDate ? deadlineDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'the deadline'}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+          <a
+            href={s.registration_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: '#f59e0b', color: '#fff', border: 'none', borderRadius: 999,
+              padding: '12px 28px', fontWeight: 700, cursor: 'pointer', fontSize: 14,
+              display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none',
+            }}
+          >
+            Register at CADT <ExternalLink size={16} />
+          </a>
+          <button
+            onClick={() => navigate('/application')}
+            style={{
+              background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 999,
+              padding: '12px 28px', fontWeight: 700, cursor: 'pointer', fontSize: 14,
+            }}
+          >
+            Start Application
+          </button>
+        </div>
+      </div>
+    </div>
+    );
+  };
 
   const renderGrouped = () => (
     <div>
@@ -528,7 +730,7 @@ export default function ScholarshipDetail() {
             <div style={{ padding: 60, textAlign: 'center', color: '#64748b' }}>Loading scholarship details...</div>
           ) : error ? (
             <div style={{ padding: 60, textAlign: 'center', color: '#ef4444' }}>{error}</div>
-          ) : apiData?.isGrouped ? renderGrouped() : apiData ? renderSingle() : null}
+          ) : apiData?.isSpecial ? renderSpecialCadt() : apiData?.isGrouped ? renderGrouped() : apiData ? renderSingle() : null}
         </section>
       </main>
     </Layout>

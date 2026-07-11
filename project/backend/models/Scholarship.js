@@ -43,6 +43,26 @@ const Scholarship = sequelize.define('Scholarship', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  benefits: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+  requirements: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+  programs: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+  exam_subjects: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  tuition_table: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
 }, {
   tableName: 'Scholarship',
   timestamps: true,

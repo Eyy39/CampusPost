@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BadgeCheck, CalendarDays, DollarSign, Sparkles, Building2, ChevronRight, Users } from 'lucide-react';
+import { BadgeCheck, CalendarDays, DollarSign, Sparkles, Building2, ChevronRight, Users, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import Layout from '../components/Layout';
@@ -18,6 +18,7 @@ export default function Scholarships() {
 
         data.forEach((s) => {
           const isTecho = s.title.toLowerCase().includes('techo');
+          const isSpecial = s.title.toLowerCase().includes('special');
           if (isTecho) {
             if (!grouped['techo']) {
               grouped['techo'] = {
@@ -43,6 +44,22 @@ export default function Scholarships() {
             grouped['techo'].totalSpots += s.spots || 0;
             if (s.deadline && (!grouped['techo'].deadline || s.deadline < grouped['techo'].deadline)) {
               grouped['techo'].deadline = s.deadline;
+            }
+          } else if (isSpecial) {
+            if (!grouped['special']) {
+              grouped['special'] = {
+                id: 'special-cadt',
+                title: s.title,
+                description: s.description,
+                tag: '50% Tuition',
+                amount: '50% Tuition',
+                totalSpots: s.spots || 0,
+                deadline: s.deadline,
+                provider: s.University?.name || 'CADT',
+                eligibility: s.eligibility,
+                registrationUrl: s.registration_url,
+                contactInfo: s.contact_info,
+              };
             }
           } else {
             others.push({
@@ -95,6 +112,73 @@ export default function Scholarships() {
             <div style={{ display: 'grid', gap: 20 }}>
               {scholarships.map((item) => {
                 const uniCount = item.universities?.length || 0;
+                if (item.id === 'special-cadt') {
+                  const deadlineDate = item.deadline ? new Date(item.deadline) : null;
+                  const now = new Date();
+                  const daysLeft = deadlineDate ? Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24)) : null;
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => navigate('/scholarships/' + item.id)}
+                      style={{
+                        background: '#fff',
+                        borderRadius: 20,
+                        padding: 28,
+                        border: '2px solid #fef3c7',
+                        boxShadow: '0 10px 30px rgba(15,23,42,0.04)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
+                        <div style={{ flex: 1, minWidth: 300 }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fef3c7', color: '#92400e', padding: '6px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                            <Award size={14} />
+                            Special Opportunity
+                          </div>
+                          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
+                          <p style={{ color: '#475569', margin: '4px 0 0' }}>CADT-only scholarship for students who failed Techo or finished high school over 1 year ago. Women get 50% extra discount.</p>
+                        </div>
+                        <button style={{ background: '#f59e0b', color: '#fff', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
+                          View Details <ChevronRight size={16} />
+                        </button>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
+                        <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#92400e', marginBottom: 6 }}>
+                            <DollarSign size={16} />
+                            <span style={{ fontWeight: 700 }}>Benefit</span>
+                          </div>
+                          <div style={{ color: '#0f172a', fontWeight: 700 }}>Multiple Tiers</div>
+                          <div style={{ fontSize: 12, color: '#92400e', marginTop: 2 }}>Women get 50% extra discount</div>
+                        </div>
+                        <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#92400e', marginBottom: 6 }}>
+                            <Users size={16} />
+                            <span style={{ fontWeight: 700 }}>Total Spots</span>
+                          </div>
+                          <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.totalSpots} spots at CADT</div>
+                        </div>
+                        <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#92400e', marginBottom: 6 }}>
+                            <CalendarDays size={16} />
+                            <span style={{ fontWeight: 700 }}>Deadline</span>
+                          </div>
+                          <div style={{ color: daysLeft !== null && daysLeft <= 30 ? '#dc2626' : '#0f172a', fontWeight: 700 }}>
+                            {deadlineDate
+                              ? deadlineDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                              : 'Rolling'
+                            }
+                            {daysLeft !== null && daysLeft > 0 && (
+                              <span style={{ fontSize: 12, fontWeight: 600, marginLeft: 6, color: daysLeft <= 30 ? '#dc2626' : '#059669' }}>
+                                ({daysLeft} days left)
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
                 if (uniCount > 0) {
                   const deadlineDate = item.deadline ? new Date(item.deadline) : null;
                   const now = new Date();
