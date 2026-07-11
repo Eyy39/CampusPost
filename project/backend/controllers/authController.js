@@ -36,7 +36,8 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       message: "Registration successful",
-      user: userData
+      user: userData,
+      role_id: userData.role_id
     });
 
   } catch (error) {
@@ -90,7 +91,8 @@ exports.login = async (req, res) => {
     res.json({
       message: "Login successful",
       token,
-      user: userData
+      user: userData,
+      role_id: userData.role_id
     });
 
   } catch (error) {

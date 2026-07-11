@@ -23,6 +23,7 @@ import {
   X,
   RotateCcw,
 } from "lucide-react";
+import { clearAuthSession } from "../api/auth";
 import "../styles/system-admin.css";
 
 const sidebarItems = [
@@ -812,9 +813,14 @@ export default function SystemAdmin() {
     reviews: "Moderate Reviews",
   }[section];
 
+  const handleSystemAdminLogout = () => {
+    clearAuthSession();
+    navigate("/login");
+  };
+
   return (
     <div className="sa-shell">
-      <Sidebar onLogout={() => pushToast("info", "Logout requested", "Session end is not wired in this prototype.")} />
+      <Sidebar onLogout={handleSystemAdminLogout} />
 
       <div className="sa-content">
         <TopNav />

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, GraduationCap, ArrowRight } from 'lucide-react';
 import Layout from '../components/Layout';
 import { loginUser, saveAuthSession } from '../api/auth';
+import { getRoleRedirectPath } from '../utils/roleRoutes';
 import '../styles/login.css';
 
 export default function Login() {
@@ -21,7 +22,7 @@ export default function Login() {
     try {
       const result = await loginUser({ email, password });
       saveAuthSession(result);
-      navigate('/profile');
+      navigate(getRoleRedirectPath(result?.role_id ?? result?.user?.role_id));
     } catch (err) {
       setError(err.message || 'Login failed');
     } finally {

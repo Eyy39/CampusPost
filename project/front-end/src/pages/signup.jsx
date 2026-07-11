@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import { registerUser, saveAuthSession } from '../api/auth';
+import { getRoleRedirectPath } from '../utils/roleRoutes';
 import '../styles/signup.css';
 
 export default function Signup() {
@@ -51,7 +52,7 @@ export default function Signup() {
       });
 
       saveAuthSession(result);
-      navigate('/profile');
+      navigate(getRoleRedirectPath(result?.role_id ?? result?.user?.role_id));
     } catch (err) {
       setError(err.message || 'Registration failed');
     } finally {

@@ -11,6 +11,7 @@ import ApplicationDashboard from "./pages/application";
 import MyApplications from "./pages/myapplications";
 import ApplicationDetail from "./pages/application-detail";
 import Profile from "./pages/profile.jsx";
+import StaffPage from "./pages/staff.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SystemAdmin from "./pages/system-admin.jsx";
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/my-applications" element={<MyApplications />} />
         <Route path="/application/:id" element={<ApplicationDetail />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/staff" element={<ProtectedRoute><StaffPage /></ProtectedRoute>} />
         <Route path="/system-admin/*" element={<SystemAdmin />} />
         <Route path="/admin/*" element={<SystemAdmin />} />
       </Routes>
