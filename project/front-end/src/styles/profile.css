@@ -159,3 +159,44 @@
     padding: 24px 16px 60px;
   }
 }
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.profile-value {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f7faff;
+  font-size: 0.95rem;
+  color: #243B5A;
+}
+
+.profile-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d0ddf0;
+  font-size: 0.95rem;
+  color: #243B5A;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.profile-input:focus {
+  border-color: #1e4da0;
+  box-shadow: 0 0 0 3px rgba(30, 77, 160, 0.1);
+}
+
+@media (max-width: 640px) {
+  .profile-grid > section {
+    grid-column: 1 !important;
+  }
+}

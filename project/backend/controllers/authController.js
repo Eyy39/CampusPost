@@ -119,6 +119,22 @@ exports.me = async (req, res) => {
 
     res.json(user);
 };
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const { first_name, last_name, phone } = req.body;
+    await user.update({ first_name, last_name, phone });
+    const userData = user.toJSON();
+    delete userData.password;
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Failed to update profile" });
+  }
+};
 exports.logout = (req, res) => {
     res.json({
         message: "Logout successful"
