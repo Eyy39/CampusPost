@@ -37,6 +37,9 @@ Major.belongsTo(University, { foreignKey: "university_id" });
 University.hasMany(Scholarship, { foreignKey: "university_id" });
 Scholarship.belongsTo(University, { foreignKey: "university_id" });
 
+// User -> University (university admin assignment)
+User.belongsTo(University, { foreignKey: "university_id", as: "AssignedUniversity" });
+
 // University -> Favorite
 University.hasMany(Favorite, { foreignKey: "university_id" });
 Favorite.belongsTo(University, { foreignKey: "university_id" });
@@ -44,6 +47,9 @@ Favorite.belongsTo(University, { foreignKey: "university_id" });
 // University -> Review
 University.hasMany(Review, { foreignKey: "university_id" });
 Review.belongsTo(University, { foreignKey: "university_id" });
+
+// University -> User (university admin assignment)
+University.hasMany(User, { foreignKey: "university_id", as: "Admins" });
 
 // Application -> University
 Application.belongsTo(University, { foreignKey: "university_id" });

@@ -7,7 +7,7 @@ exports.listReviews = async (req, res) => {
         { model: User, attributes: ['first_name', 'last_name'] },
         { model: University, attributes: ['name'] },
       ],
-      order: [['created_at', 'DESC']],
+      order: [['createdAt', 'DESC']],
     });
     res.json(reviews);
   } catch (error) {

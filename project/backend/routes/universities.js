@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const universityController = require('../controllers/universityController');
+const authenticate = require('../middleware/authMiddleware');
 const { Major } = require('../models');
 
 router.get('/', universityController.listUniversities);
@@ -20,8 +21,8 @@ router.get('/:id/majors', async (req, res) => {
   }
 });
 
-router.post('/', universityController.createUniversity);
-router.put('/:id', universityController.updateUniversity);
-router.delete('/:id', universityController.deleteUniversity);
+router.post('/', authenticate, universityController.createUniversity);
+router.put('/:id', authenticate, universityController.updateUniversity);
+router.delete('/:id', authenticate, universityController.deleteUniversity);
 
 module.exports = router;

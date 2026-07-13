@@ -12,6 +12,7 @@ const favoriteRoutes = require("./routes/favorites");
 const applicationRoutes = require("./routes/applications");
 const reviewRoutes = require("./routes/reviews");
 const adminRoutes = require("./routes/admin");
+const universityAdminRoutes = require("./routes/universityAdmin");
 const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
@@ -52,6 +53,7 @@ app.use("/api/favorites", favoriteRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/university-admin", universityAdminRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -62,6 +64,22 @@ app.use((err, req, res, next)=> {
 });
 const port = process.env.PORT || 3000;
 
+async function ensureUserColumns(queryInterface) {
+  const [columns] = await sequelize.query(
+    "SHOW COLUMNS FROM `User`"
+  );
+  const colNames = columns.map(c => c.Field);
+
+  if (!colNames.includes('university_id')) {
+    console.log('Adding university_id column to User table...');
+    await sequelize.query('ALTER TABLE `User` ADD COLUMN `university_id` INT NULL');
+  }
+  if (!colNames.includes('status')) {
+    console.log('Adding status column to User table...');
+    await sequelize.query("ALTER TABLE `User` ADD COLUMN `status` ENUM('active','suspended') NOT NULL DEFAULT 'active'");
+  }
+}
+
 async function start() {
   try {
     await sequelize.ensureDatabase();
@@ -69,6 +87,7 @@ async function start() {
     console.log(`Connected to MySQL database: ${process.env.DB_NAME}`);
     await sequelize.sync();
     await sequelize.sync({ alter: true });
+    await ensureUserColumns();
 
     app.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);

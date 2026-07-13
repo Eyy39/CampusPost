@@ -14,8 +14,21 @@ async function request(method, path, body) {
 
   const res = await fetch(`${API_BASE}${path}`, config);
   if (res.status === 204) return null;
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Request failed");
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    const text = await res.text();
+    throw new Error(text || `Request failed with status ${res.status}`);
+  }
+
+  if (!res.ok) {
+    if (res.status === 401 && data.message === "User not found") {
+      throw new Error("Account not found");
+    }
+    throw new Error(data.message || "Request failed");
+  }
   return data;
 }
 

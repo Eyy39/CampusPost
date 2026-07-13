@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { User } = require("../models");
 
 module.exports = (req, res, next) => {
   try {
@@ -10,7 +11,6 @@ module.exports = (req, res, next) => {
       });
     }
 
-    // Expected format: Bearer <token>
     const token = authHeader.split(" ")[1];
 
     if (!token) {
@@ -21,10 +21,21 @@ module.exports = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Save user information from the token
     req.user = decoded;
 
-    next();
+    User.findByPk(decoded.id, { attributes: ["user_id", "status"] })
+      .then((user) => {
+        if (!user) {
+          return res.status(401).json({ message: "User not found" });
+        }
+        if (user.status === "suspended") {
+          return res.status(403).json({ message: "Your account has been suspended. Please contact support." });
+        }
+        next();
+      })
+      .catch(() => {
+        next();
+      });
 
   } catch (error) {
     return res.status(401).json({

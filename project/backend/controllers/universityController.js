@@ -1,14 +1,17 @@
-const { University, Major } = require('../models');
+const { University, Major, User } = require('../models');
 
 exports.listUniversities = async (req, res) => {
   try {
     const universities = await University.findAll({
-      include: [{ model: Major, as: 'Majors' }],
+      include: [
+        { model: Major, as: 'Majors' },
+        { model: User, as: 'Admins', attributes: ['user_id', 'first_name', 'last_name', 'email'], required: false },
+      ],
       order: [['ranking', 'ASC']],
     });
     res.json(universities);
   } catch (error) {
-    console.error('List universities error:', error.message);
+    console.error('List universities error:', error.message, error.stack);
     res.status(500).json({ message: 'Failed to load universities' });
   }
 };
@@ -16,14 +19,17 @@ exports.listUniversities = async (req, res) => {
 exports.getUniversityById = async (req, res) => {
   try {
     const university = await University.findByPk(req.params.id, {
-      include: [{ model: Major, as: 'Majors' }],
+      include: [
+        { model: Major, as: 'Majors' },
+        { model: User, as: 'Admins', attributes: ['user_id', 'first_name', 'last_name', 'email'], required: false },
+      ],
     });
     if (!university) {
       return res.status(404).json({ message: 'University not found' });
     }
     res.json(university);
   } catch (error) {
-    console.error('Get university error:', error.message);
+    console.error('Get university error:', error.message, error.stack);
     res.status(500).json({ message: 'Failed to load university' });
   }
 };

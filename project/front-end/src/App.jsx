@@ -15,6 +15,7 @@ import Profile from "./pages/profile.jsx";
 import StaffPage from "./pages/staff.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SystemAdmin from "./pages/system-admin.jsx";
+import UniversityAdmin from "./pages/university-admin.jsx";
 export default function App() {
   return (
     <BrowserRouter>
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/staff" element={<ProtectedRoute><StaffPage /></ProtectedRoute>} />
         <Route path="/system-admin/*" element={<SystemAdmin />} />
         <Route path="/admin/*" element={<SystemAdmin />} />
+        <Route path="/university-admin/*" element={<UniversityAdmin />} />
       </Routes>
     </BrowserRouter>
   );

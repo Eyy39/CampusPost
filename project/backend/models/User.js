@@ -36,6 +36,15 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
+  university_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'suspended'),
+    allowNull: false,
+    defaultValue: 'active',
+  },
 }, {
   tableName: 'User',
   timestamps: true,

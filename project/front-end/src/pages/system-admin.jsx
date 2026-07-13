@@ -11,8 +11,10 @@ import {
   EyeOff,
   LockKeyhole,
   LogOut,
+  Menu,
   MessageSquareWarning,
   PencilLine,
+  PanelLeftClose,
   Plus,
   Search,
   ShieldAlert,
@@ -23,51 +25,34 @@ import {
   Users,
   X,
   RotateCcw,
+  ShieldCheck,
+  User,
 } from "lucide-react";
 import { clearAuthSession } from "../api/auth";
+import { LogoIcon } from "../components/Icons";
 import "../styles/system-admin.css";
 
-const sidebarItems = [
-  { label: "Manage Universities", to: "/system-admin/universities", icon: Building2 },
-  { label: "Manage University Admin Accounts", to: "/system-admin/admin-accounts", icon: UserCog },
-  { label: "Manage Users", to: "/system-admin/users", icon: Users },
-  { label: "Moderate Reviews", to: "/system-admin/reviews", icon: MessageSquareWarning },
-];
-
-const initialUniversities = [
-  { id: 1, university: "Paragon International University", country: "Cambodia", majors: 18, admin: "Sokha Vann", status: "Active", updated: "Today" },
-  { id: 2, university: "Royal University of Phnom Penh", country: "Cambodia", majors: 24, admin: "Dara Chhay", status: "Pending Review", updated: "Today" },
-  { id: 3, university: "Institute of Technology of Cambodia", country: "Cambodia", majors: 31, admin: "Malis Chan", status: "Active", updated: "Yesterday" },
-  { id: 4, university: "Western University", country: "Cambodia", majors: 12, admin: "Rina Ly", status: "Suspended", updated: "2 days ago" },
-  { id: 5, university: "University of Cambodia", country: "Cambodia", majors: 20, admin: "Nary Heng", status: "Active", updated: "2 days ago" },
-  { id: 6, university: "National University of Management", country: "Cambodia", majors: 16, admin: "Piseth Long", status: "Active", updated: "3 days ago" },
-  { id: 7, university: "Asian Institute of Technology", country: "Thailand", majors: 14, admin: "Sophea Kim", status: "Active", updated: "3 days ago" },
-  { id: 8, university: "University of the Philippines", country: "Philippines", majors: 22, admin: "Lina Cruz", status: "Pending Review", updated: "4 days ago" },
-];
-
-const initialAdmins = [
-  { id: 1, avatar: "SV", name: "Sokha Vann", email: "sokha.vann@campuspost.com", university: "Paragon International University", status: "Active", registeredDate: "12 Jan 2026", lastLogin: "2 hours ago" },
-  { id: 2, avatar: "DC", name: "Dara Chhay", email: "dara.chhay@campuspost.com", university: "Royal University of Phnom Penh", status: "Pending Review", registeredDate: "20 Feb 2026", lastLogin: "Yesterday" },
-  { id: 3, avatar: "MC", name: "Malis Chan", email: "malis.chan@campuspost.com", university: "Institute of Technology of Cambodia", status: "Active", registeredDate: "04 Mar 2026", lastLogin: "5 hours ago" },
-  { id: 4, avatar: "RL", name: "Rina Ly", email: "rina.ly@campuspost.com", university: "Western University", status: "Inactive", registeredDate: "19 Apr 2026", lastLogin: "3 days ago" },
-  { id: 5, avatar: "NH", name: "Nary Heng", email: "nary.heng@campuspost.com", university: "University of Cambodia", status: "Active", registeredDate: "08 May 2026", lastLogin: "30 minutes ago" },
-];
-
-const initialStudents = [
-  { id: 1, avatar: "PH", name: "Piseth Heng", email: "piseth.heng@student.campuspost.com", role: "Student", registeredDate: "03 Jul 2026", status: "Active" },
-  { id: 2, avatar: "JC", name: "Jasmine Chan", email: "jasmine.chan@student.campuspost.com", role: "Student", registeredDate: "01 Jul 2026", status: "Pending Review" },
-  { id: 3, avatar: "VK", name: "Vuthy Khem", email: "vuthy.khem@student.campuspost.com", role: "Student", registeredDate: "28 Jun 2026", status: "Active" },
-  { id: 4, avatar: "SL", name: "Sokliny Phan", email: "sokliny.phan@student.campuspost.com", role: "Student", registeredDate: "23 Jun 2026", status: "Suspended" },
-  { id: 5, avatar: "MC", name: "Monica Choi", email: "monica.choi@student.campuspost.com", role: "Student", registeredDate: "19 Jun 2026", status: "Active" },
-  { id: 6, avatar: "AR", name: "Ariya Rith", email: "ariya.rith@student.campuspost.com", role: "Student", registeredDate: "14 Jun 2026", status: "Active" },
-];
-
-const initialReviews = [
-  { id: 1, student: "Piseth Heng", university: "Paragon International University", rating: 4.8, preview: "Great support team, but the enrollment process could be faster.", reason: "Spam flag", date: "Today", status: "Under Review" },
-  { id: 2, student: "Jasmine Chan", university: "Royal University of Phnom Penh", rating: 2.1, preview: "The information looked outdated compared with the admission office.", reason: "Incorrect information", date: "Today", status: "Escalated" },
-  { id: 3, student: "Vuthy Khem", university: "Institute of Technology of Cambodia", rating: 4.4, preview: "Solid academics and helpful counselors throughout the process.", reason: "User reported", date: "Yesterday", status: "Under Review" },
-  { id: 4, student: "Sokliny Phan", university: "Western University", rating: 1.8, preview: "This review contains personal attacks and should be removed.", reason: "Abusive language", date: "Yesterday", status: "Escalated" },
-  { id: 5, student: "Monica Choi", university: "University of Cambodia", rating: 4.9, preview: "Clear guidance and quick responses from the university admin.", reason: "False report", date: "2 days ago", status: "Resolved" },
+const sidebarSections = [
+  {
+    label: "Management",
+    items: [
+      { label: "Universities", to: "/system-admin/universities", icon: Building2 },
+      { label: "University Admins", to: "/system-admin/admin-accounts", icon: UserCog },
+      { label: "Students", to: "/system-admin/users", icon: Users },
+    ],
+  },
+  {
+    label: "Moderation",
+    items: [
+      { label: "Reviews", to: "/system-admin/reviews", icon: MessageSquareWarning },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { label: "My Profile", to: "/system-admin/profile", icon: User },
+    ],
+  },
 ];
 
 const activityRows = [
@@ -79,11 +64,11 @@ const activityRows = [
 ];
 
 const notificationRows = [
-  { icon: UserRound, title: "New student registered.", time: "2m ago", tone: "info" },
-  { icon: Building2, title: "University information updated.", time: "12m ago", tone: "success" },
-  { icon: MessageSquareWarning, title: "Review reported by a student.", time: "24m ago", tone: "warning" },
-  { icon: UserCog, title: "University admin account created.", time: "1h ago", tone: "info" },
-  { icon: ShieldAlert, title: "User account suspended.", time: "3h ago", tone: "danger" },
+  { icon: UserRound, title: "New student registered.", time: "2m ago", tone: "purple" },
+  { icon: Building2, title: "University information updated.", time: "12m ago", tone: "emerald" },
+  { icon: MessageSquareWarning, title: "Review reported by a student.", time: "24m ago", tone: "amber" },
+  { icon: UserCog, title: "University admin account created.", time: "1h ago", tone: "blue" },
+  { icon: ShieldAlert, title: "User account suspended.", time: "3h ago", tone: "rose" },
 ];
 
 const quickActions = [
@@ -101,10 +86,12 @@ const reportStatusColors = {
 
 const statusColors = {
   Active: "success",
+  active: "success",
+  Suspended: "danger",
+  suspended: "danger",
   Completed: "success",
   Updated: "info",
   Removed: "danger",
-  Suspended: "danger",
   Inactive: "neutral",
   "Pending Review": "warning",
   Approved: "success",
@@ -117,13 +104,9 @@ function makeId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function getInitials(name) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
+function formatDate(dateStr) {
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
 
 function getSection(pathname) {
@@ -131,12 +114,23 @@ function getSection(pathname) {
   if (pathname.startsWith("/system-admin/admin-accounts")) return "admin-accounts";
   if (pathname.startsWith("/system-admin/users")) return "users";
   if (pathname.startsWith("/system-admin/reviews")) return "reviews";
+  if (pathname.startsWith("/system-admin/profile")) return "profile";
   return "dashboard";
 }
 
+function fullName(user) {
+  return `${user.first_name} ${user.last_name}`;
+}
+
+function statusLabel(status) {
+  if (status === "suspended") return "Suspended";
+  return "Active";
+}
+
 function StatusPill({ status }) {
-  const tone = reportStatusColors[status] || statusColors[status] || "neutral";
-  return <span className={`sa-pill sa-pill-${tone}`}>{status}</span>;
+  const label = statusLabel(status);
+  const tone = reportStatusColors[label] || statusColors[label] || "neutral";
+  return <span className={`sa-pill sa-pill-${tone}`}>{label}</span>;
 }
 
 function SectionCard({ title, subtitle, action, children, className = "" }) {
@@ -172,45 +166,64 @@ function ActionButton({ icon: Icon, children, onClick, destructive = false, ghos
   );
 }
 
-function Sidebar({ onLogout }) {
+function EmptyState({ icon: Icon, title, description }) {
   return (
-    <aside className="sa-sidebar">
-      <div className="sa-brand">
-        <div className="sa-brand-mark">CP</div>
-        <div>
-          <div className="sa-brand-name">CampusPost Admin</div>
-          <div className="sa-brand-subtitle">System workspace</div>
-        </div>
-      </div>
-
-      <nav className="sa-nav">
-        {sidebarItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink key={item.label} to={item.to} end={item.end} className={({ isActive }) => `sa-nav-link${isActive ? " active" : ""}`}>
-              <Icon size={18} />
-              <span>{item.label}</span>
-            </NavLink>
-          );
-        })}
-      </nav>
-
-      <button type="button" className="sa-logout" onClick={onLogout}>
-        <LogOut size={18} />
-        <span>Logout</span>
-      </button>
-    </aside>
+    <div className="sa-empty">
+      <div className="sa-empty-icon"><Icon size={22} /></div>
+      <h3 className="sa-empty-title">{title}</h3>
+      <p className="sa-empty-desc">{description}</p>
+    </div>
   );
 }
 
-function TopNav() {
+function Sidebar({ onLogout, isOpen, onClose }) {
+  return (
+    <>
+      <div className={`sa-mobile-overlay ${isOpen ? "visible" : ""}`} onClick={onClose} />
+      <aside className={`sa-sidebar ${isOpen ? "open" : ""}`}>
+        <div className="sa-brand">
+          <div className="sa-brand-mark"><LogoIcon /></div>
+          <div className="sa-brand-name">Campus<span style={{ color: "#8BB8F0" }}>Post</span></div>
+        </div>
+
+        {sidebarSections.map((section) => (
+          <div key={section.label} className="sa-nav-section">
+            <div className="sa-nav-section-label">{section.label}</div>
+            <nav className="sa-nav">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `sa-nav-link${isActive ? " active" : ""}`} onClick={onClose}>
+                    <Icon size={16} />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+        ))}
+
+        <button type="button" className="sa-logout" onClick={onLogout}>
+          <LogOut size={16} />
+          <span>Logout</span>
+        </button>
+      </aside>
+    </>
+  );
+}
+
+function TopNav({ adminProfile, onToggleSidebar, onNavigateProfile }) {
+  const displayName = adminProfile ? `${adminProfile.first_name} ${adminProfile.last_name}` : "System Administrator";
   return (
     <header className="sa-topnav">
-      <div className="sa-topnav-right">
-        <div className="sa-avatar">SA</div>
+      <button type="button" className="sa-mobile-toggle" onClick={onToggleSidebar} aria-label="Toggle sidebar">
+        <Menu size={20} />
+      </button>
+      <div className="sa-topnav-right" onClick={onNavigateProfile} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" && onNavigateProfile()}>
+        <div className="sa-avatar"><User size={18} /></div>
         <div>
-          <div className="sa-role-label">System Administrator</div>
-          <div className="sa-role-subtitle">CampusPost</div>
+          <div className="sa-role-label">{displayName}</div>
+          <div className="sa-role-subtitle">System Administrator</div>
         </div>
       </div>
     </header>
@@ -231,6 +244,209 @@ function ConfirmationModal({ open, title, description, confirmLabel = "Delete", 
         <div className="sa-modal-actions">
           <button type="button" className="sa-secondary-btn" onClick={onCancel}>Cancel</button>
           <button type="button" className="sa-danger-btn" onClick={onConfirm}>{confirmLabel}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SuspendModal({ open, user, onCancel, onConfirm }) {
+  if (!open || !user) return null;
+  const isSuspended = user.status === "suspended";
+  const name = fullName(user);
+
+  return (
+    <div className="sa-modal-backdrop" role="presentation" onClick={onCancel}>
+      <div className="sa-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <div className="sa-modal-icon" style={{ color: isSuspended ? "#16a34a" : "#d97706" }}>
+          {isSuspended ? <ShieldCheck size={18} /> : <ShieldAlert size={18} />}
+        </div>
+        <div className="sa-modal-body">
+          <h3 className="sa-modal-title">{isSuspended ? `Reactivate ${name}?` : `Suspend ${name}?`}</h3>
+          <p className="sa-modal-description">
+            {isSuspended
+              ? "This user will be able to log in and use the platform again."
+              : "This user will not be able to log in until an administrator reactivates their account."}
+          </p>
+        </div>
+        <div className="sa-modal-actions">
+          <button type="button" className="sa-secondary-btn" onClick={onCancel}>Cancel</button>
+          <button
+            type="button"
+            className={isSuspended ? "sa-primary-btn" : "sa-danger-btn"}
+            onClick={onConfirm}
+          >
+            {isSuspended ? "Reactivate" : "Suspend"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const emptyUniversity = { name: "", country: "Cambodia", city: "", website: "", email: "", phone: "" };
+
+function UniversityModal({ open, university, onSave, onCancel }) {
+  const [form, setForm] = useState(emptyUniversity);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (university) {
+      setForm({
+        name: university.name || "",
+        country: university.country || "Cambodia",
+        city: university.city || "",
+        website: university.website || "",
+        email: university.email || "",
+        phone: university.phone || "",
+      });
+    } else {
+      setForm(emptyUniversity);
+    }
+  }, [university, open]);
+
+  if (!open) return null;
+
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await onSave(form);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="sa-modal-backdrop" role="presentation" onClick={onCancel}>
+      <div className="sa-modal" role="dialog" aria-modal="true" style={{ maxWidth: 600 }} onClick={(e) => e.stopPropagation()}>
+        <div className="sa-modal-body">
+          <h3 className="sa-modal-title">{university ? "Edit University" : "Add University"}</h3>
+          <form onSubmit={handleSubmit} style={{ display: "grid", gap: 14, marginTop: 16 }}>
+            <div className="ua-form-grid">
+              <div className="ua-form-group ua-full">
+                <label className="ua-form-label">University Name *</label>
+                <input className="ua-form-input" required value={form.name} onChange={set("name")} />
+              </div>
+              <div className="ua-form-group">
+                <label className="ua-form-label">Country</label>
+                <input className="ua-form-input" value={form.country} onChange={set("country")} />
+              </div>
+              <div className="ua-form-group">
+                <label className="ua-form-label">City</label>
+                <input className="ua-form-input" value={form.city} onChange={set("city")} />
+              </div>
+              <div className="ua-form-group">
+                <label className="ua-form-label">Website</label>
+                <input className="ua-form-input" type="url" value={form.website} onChange={set("website")} placeholder="https://" />
+              </div>
+              <div className="ua-form-group">
+                <label className="ua-form-label">Email</label>
+                <input className="ua-form-input" type="email" value={form.email} onChange={set("email")} />
+              </div>
+              <div className="ua-form-group">
+                <label className="ua-form-label">Phone</label>
+                <input className="ua-form-input" value={form.phone} onChange={set("phone")} />
+              </div>
+            </div>
+            <div className="sa-modal-actions" style={{ marginTop: 8 }}>
+              <button type="button" className="sa-secondary-btn" onClick={onCancel}>Cancel</button>
+              <button type="submit" className="sa-primary-btn" disabled={saving}>{saving ? "Saving..." : university ? "Update" : "Create"}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const emptyAdmin = { first_name: "", last_name: "", email: "", university_id: "", password: "", confirmPassword: "" };
+
+function AdminModal({ open, admin, universities, onSave, onCancel }) {
+  const [form, setForm] = useState(emptyAdmin);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (admin) {
+      setForm({
+        first_name: admin.first_name || "",
+        last_name: admin.last_name || "",
+        email: admin.email || "",
+        university_id: admin.university_id || "",
+        password: "",
+        confirmPassword: "",
+      });
+    } else {
+      setForm(emptyAdmin);
+    }
+  }, [admin, open]);
+
+  if (!open) return null;
+
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!admin && form.password !== form.confirmPassword) return;
+    setSaving(true);
+    try {
+      await onSave(form);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="sa-modal-backdrop" role="presentation" onClick={onCancel}>
+      <div className="sa-modal" role="dialog" aria-modal="true" style={{ maxWidth: 600 }} onClick={(e) => e.stopPropagation()}>
+        <div className="sa-modal-body">
+          <h3 className="sa-modal-title">{admin ? "Edit Admin Account" : "Create Admin Account"}</h3>
+          {(!admin && form.password && form.confirmPassword && form.password !== form.confirmPassword) && (
+            <div style={{ color: "#DC2626", fontSize: 12, marginTop: 8 }}>Passwords do not match.</div>
+          )}
+          <form onSubmit={handleSubmit} style={{ display: "grid", gap: 14, marginTop: 16 }}>
+            <div className="ua-form-grid">
+              <div className="ua-form-group">
+                <label className="ua-form-label">First Name *</label>
+                <input className="ua-form-input" required value={form.first_name} onChange={set("first_name")} />
+              </div>
+              <div className="ua-form-group">
+                <label className="ua-form-label">Last Name *</label>
+                <input className="ua-form-input" required value={form.last_name} onChange={set("last_name")} />
+              </div>
+              <div className="ua-form-group ua-full">
+                <label className="ua-form-label">Email *</label>
+                <input className="ua-form-input" type="email" required value={form.email} onChange={set("email")} />
+              </div>
+              <div className="ua-form-group ua-full">
+                <label className="ua-form-label">Assigned University</label>
+                <select className="ua-form-input" value={form.university_id} onChange={set("university_id")}>
+                  <option value="">Select university</option>
+                  {universities.map((u) => (
+                    <option key={u.university_id} value={u.university_id}>{u.name}</option>
+                  ))}
+                </select>
+              </div>
+              {!admin && (
+                <>
+                  <div className="ua-form-group ua-full">
+                    <label className="ua-form-label">Password *</label>
+                    <input className="ua-form-input" type="password" required value={form.password} onChange={set("password")} minLength={6} />
+                  </div>
+                  <div className="ua-form-group ua-full">
+                    <label className="ua-form-label">Confirm Password *</label>
+                    <input className="ua-form-input" type="password" required value={form.confirmPassword} onChange={set("confirmPassword")} minLength={6} />
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="sa-modal-actions" style={{ marginTop: 8 }}>
+              <button type="button" className="sa-secondary-btn" onClick={onCancel}>Cancel</button>
+              <button type="submit" className="sa-primary-btn" disabled={saving}>{saving ? "Saving..." : admin ? "Update" : "Create"}</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -272,7 +488,7 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
                 </tr>
               </thead>
               <tbody>
-                {activityRows.map((row) => (
+                {activityRows.map((row, idx) => (
                   <tr key={`${row.activity}-${row.date}`}>
                     <td>{row.activity}</td>
                     <td>{row.by}</td>
@@ -288,7 +504,7 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
         <SectionCard
           title="Recently Registered Users"
           subtitle="Newest student accounts created in CampusPost."
-          action={<button type="button" className="sa-link-btn" onClick={() => navigate("/system-admin/users")}>View All Users</button>}
+          action={<button type="button" className="sa-link-btn" onClick={() => navigate("/system-admin/users")}>View All</button>}
         >
           <div className="sa-table-wrap">
             <table className="sa-table">
@@ -296,24 +512,24 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
                 <tr>
                   <th>Student</th>
                   <th>Email</th>
-                  <th>Registration Date</th>
+                  <th>Registered</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {students.slice(0, 5).map((student) => (
-                  <tr key={student.id}>
+                {students.slice(0, 5).map((student, idx) => (
+                  <tr key={student.user_id}>
                     <td>
                       <div className="sa-person-cell">
-                        <div className="sa-avatar-sm">{student.avatar}</div>
+                        <div className="sa-avatar-sm"><User size={14} /></div>
                         <div>
-                          <div className="sa-person-name">{student.name}</div>
-                          <div className="sa-person-meta">{student.role}</div>
+                          <div className="sa-person-name">{fullName(student)}</div>
+                          <div className="sa-person-meta">{student.Role?.role_name || "Student"}</div>
                         </div>
                       </div>
                     </td>
                     <td>{student.email}</td>
-                    <td>{student.registeredDate}</td>
+                    <td>{formatDate(student.createdAt)}</td>
                     <td><StatusPill status={student.status} /></td>
                   </tr>
                 ))}
@@ -326,11 +542,12 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
       <div className="sa-dashboard-right">
         <SectionCard title="Quick Actions" subtitle="Fast access to the most common admin tasks.">
           <div className="sa-quick-grid">
-            {quickActions.map((action) => {
+            {quickActions.map((action, idx) => {
               const Icon = action.icon;
+              const colors = ["sa-quick-icon-purple", "sa-quick-icon-blue", "sa-quick-icon-emerald", "sa-quick-icon-amber"];
               return (
                 <button key={action.label} type="button" className="sa-quick-action" onClick={() => navigate(action.to)}>
-                  <Icon size={18} />
+                  <div className={`sa-quick-icon ${colors[idx % colors.length]}`}><Icon size={16} /></div>
                   <span>{action.label}</span>
                 </button>
               );
@@ -343,9 +560,9 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
             {notificationRows.map((notification) => {
               const Icon = notification.icon;
               return (
-                <div key={`${notification.title}-${notification.time}`} className={`sa-notification-item tone-${notification.tone}`}>
-                  <div className="sa-notification-icon"><Icon size={16} /></div>
-                  <div className="sa-notification-copy">
+                <div key={`${notification.title}-${notification.time}`} className="sa-notification-item">
+                  <div className={`sa-notification-icon sa-notification-icon-${notification.tone}`}><Icon size={14} /></div>
+                  <div style={{ minWidth: 0 }}>
                     <div className="sa-notification-title">{notification.title}</div>
                     <div className="sa-notification-time">{notification.time}</div>
                   </div>
@@ -358,18 +575,18 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
         <SectionCard title="Reviews Awaiting Attention" subtitle="Reported reviews that need a quick moderation decision.">
           <div className="sa-review-list">
             {reviews.slice(0, 4).map((review) => (
-              <div key={review.id} className="sa-review-item">
+              <div key={review.review_id} className="sa-review-item">
                 <div className="sa-review-topline">
                   <div>
-                    <div className="sa-review-name">{review.student}</div>
-                    <div className="sa-review-university">{review.university}</div>
+                    <div className="sa-review-name">{review.User ? fullName(review.User) : "Unknown"}</div>
+                    <div className="sa-review-university">{review.University?.name || "Unknown"}</div>
                   </div>
                   <div className="sa-rating-pill"><Star size={12} />{review.rating.toFixed(1)}</div>
                 </div>
-                <p className="sa-review-preview">{review.preview}</p>
+                <p className="sa-review-preview">{review.comment || ""}</p>
                 <div className="sa-review-actions">
                   <ActionButton icon={Eye} compact ghost onClick={() => navigate("/system-admin/reviews")}>View</ActionButton>
-                  <ActionButton icon={EyeOff} compact ghost onClick={() => onHideReview(review.id, review.student)}>Hide</ActionButton>
+                  <ActionButton icon={EyeOff} compact ghost onClick={() => onHideReview(review)}>Hide</ActionButton>
                   <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDeleteReview(review)}>Delete</ActionButton>
                 </div>
               </div>
@@ -381,22 +598,20 @@ function DashboardView({ navigate, students, reviews, onDeleteReview, onHideRevi
   );
 }
 
-function UniversitiesView({ universities, onDelete, onToast }) {
+function UniversitiesView({ universities, onDelete, onAdd, onEdit, onView }) {
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState("All Countries");
-  const [status, setStatus] = useState("All Statuses");
   const [page, setPage] = useState(1);
 
-  useEffect(() => setPage(1), [query, country, status]);
+  useEffect(() => setPage(1), [query, country]);
 
   const filtered = useMemo(() => {
-    return universities.filter((item) => {
-      const matchesQuery = [item.university, item.country, item.admin].join(" ").toLowerCase().includes(query.toLowerCase());
-      const matchesCountry = country === "All Countries" || item.country === country;
-      const matchesStatus = status === "All Statuses" || item.status === status;
-      return matchesQuery && matchesCountry && matchesStatus;
+    return universities.filter((u) => {
+      const matchesQuery = [u.name, u.country].join(" ").toLowerCase().includes(query.toLowerCase());
+      const matchesCountry = country === "All Countries" || u.country === country;
+      return matchesQuery && matchesCountry;
     });
-  }, [universities, query, country, status]);
+  }, [universities, query, country]);
 
   const pageSize = 5;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -406,166 +621,170 @@ function UniversitiesView({ universities, onDelete, onToast }) {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  const countries = ["All Countries", ...Array.from(new Set(universities.map((item) => item.country)))];
-  const statuses = ["All Statuses", ...Array.from(new Set(universities.map((item) => item.status)))];
+  const countries = ["All Countries", ...Array.from(new Set(universities.map((u) => u.country).filter(Boolean)))];
 
   return (
     <div className="sa-page-section">
       <div className="sa-page-heading">
         <h1>Manage Universities</h1>
-        <button type="button" className="sa-primary-btn" onClick={() => onToast("info", "Add University", "University creation flow is not connected in this prototype.") }><Plus size={16} />Add University</button>
+        <button type="button" className="sa-primary-btn" onClick={onAdd}><Plus size={15} />Add University</button>
       </div>
 
       <div className="sa-toolbar">
         <div className="sa-toolbar-search">
-          <Search size={16} />
+          <Search size={15} />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search universities..." />
         </div>
         <select value={country} onChange={(event) => setCountry(event.target.value)}>
           {countries.map((item) => <option key={item}>{item}</option>)}
         </select>
-        <select value={status} onChange={(event) => setStatus(event.target.value)}>
-          {statuses.map((item) => <option key={item}>{item}</option>)}
-        </select>
       </div>
 
       <SectionCard className="sa-card-table">
-        <div className="sa-section-label">University Records</div>
-        <div className="sa-table-wrap">
-          <table className="sa-table">
-            <thead>
-              <tr>
-                <th>University</th>
-                <th>Country</th>
-                <th>Number of Majors</th>
-                <th>University Admin</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paged.map((row) => (
-                <tr key={row.id}>
-                  <td>
-                    <div className="sa-person-cell">
-                      <div className="sa-avatar-sm sa-avatar-uni">{getInitials(row.university)}</div>
-                      <div>
-                        <div className="sa-person-name">{row.university}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{row.country}</td>
-                  <td>{row.majors}</td>
-                  <td>{row.admin}</td>
-                  <td><StatusPill status={row.status} /></td>
-                  <td>
-                    <div className="sa-row-actions">
-                      <ActionButton icon={Eye} compact ghost onClick={() => onToast("info", `${row.university} opened`, "View university profile.")}>View</ActionButton>
-                      <ActionButton icon={PencilLine} compact ghost onClick={() => onToast("success", `${row.university} updated`, "Edit mode opened.")}>Edit</ActionButton>
-                      <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDelete(row.id, row.university)}>Delete</ActionButton>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {paged.length === 0 ? (
+          <EmptyState icon={Building2} title="No universities found" description={query || country !== "All Countries" ? "Try adjusting your search or filter." : "Add a university to get started."} />
+        ) : (
+          <>
+            <div className="sa-table-wrap">
+              <table className="sa-table">
+                <thead>
+                  <tr>
+                    <th>University</th>
+                    <th>Country</th>
+                    <th style={{ textAlign: "center" }}>Majors</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paged.map((u, idx) => {
+                    return (
+                      <tr key={u.university_id}>
+                        <td>
+                          <div className="sa-person-cell">
+                            <div className="sa-avatar-sm sa-avatar-uni"><Building2 size={14} /></div>
+                            <div>
+                              <div className="sa-person-name">{u.name}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{u.country || "—"}</td>
+                        <td style={{ textAlign: "center" }}>{u.Majors?.length || 0}</td>
+                        <td><StatusPill status="Active" /></td>
+                        <td>
+                          <div className="sa-row-actions">
+                            <ActionButton icon={Eye} compact ghost onClick={() => onView(u)}>View</ActionButton>
+                            <ActionButton icon={PencilLine} compact ghost onClick={() => onEdit(u)}>Edit</ActionButton>
+                            <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDelete(u.university_id, u.name)}>Delete</ActionButton>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-        <div className="sa-pagination">
-          <button type="button" className="sa-page-btn" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}><ChevronLeft size={16} /></button>
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-            <button key={pageNumber} type="button" className={`sa-page-btn ${page === pageNumber ? "active" : ""}`} onClick={() => setPage(pageNumber)}>
-              {pageNumber}
-            </button>
-          ))}
-          <button type="button" className="sa-page-btn" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page === totalPages}><ChevronRight size={16} /></button>
-        </div>
+            <div className="sa-pagination">
+              <button type="button" className="sa-page-btn" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}><ChevronLeft size={14} /></button>
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                <button key={pageNumber} type="button" className={`sa-page-btn ${page === pageNumber ? "active" : ""}`} onClick={() => setPage(pageNumber)}>
+                  {pageNumber}
+                </button>
+              ))}
+              <button type="button" className="sa-page-btn" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page === totalPages}><ChevronRight size={14} /></button>
+            </div>
+          </>
+        )}
       </SectionCard>
     </div>
   );
 }
 
-function AdminAccountsView({ admins, onToast }) {
+function AdminAccountsView({ admins, onAdd, onEdit, onView, onResetPassword, onSuspend, onDelete }) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
-    return admins.filter((item) => [item.name, item.email, item.university].join(" ").toLowerCase().includes(query.toLowerCase()));
+    return admins.filter((a) => [fullName(a), a.email, a.AssignedUniversity?.name || ""].join(" ").toLowerCase().includes(query.toLowerCase()));
   }, [admins, query]);
 
   return (
     <div className="sa-page-section">
       <div className="sa-page-heading">
-        <h1>Manage University Admin Accounts</h1>
-        <button type="button" className="sa-primary-btn" onClick={() => onToast("info", "Create Admin", "Admin creation flow is not connected in this prototype.") }><Plus size={16} />Create Admin</button>
+        <h1>Manage University Admins</h1>
+        <button type="button" className="sa-primary-btn" onClick={onAdd}><Plus size={15} />Create Admin</button>
       </div>
 
       <div className="sa-toolbar">
         <div className="sa-toolbar-search">
-          <Search size={16} />
+          <Search size={15} />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search admins..." />
         </div>
       </div>
 
       <SectionCard className="sa-card-table">
-        <div className="sa-section-label">Admin Directory</div>
-        <div className="sa-table-wrap">
-          <table className="sa-table">
-            <thead>
-              <tr>
-                <th>Avatar</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Assigned University</th>
-                <th>Status</th>
-                <th>Last Login</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((row) => (
-                <tr key={row.id}>
-                  <td><div className="sa-avatar-sm">{row.avatar}</div></td>
-                  <td>
-                    <div className="sa-person-name">{row.name}</div>
-                  </td>
-                  <td>{row.email}</td>
-                  <td>{row.university}</td>
-                  <td><StatusPill status={row.status} /></td>
-                  <td>{row.lastLogin}</td>
-                  <td>
-                    <div className="sa-row-actions">
-                      <ActionButton icon={Eye} compact ghost onClick={() => onToast("info", `${row.name} profile opened`, "View admin profile.")}>View</ActionButton>
-                      <ActionButton icon={PencilLine} compact ghost onClick={() => onToast("success", `${row.name} edited`, "Edit mode opened.")}>Edit</ActionButton>
-                      <ActionButton icon={LockKeyhole} compact ghost onClick={() => onToast("warning", `${row.name} password reset`, "Password reset link prepared.")}>Reset Password</ActionButton>
-                      <ActionButton icon={RotateCcw} compact ghost onClick={() => onToast("info", `${row.name} status updated`, row.status === "Active" ? "Admin deactivated." : "Admin reactivated.")}>{row.status === "Active" ? "Deactivate" : "Reactivate"}</ActionButton>
-                    </div>
-                  </td>
+        {filtered.length === 0 ? (
+          <EmptyState icon={UserCog} title="No admin accounts found" description={query ? "Try a different search term." : "Create an admin account to get started."} />
+        ) : (
+          <div className="sa-table-wrap">
+            <table className="sa-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>University</th>
+                  <th>Status</th>
+                  <th>Registered</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((a, idx) => (
+                  <tr key={a.user_id}>
+                    <td>
+                      <div className="sa-person-cell">
+                        <div className="sa-avatar-sm"><User size={14} /></div>
+                        <div className="sa-person-name">{fullName(a)}</div>
+                      </div>
+                    </td>
+                    <td>{a.email}</td>
+                    <td>{a.AssignedUniversity?.name || "—"}</td>
+                    <td><StatusPill status={a.status} /></td>
+                    <td>{formatDate(a.createdAt)}</td>
+                    <td>
+                      <div className="sa-row-actions">
+                        <ActionButton icon={Eye} compact ghost onClick={() => onView(a)}>View</ActionButton>
+                        <ActionButton icon={PencilLine} compact ghost onClick={() => onEdit(a)}>Edit</ActionButton>
+                        <ActionButton icon={LockKeyhole} compact ghost onClick={() => onResetPassword(a)}>Reset</ActionButton>
+                        <ActionButton icon={ShieldAlert} compact ghost onClick={() => onSuspend(a)}>
+                          {a.status === "suspended" ? "Reactivate" : "Suspend"}
+                        </ActionButton>
+                        <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDelete("admin", a.user_id, fullName(a))}>Delete</ActionButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </SectionCard>
     </div>
   );
 }
 
-function UsersView({ students, admins, onDeleteUser, onToggleStatus, onToast }) {
-  const [tab, setTab] = useState("students");
+function UsersView({ students, onDeleteUser, onSuspend, onViewProfile }) {
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("All Statuses");
+  const [statusFilter, setStatusFilter] = useState("All");
 
-  const source = tab === "students" ? students : admins;
   const filtered = useMemo(() => {
-    return source.filter((item) => {
-      const searchable = [item.name, item.email, item.status, item.role, item.university || ""].join(" ").toLowerCase();
+    return students.filter((u) => {
+      const searchable = [fullName(u), u.email].join(" ").toLowerCase();
       const matchesQuery = searchable.includes(query.toLowerCase());
-      const matchesStatus = status === "All Statuses" || item.status === status;
+      const matchesStatus = statusFilter === "All" || u.status === statusFilter;
       return matchesQuery && matchesStatus;
     });
-  }, [source, query, status]);
-
-  const statuses = ["All Statuses", ...Array.from(new Set(source.map((item) => item.status)))];
+  }, [students, query, statusFilter]);
 
   return (
     <div className="sa-page-section">
@@ -573,59 +792,62 @@ function UsersView({ students, admins, onDeleteUser, onToggleStatus, onToast }) 
         <h1>Manage Users</h1>
       </div>
 
-      <div className="sa-tabs">
-        <button type="button" className={`sa-tab ${tab === "students" ? "active" : ""}`} onClick={() => setTab("students")}>Students</button>
-        <button type="button" className={`sa-tab ${tab === "admins" ? "active" : ""}`} onClick={() => setTab("admins")}>University Admins</button>
-      </div>
-
       <div className="sa-toolbar">
         <div className="sa-toolbar-search">
-          <Search size={16} />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search users..." />
+          <Search size={15} />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search students..." />
         </div>
-        <select value={status} onChange={(event) => setStatus(event.target.value)}>
-          {statuses.map((item) => <option key={item}>{item}</option>)}
+        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+          <option value="All">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
         </select>
       </div>
 
       <SectionCard className="sa-card-table">
-        <div className="sa-section-label">User Accounts</div>
-        <div className="sa-table-wrap">
-          <table className="sa-table">
-            <thead>
-              <tr>
-                <th>Avatar</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Registered Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((row) => (
-                <tr key={`${tab}-${row.id}`}>
-                  <td><div className="sa-avatar-sm">{row.avatar}</div></td>
-                  <td>
-                    <div className="sa-person-name">{row.name}</div>
-                  </td>
-                  <td>{row.email}</td>
-                  <td>{tab === "students" ? "Student" : "University Admin"}</td>
-                  <td>{row.registeredDate}</td>
-                  <td><StatusPill status={row.status} /></td>
-                  <td>
-                    <div className="sa-row-actions">
-                      <ActionButton icon={Eye} compact ghost onClick={() => onToast("info", `${row.name} profile opened`, "Profile view opened.")}>View Profile</ActionButton>
-                      <ActionButton icon={ShieldAlert} compact ghost onClick={() => onToggleStatus(tab, row.id, row.status)}>{row.status === "Suspended" ? "Reactivate" : "Suspend"}</ActionButton>
-                      <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDeleteUser(tab, row.id, row.name)}>Delete</ActionButton>
-                    </div>
-                  </td>
+        {filtered.length === 0 ? (
+          <EmptyState icon={Users} title="No students found" description={query || statusFilter !== "All" ? "Try adjusting your search or filter." : "No student accounts yet."} />
+        ) : (
+          <div className="sa-table-wrap">
+            <table className="sa-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Registered</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((u, idx) => (
+                  <tr key={u.user_id}>
+                    <td>
+                      <div className="sa-person-cell">
+                        <div className="sa-avatar-sm"><User size={14} /></div>
+                        <div className="sa-person-name">{fullName(u)}</div>
+                      </div>
+                    </td>
+                    <td>{u.email}</td>
+                    <td>{u.phone || "—"}</td>
+                    <td>{formatDate(u.createdAt)}</td>
+                    <td><StatusPill status={u.status} /></td>
+                    <td>
+                      <div className="sa-row-actions">
+                        <ActionButton icon={Eye} compact ghost onClick={() => onViewProfile(u)}>Profile</ActionButton>
+                        <ActionButton icon={ShieldAlert} compact ghost onClick={() => onSuspend(u)}>
+                          {u.status === "suspended" ? "Reactivate" : "Suspend"}
+                        </ActionButton>
+                        <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDeleteUser("student", u.user_id, fullName(u))}>Delete</ActionButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </SectionCard>
     </div>
   );
@@ -634,16 +856,16 @@ function UsersView({ students, admins, onDeleteUser, onToggleStatus, onToast }) 
 function ReviewsView({ reviews, onDelete, onHide, onToast }) {
   const [query, setQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState("All Ratings");
-  const [reportFilter, setReportFilter] = useState("All Report Statuses");
 
   const filtered = useMemo(() => {
-    return reviews.filter((review) => {
-      const matchesQuery = [review.student, review.university, review.preview, review.reason].join(" ").toLowerCase().includes(query.toLowerCase());
-      const matchesRating = ratingFilter === "All Ratings" || (ratingFilter === "4+" ? review.rating >= 4 : ratingFilter === "Below 4" ? review.rating < 4 : true);
-      const matchesReport = reportFilter === "All Report Statuses" || review.status === reportFilter;
-      return matchesQuery && matchesRating && matchesReport;
+    return reviews.filter((r) => {
+      const studentName = r.User ? fullName(r.User) : "";
+      const uniName = r.University?.name || "";
+      const matchesQuery = [studentName, uniName, r.comment || ""].join(" ").toLowerCase().includes(query.toLowerCase());
+      const matchesRating = ratingFilter === "All Ratings" || (ratingFilter === "4+" ? r.rating >= 4 : r.rating < 4);
+      return matchesQuery && matchesRating;
     });
-  }, [reviews, query, ratingFilter, reportFilter]);
+  }, [reviews, query, ratingFilter]);
 
   return (
     <div className="sa-page-section">
@@ -653,7 +875,7 @@ function ReviewsView({ reviews, onDelete, onHide, onToast }) {
 
       <div className="sa-toolbar">
         <div className="sa-toolbar-search">
-          <Search size={16} />
+          <Search size={15} />
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search reviews..." />
         </div>
         <select value={ratingFilter} onChange={(event) => setRatingFilter(event.target.value)}>
@@ -661,56 +883,135 @@ function ReviewsView({ reviews, onDelete, onHide, onToast }) {
           <option>4+</option>
           <option>Below 4</option>
         </select>
-        <select value={reportFilter} onChange={(event) => setReportFilter(event.target.value)}>
-          <option>All Report Statuses</option>
-          <option>Under Review</option>
-          <option>Escalated</option>
-          <option>Resolved</option>
-        </select>
       </div>
 
       <SectionCard className="sa-card-table">
-        <div className="sa-section-label">Review Queue</div>
-        <div className="sa-table-wrap">
-          <table className="sa-table">
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>University</th>
-                <th>Rating</th>
-                <th>Review Preview</th>
-                <th>Report Reason</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((review) => (
-                <tr key={review.id}>
-                  <td>{review.student}</td>
-                  <td>{review.university}</td>
-                  <td>
-                    <div className="sa-rating-inline"><Star size={12} />{review.rating.toFixed(1)}</div>
-                  </td>
-                  <td className="sa-review-preview-cell">{review.preview}</td>
-                  <td>
-                    <div className="sa-report-cell">
-                      <span>{review.reason}</span>
-                      <StatusPill status={review.status} />
-                    </div>
-                  </td>
-                  <td>{review.date}</td>
-                  <td>
-                    <div className="sa-row-actions">
-                      <ActionButton icon={Eye} compact ghost onClick={() => onToast("info", `${review.student} review opened`, "Moderation details loaded.")}>View</ActionButton>
-                      <ActionButton icon={EyeOff} compact ghost onClick={() => onHide(review.id, review.student)}>Hide</ActionButton>
-                      <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDelete(review.id, review.student)}>Delete</ActionButton>
-                    </div>
-                  </td>
+        {filtered.length === 0 ? (
+          <EmptyState icon={MessageSquareWarning} title="No reviews found" description={query || ratingFilter !== "All Ratings" ? "Try adjusting your search or filter." : "No reviews to moderate."} />
+        ) : (
+          <div className="sa-table-wrap">
+            <table className="sa-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>University</th>
+                  <th>Rating</th>
+                  <th>Review</th>
+                  <th>Date</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((r) => (
+                  <tr key={r.review_id}>
+                    <td>{r.User ? fullName(r.User) : "Unknown"}</td>
+                    <td>{r.University?.name || "Unknown"}</td>
+                    <td>
+                      <div className="sa-rating-inline"><Star size={11} />{r.rating.toFixed(1)}</div>
+                    </td>
+                    <td className="sa-td-wrap" style={{ maxWidth: 280 }}>{r.comment || ""}</td>
+                    <td>{formatDate(r.createdAt)}</td>
+                    <td>
+                      <div className="sa-row-actions">
+                        <ActionButton icon={Eye} compact ghost onClick={() => onToast("info", `${r.User ? fullName(r.User) : "Unknown"} review opened`, "Moderation details loaded.")}>View</ActionButton>
+                        <ActionButton icon={EyeOff} compact ghost onClick={() => onHide(r)}>Hide</ActionButton>
+                        <ActionButton icon={Trash2} compact destructive ghost onClick={() => onDelete(r)}>Delete</ActionButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </SectionCard>
+    </div>
+  );
+}
+
+function ProfileView({ adminProfile, onSave }) {
+  const [form, setForm] = useState({ first_name: "", last_name: "", email: "", phone: "", password: "", confirmPassword: "" });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (adminProfile) {
+      setForm({
+        first_name: adminProfile.first_name || "",
+        last_name: adminProfile.last_name || "",
+        email: adminProfile.email || "",
+        phone: adminProfile.phone || "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+  }, [adminProfile]);
+
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (form.password && form.password !== form.confirmPassword) return;
+    setSaving(true);
+    try {
+      await onSave(form);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!adminProfile) return null;
+
+  return (
+    <div className="sa-page-section" style={{ maxWidth: 640 }}>
+      <div className="sa-page-heading">
+        <h1>My Profile</h1>
+      </div>
+
+      <SectionCard title="Account Details" subtitle="Manage your personal information.">
+        <form onSubmit={handleSubmit} style={{ display: "grid", gap: 14 }}>
+          {form.password && form.confirmPassword && form.password !== form.confirmPassword && (
+            <div style={{ color: "#DC2626", fontSize: 12 }}>Passwords do not match.</div>
+          )}
+          <div className="ua-form-grid">
+            <div className="ua-form-group">
+              <label className="ua-form-label">First Name *</label>
+              <input className="ua-form-input" required value={form.first_name} onChange={set("first_name")} />
+            </div>
+            <div className="ua-form-group">
+              <label className="ua-form-label">Last Name *</label>
+              <input className="ua-form-input" required value={form.last_name} onChange={set("last_name")} />
+            </div>
+            <div className="ua-form-group ua-full">
+              <label className="ua-form-label">Email *</label>
+              <input className="ua-form-input" type="email" required value={form.email} onChange={set("email")} />
+            </div>
+            <div className="ua-form-group ua-full">
+              <label className="ua-form-label">Phone</label>
+              <input className="ua-form-input" value={form.phone} onChange={set("phone")} placeholder="Optional" />
+            </div>
+            <div className="ua-form-group ua-full">
+              <label className="ua-form-label">New Password</label>
+              <input className="ua-form-input" type="password" value={form.password} onChange={set("password")} placeholder="Leave blank to keep current" minLength={6} />
+            </div>
+            {form.password && (
+              <div className="ua-form-group ua-full">
+                <label className="ua-form-label">Confirm New Password</label>
+                <input className="ua-form-input" type="password" value={form.confirmPassword} onChange={set("confirmPassword")} placeholder="Re-enter new password" minLength={6} />
+              </div>
+            )}
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
+            <button type="submit" className="sa-primary-btn" disabled={saving}>{saving ? "Saving..." : "Save Changes"}</button>
+          </div>
+        </form>
+      </SectionCard>
+
+      <SectionCard title="Account Information" subtitle="Your account details and role.">
+        <div style={{ display: "grid", gap: 10 }}>
+          <div className="ua-detail-row"><dt>Email</dt><dd>{adminProfile.email}</dd></div>
+          <div className="ua-detail-row"><dt>Role</dt><dd>System Administrator</dd></div>
+          <div className="ua-detail-row"><dt>Registered</dt><dd>{formatDate(adminProfile.createdAt)}</dd></div>
+          <div className="ua-detail-row"><dt>Status</dt><dd><StatusPill status={adminProfile.status} /></dd></div>
         </div>
       </SectionCard>
     </div>
@@ -726,59 +1027,45 @@ export default function SystemAdmin() {
   const [admins, setAdmins] = useState([]);
   const [students, setStudents] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [adminProfile, setAdminProfile] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [suspendTarget, setSuspendTarget] = useState(null);
+  const [universityModal, setUniversityModal] = useState({ open: false, university: null });
+  const [adminModal, setAdminModal] = useState({ open: false, admin: null });
+  const [viewTarget, setViewTarget] = useState(null);
+  const [profileTarget, setProfileTarget] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const toastTimers = useRef(new Map());
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      api.get("/universities").catch(() => []),
-      api.get("/users").catch(() => []),
-      api.get("/reviews").catch(() => []),
-      api.get("/admin/applications").catch(() => []),
-    ]).then(([uniData, userData, reviewData, appData]) => {
-      setUniversities(uniData.map((u) => ({
-        id: u.university_id,
-        university: u.name,
-        country: u.country || "Cambodia",
-        majors: u.Majors?.length || 0,
-        admin: "—",
-        status: "Active",
-        updated: u.updated_at ? new Date(u.updated_at).toLocaleDateString() : "—",
-      })));
+    const token = localStorage.getItem("campuspost_token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    setAuthChecked(true);
+  }, [navigate]);
 
-      const allUsers = Array.isArray(userData) ? userData : [];
-      setAdmins(allUsers.filter((u) => u.role_id === 2 || (u.Role && u.Role.role_name === "admin")).map((u) => ({
-        id: u.user_id,
-        avatar: `${u.first_name[0]}${u.last_name[0]}`.toUpperCase(),
-        name: `${u.first_name} ${u.last_name}`,
-        email: u.email,
-        university: "—",
-        status: "Active",
-        registeredDate: u.created_at ? new Date(u.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—",
-        lastLogin: "—",
-      })));
-      setStudents(allUsers.filter((u) => u.role_id === 1 || (u.Role && u.Role.role_name === "user")).map((u) => ({
-        id: u.user_id,
-        avatar: `${u.first_name[0]}${u.last_name[0]}`.toUpperCase(),
-        name: `${u.first_name} ${u.last_name}`,
-        email: u.email,
-        role: "Student",
-        registeredDate: u.created_at ? new Date(u.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—",
-        status: "Active",
-      })));
-      setReviews((Array.isArray(reviewData) ? reviewData : []).map((r) => ({
-        id: r.review_id,
-        student: r.User ? `${r.User.first_name} ${r.User.last_name}` : "Unknown",
-        university: r.University?.name || "Unknown",
-        rating: r.rating,
-        preview: r.comment || "",
-        reason: "Reported",
-        date: r.created_at ? new Date(r.created_at).toLocaleDateString() : "—",
-        status: "Under Review",
-      })));
+  useEffect(() => {
+    if (!authChecked) return;
+    Promise.all([
+      api.get("/universities").catch(() => null),
+      api.get("/users").catch(() => null),
+      api.get("/reviews").catch(() => null),
+    ]).then(([uniData, userData, reviewData]) => {
+      if (Array.isArray(uniData)) setUniversities(uniData);
+      if (Array.isArray(userData)) {
+        setAdmins(userData.filter((u) => u.role_id === 2));
+        setStudents(userData.filter((u) => u.role_id === 1));
+        // Find the current logged-in system admin (role_id=3) for profile
+        const sysAdmin = userData.find((u) => u.role_id === 3);
+        if (sysAdmin) setAdminProfile(sysAdmin);
+      }
+      if (Array.isArray(reviewData)) setReviews(reviewData);
     }).catch(() => {});
-  }, []);
+  }, [authChecked]);
 
   useEffect(() => {
     return () => {
@@ -812,56 +1099,167 @@ export default function SystemAdmin() {
   };
 
   const handleDeleteReview = (review) => {
-    setDeleteTarget({ type: "review", id: review.id, name: review.student });
+    setDeleteTarget({ type: "review", id: review.review_id, name: review.User ? fullName(review.User) : "Unknown" });
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
 
-    if (deleteTarget.type === "university") {
-      setUniversities((current) => current.filter((item) => item.id !== deleteTarget.id));
-      pushToast("success", `${deleteTarget.name} deleted`, "University record removed from the platform.");
-    }
+    try {
+      if (deleteTarget.type === "university") {
+        await api.delete(`/universities/${deleteTarget.id}`).catch(() => null);
+        setUniversities((current) => current.filter((u) => u.university_id !== deleteTarget.id));
+        pushToast("success", `${deleteTarget.name} deleted`, "University record removed from the platform.");
+      }
 
-    if (deleteTarget.type === "student") {
-      setStudents((current) => current.filter((item) => item.id !== deleteTarget.id));
-      pushToast("success", `${deleteTarget.name} deleted`, "Student account removed from the platform.");
-    }
+      if (deleteTarget.type === "student") {
+        await api.delete(`/users/${deleteTarget.id}`).catch(() => null);
+        setStudents((current) => current.filter((u) => u.user_id !== deleteTarget.id));
+        pushToast("success", `${deleteTarget.name} deleted`, "Student account removed from the platform.");
+      }
 
-    if (deleteTarget.type === "admin") {
-      setAdmins((current) => current.filter((item) => item.id !== deleteTarget.id));
-      pushToast("success", `${deleteTarget.name} deleted`, "Admin account removed from the platform.");
-    }
+      if (deleteTarget.type === "admin") {
+        await api.delete(`/users/${deleteTarget.id}`).catch(() => null);
+        setAdmins((current) => current.filter((u) => u.user_id !== deleteTarget.id));
+        pushToast("success", `${deleteTarget.name} deleted`, "Admin account removed from the platform.");
+      }
 
-    if (deleteTarget.type === "review") {
-      setReviews((current) => current.filter((item) => item.id !== deleteTarget.id));
-      pushToast("success", `${deleteTarget.name} deleted`, "Reported review removed from moderation queue.");
+      if (deleteTarget.type === "review") {
+        await api.delete(`/reviews/${deleteTarget.id}`).catch(() => null);
+        setReviews((current) => current.filter((r) => r.review_id !== deleteTarget.id));
+        pushToast("success", `${deleteTarget.name} deleted`, "Reported review removed from moderation queue.");
+      }
+    } catch (err) {
+      pushToast("danger", "Error", err.message || "Failed to delete.");
     }
 
     setDeleteTarget(null);
   };
 
-  const handleHideReview = (reviewId, studentName) => {
-    setReviews((current) => current.map((review) => (review.id === reviewId ? { ...review, status: "Hidden" } : review)));
-    pushToast("info", `${studentName} review hidden`, "The review was hidden from public view.");
+  const handleHideReview = (review) => {
+    pushToast("info", `${review.User ? fullName(review.User) : "Unknown"} review hidden`, "The review was hidden from public view.");
   };
 
-  const handleToggleStatus = (tab, id, currentStatus) => {
-    const nextStatus = currentStatus === "Suspended" ? "Active" : "Suspended";
-    if (tab === "students") {
-      setStudents((current) => current.map((item) => (item.id === id ? { ...item, status: nextStatus } : item)));
-    } else {
-      setAdmins((current) => current.map((item) => (item.id === id ? { ...item, status: nextStatus === "Suspended" ? "Inactive" : "Active" } : item)));
+  const handleSuspend = (user) => {
+    setSuspendTarget(user);
+  };
+
+  const handleSuspendConfirm = async () => {
+    if (!suspendTarget) return;
+    const isSuspended = suspendTarget.status === "suspended";
+    const newStatus = isSuspended ? "active" : "suspended";
+    const name = fullName(suspendTarget);
+
+    try {
+      const updated = await api.put(`/users/${suspendTarget.user_id}`, { status: newStatus });
+      setStudents((current) => current.map((u) => u.user_id === suspendTarget.user_id ? { ...u, status: updated.status } : u));
+      setAdmins((current) => current.map((u) => u.user_id === suspendTarget.user_id ? { ...u, status: updated.status } : u));
+      pushToast("success", isSuspended ? `${name} reactivated` : `${name} suspended`, isSuspended ? "Account has been reactivated." : "Account has been suspended. They can no longer log in.");
+    } catch (err) {
+      pushToast("danger", "Error", err.message || "Failed to update status.");
     }
-    pushToast("warning", "Status updated", tab === "students" ? `Student account ${nextStatus.toLowerCase()}.` : "Admin account updated.");
+
+    setSuspendTarget(null);
+  };
+
+  const handleSaveUniversity = async (form) => {
+    try {
+      if (universityModal.university) {
+        await api.put(`/universities/${universityModal.university.university_id}`, {
+          name: form.name,
+          country: form.country,
+          city: form.city,
+          website: form.website,
+          email: form.email,
+          phone: form.phone,
+        });
+        setUniversities((current) => current.map((u) => u.university_id === universityModal.university.university_id ? { ...u, ...form } : u));
+        pushToast("success", `${form.name} updated`, "University record updated successfully.");
+      } else {
+        const created = await api.post("/universities", {
+          name: form.name,
+          country: form.country,
+          city: form.city,
+          website: form.website,
+          email: form.email,
+          phone: form.phone,
+        });
+        setUniversities((current) => [{ ...created, Majors: [], Admins: [] }, ...current]);
+        pushToast("success", `${form.name} created`, "New university added to the platform.");
+      }
+      setUniversityModal({ open: false, university: null });
+    } catch (err) {
+      pushToast("danger", "Error", err.message || "Failed to save university.");
+    }
+  };
+
+  const handleSaveAdmin = async (form) => {
+    try {
+      const universityId = form.university_id ? Number(form.university_id) : null;
+      if (adminModal.admin) {
+        const payload = {
+          first_name: form.first_name,
+          last_name: form.last_name,
+          email: form.email,
+          university_id: universityId,
+        };
+        if (form.password) payload.password = form.password;
+        const updated = await api.put(`/users/${adminModal.admin.user_id}`, payload);
+        setAdmins((current) => current.map((a) => a.user_id === adminModal.admin.user_id ? { ...a, ...updated } : a));
+        pushToast("success", `${form.first_name} ${form.last_name} updated`, "Admin account updated successfully.");
+      } else {
+        const created = await api.post("/users", {
+          first_name: form.first_name,
+          last_name: form.last_name,
+          email: form.email,
+          password: form.password,
+          role_id: 2,
+          university_id: universityId,
+        });
+        setAdmins((current) => [{ ...created, AssignedUniversity: universities.find((u) => u.university_id === universityId) || null }, ...current]);
+        pushToast("success", `${form.first_name} ${form.last_name} created`, "New admin account created.");
+      }
+      setAdminModal({ open: false, admin: null });
+    } catch (err) {
+      pushToast("danger", "Error", err.message || "Failed to save admin.");
+    }
+  };
+
+  const handleResetPassword = async (admin) => {
+    try {
+      const tempPassword = "Reset" + Math.random().toString(36).slice(2, 8) + "!";
+      await api.put(`/users/${admin.user_id}`, { password: tempPassword });
+      pushToast("warning", `Password reset: ${fullName(admin)}`, `Password has been reset. New password: ${tempPassword}`);
+    } catch (err) {
+      pushToast("danger", "Error", err.message || "Failed to reset password.");
+    }
+  };
+
+  const handleSaveProfile = async (form) => {
+    if (!adminProfile) return;
+    try {
+      const payload = {
+        first_name: form.first_name,
+        last_name: form.last_name,
+        email: form.email,
+        phone: form.phone || null,
+      };
+      if (form.password) payload.password = form.password;
+      const updated = await api.put(`/users/${adminProfile.user_id}`, payload);
+      setAdminProfile((prev) => ({ ...prev, ...updated }));
+      pushToast("success", "Profile updated", "Your profile has been saved successfully.");
+    } catch (err) {
+      pushToast("danger", "Error", err.message || "Failed to update profile.");
+    }
   };
 
   const currentTitle = {
     dashboard: "Dashboard",
     universities: "Manage Universities",
-    "admin-accounts": "Manage University Admin Accounts",
+    "admin-accounts": "Manage University Admins",
     users: "Manage Users",
     reviews: "Moderate Reviews",
+    profile: "My Profile",
   }[section];
 
   const handleSystemAdminLogout = () => {
@@ -869,17 +1267,23 @@ export default function SystemAdmin() {
     navigate("/login");
   };
 
+  if (!authChecked) return null;
+
   return (
     <div className="sa-shell">
-      <Sidebar onLogout={handleSystemAdminLogout} />
+      <button type="button" className="sa-mobile-toggle" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
+        <Menu size={20} />
+      </button>
+      <Sidebar onLogout={handleSystemAdminLogout} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="sa-content">
-        <TopNav />
+        <TopNav adminProfile={adminProfile} onToggleSidebar={() => setSidebarOpen(true)} />
 
         <main className="sa-main">
           {section === "dashboard" && (
             <div className="sa-page-title-block">
               <h1>{currentTitle}</h1>
+              <p className="sa-page-subtitle">Here's today's overview of your platform.</p>
             </div>
           )}
 
@@ -893,13 +1297,42 @@ export default function SystemAdmin() {
             />
           )}
 
-          {section === "universities" && <UniversitiesView universities={universities} onDelete={handleDeleteUniversity} onToast={pushToast} />}
+          {section === "universities" && (
+            <UniversitiesView
+              universities={universities}
+              onDelete={handleDeleteUniversity}
+              onAdd={() => setUniversityModal({ open: true, university: null })}
+              onEdit={(uni) => setUniversityModal({ open: true, university: uni })}
+              onView={(uni) => setViewTarget({ type: "university", data: uni })}
+            />
+          )}
 
-          {section === "admin-accounts" && <AdminAccountsView admins={admins} onToast={pushToast} />}
+          {section === "admin-accounts" && (
+            <AdminAccountsView
+              admins={admins}
+              onAdd={() => setAdminModal({ open: true, admin: null })}
+              onEdit={(adm) => setAdminModal({ open: true, admin: adm })}
+              onView={(adm) => setViewTarget({ type: "admin", data: adm })}
+              onResetPassword={handleResetPassword}
+              onSuspend={handleSuspend}
+              onDelete={handleDeleteUser}
+            />
+          )}
 
-          {section === "users" && <UsersView students={students} admins={admins} onDeleteUser={handleDeleteUser} onToggleStatus={handleToggleStatus} onToast={pushToast} />}
+          {section === "users" && (
+            <UsersView
+              students={students}
+              onDeleteUser={handleDeleteUser}
+              onSuspend={handleSuspend}
+              onViewProfile={(u) => setProfileTarget(u)}
+            />
+          )}
 
           {section === "reviews" && <ReviewsView reviews={reviews} onDelete={handleDeleteReview} onHide={handleHideReview} onToast={pushToast} />}
+
+          {section === "profile" && (
+            <ProfileView adminProfile={adminProfile} onSave={handleSaveProfile} />
+          )}
         </main>
       </div>
 
@@ -911,6 +1344,88 @@ export default function SystemAdmin() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
       />
+
+      <SuspendModal
+        open={Boolean(suspendTarget)}
+        user={suspendTarget}
+        onCancel={() => setSuspendTarget(null)}
+        onConfirm={handleSuspendConfirm}
+      />
+
+      <UniversityModal
+        open={universityModal.open}
+        university={universityModal.university}
+        onSave={handleSaveUniversity}
+        onCancel={() => setUniversityModal({ open: false, university: null })}
+      />
+
+      <AdminModal
+        open={adminModal.open}
+        admin={adminModal.admin}
+        universities={universities}
+        onSave={handleSaveAdmin}
+        onCancel={() => setAdminModal({ open: false, admin: null })}
+      />
+
+      {viewTarget && (
+        <div className="sa-modal-backdrop" role="presentation" onClick={() => setViewTarget(null)}>
+          <div className="sa-modal" role="dialog" aria-modal="true" style={{ maxWidth: 560 }} onClick={(e) => e.stopPropagation()}>
+            <div className="sa-modal-body">
+              <h3 className="sa-modal-title">{viewTarget.type === "university" ? viewTarget.data.name : fullName(viewTarget.data)}</h3>
+              <div style={{ marginTop: 16, display: "grid", gap: 10 }}>
+                {viewTarget.type === "university" ? (
+                  <>
+                    <div className="ua-detail-row"><dt>Country</dt><dd>{viewTarget.data.country || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>City</dt><dd>{viewTarget.data.city || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>Website</dt><dd>{viewTarget.data.website || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>Email</dt><dd>{viewTarget.data.email || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>Phone</dt><dd>{viewTarget.data.phone || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>Majors</dt><dd>{viewTarget.data.Majors?.length || 0}</dd></div>
+                    <div className="ua-detail-row"><dt>Admin</dt><dd>{viewTarget.data.Admins?.[0] ? fullName(viewTarget.data.Admins[0]) : "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>Status</dt><dd><StatusPill status="Active" /></dd></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="ua-detail-row"><dt>Email</dt><dd>{viewTarget.data.email}</dd></div>
+                    <div className="ua-detail-row"><dt>Phone</dt><dd>{viewTarget.data.phone || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>University</dt><dd>{viewTarget.data.AssignedUniversity?.name || "—"}</dd></div>
+                    <div className="ua-detail-row"><dt>Registered</dt><dd>{formatDate(viewTarget.data.createdAt)}</dd></div>
+                    <div className="ua-detail-row"><dt>Status</dt><dd><StatusPill status={viewTarget.data.status} /></dd></div>
+                  </>
+                )}
+              </div>
+              <div className="sa-modal-actions" style={{ marginTop: 20 }}>
+                <button type="button" className="sa-secondary-btn" onClick={() => setViewTarget(null)}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {profileTarget && (
+        <div className="sa-modal-backdrop" role="presentation" onClick={() => setProfileTarget(null)}>
+          <div className="sa-modal" role="dialog" aria-modal="true" style={{ maxWidth: 560 }} onClick={(e) => e.stopPropagation()}>
+            <div className="sa-modal-body">
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <div className="sa-avatar-sm" style={{ width: 48, height: 48 }}><User size={22} /></div>
+                <div>
+                  <h3 className="sa-modal-title" style={{ margin: 0 }}>{fullName(profileTarget)}</h3>
+                  <div style={{ color: "#64748b", fontSize: 13 }}>Student</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 16, display: "grid", gap: 10 }}>
+                <div className="ua-detail-row"><dt>Email</dt><dd>{profileTarget.email}</dd></div>
+                <div className="ua-detail-row"><dt>Phone</dt><dd>{profileTarget.phone || "—"}</dd></div>
+                <div className="ua-detail-row"><dt>Registered</dt><dd>{formatDate(profileTarget.createdAt)}</dd></div>
+                <div className="ua-detail-row"><dt>Status</dt><dd><StatusPill status={profileTarget.status} /></dd></div>
+              </div>
+              <div className="sa-modal-actions" style={{ marginTop: 20 }}>
+                <button type="button" className="sa-secondary-btn" onClick={() => setProfileTarget(null)}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>

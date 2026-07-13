@@ -61,14 +61,27 @@ exports.login = async (req, res) => {
 
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required"
+      });
+    }
+
     // Find user by email
     const user = await User.findOne({
       where: { email }
     });
 
     if (!user) {
+      console.log(`Login attempt failed: user not found for email ${email}`);
       return res.status(401).json({
         message: "Invalid email or password"
+      });
+    }
+
+    if (user.status === "suspended") {
+      return res.status(403).json({
+        message: "Your account has been suspended. Please contact support."
       });
     }
 
@@ -76,6 +89,7 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
+      console.log(`Login attempt failed: password mismatch for user ${user.user_id} (${email})`);
       return res.status(401).json({
         message: "Invalid email or password"
       });
@@ -125,8 +139,12 @@ exports.updateProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const { first_name, last_name, phone } = req.body;
-    await user.update({ first_name, last_name, phone });
+    const { first_name, last_name, phone, password } = req.body;
+    const updates = { first_name, last_name, phone };
+    if (password) {
+      updates.password = await bcrypt.hash(password, 10);
+    }
+    await user.update(updates);
     const userData = user.toJSON();
     delete userData.password;
     res.json(userData);

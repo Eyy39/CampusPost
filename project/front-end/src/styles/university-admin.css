@@ -1,0 +1,59 @@
+.ua-modal-icon-success { background: var(--sa-success-bg); color: var(--sa-success); }
+.ua-modal-icon-info { background: var(--sa-info-bg); color: var(--sa-info); }
+
+.ua-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.ua-stat-card {
+  background: var(--sa-surface);
+  border: 1px solid var(--sa-border);
+  border-radius: var(--sa-radius-lg);
+  box-shadow: var(--sa-shadow-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ua-stat-label { font-size: 13px; font-weight: 600; color: var(--sa-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.ua-stat-value { font-size: 32px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+.ua-stat-card-success .ua-stat-value { color: var(--sa-success); }
+.ua-stat-card-warning .ua-stat-value { color: var(--sa-warning); }
+.ua-stat-card-danger .ua-stat-value { color: var(--sa-danger); }
+.ua-stat-card-info .ua-stat-value { color: var(--sa-info); }
+
+.ua-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ua-form-group { display: flex; flex-direction: column; gap: 6px; }
+.ua-form-group.ua-full { grid-column: 1 / -1; }
+.ua-form-label { font-size: 13px; font-weight: 700; color: var(--sa-text); }
+.ua-form-input, .ua-form-textarea, .ua-form-select {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 13px;
+  border: 1px solid var(--sa-border);
+  background: #fbfcfe;
+  color: var(--sa-text);
+  font-size: 14px;
+}
+.ua-form-textarea { min-height: 80px; padding: 10px 14px; resize: vertical; }
+
+.ua-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.ua-detail-section { display: flex; flex-direction: column; gap: 10px; }
+.ua-detail-section-title { font-size: 14px; font-weight: 700; color: var(--sa-text); border-bottom: 1px solid var(--sa-border); padding-bottom: 8px; }
+.ua-detail-row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.ua-detail-row dt { color: var(--sa-muted); font-weight: 600; }
+.ua-detail-row dd { margin: 0; font-weight: 600; color: var(--sa-text); text-align: right; }
+.ua-note-box {
+  background: var(--sa-surface-soft);
+  border: 1px solid var(--sa-border);
+  border-radius: 13px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--sa-text);
+}
+
+@media (max-width: 1280px) {
+  .ua-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .ua-stat-grid { grid-template-columns: 1fr; }
+  .ua-form-grid, .ua-detail-grid { grid-template-columns: 1fr; }
+}

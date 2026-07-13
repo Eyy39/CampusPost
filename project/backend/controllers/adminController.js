@@ -28,7 +28,7 @@ exports.dashboard = async (req, res) => {
         ],
       }),
       User.findAll({
-        order: [['created_at', 'DESC']],
+        order: [['createdAt', 'DESC']],
         limit: 5,
         attributes: { exclude: ['password'] },
       }),

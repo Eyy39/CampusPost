@@ -28,6 +28,7 @@ async function seed() {
     await Role.bulkCreate([
       { role_id: 1, role_name: "user" },
       { role_id: 2, role_name: "admin" },
+      { role_id: 3, role_name: "system_admin" },
     ]);
     console.log("Roles seeded.");
 
@@ -309,30 +310,31 @@ async function seed() {
     // ==========================================
     const hash = await bcrypt.hash("password123", 10);
     await User.bulkCreate([
-      { user_id: 1, role_id: 2, first_name: "Admin", last_name: "User", email: "admin@campuspost.com", password: hash, phone: "099999999" },
-      { user_id: 2, role_id: 1, first_name: "Samnang", last_name: "Sok", email: "samnang.sok@gmail.com", password: hash, phone: "012345678" },
-      { user_id: 3, role_id: 1, first_name: "Sreypov", last_name: "Chan", email: "sreypov.chan@gmail.com", password: hash, phone: "098765432" },
-      { user_id: 4, role_id: 1, first_name: "Piseth", last_name: "Keo", email: "piseth.keo@gmail.com", password: hash, phone: "077889900" },
-      { user_id: 5, role_id: 1, first_name: "Boramy", last_name: "Vannak", email: "boramy.vannak@gmail.com", password: hash, phone: "011223344" },
-      { user_id: 6, role_id: 1, first_name: "Rotha", last_name: "Chhoun", email: "rotha.chhoun@gmail.com", password: hash, phone: "085556677" },
-      { user_id: 7, role_id: 1, first_name: "Somaly", last_name: "Nguon", email: "somaly.nguon@gmail.com", password: hash, phone: "015998877" },
-      { user_id: 8, role_id: 1, first_name: "Mengleang", last_name: "Seng", email: "mengleang.seng@gmail.com", password: hash, phone: "069123456" },
-      { user_id: 9, role_id: 1, first_name: "Kalyan", last_name: "Ouk", email: "kalyan.ouk@gmail.com", password: hash, phone: "089776655" },
+      { user_id: 1, role_id: 3, first_name: "System", last_name: "Admin", email: "sysadmin@campuspost.com", password: hash, phone: "099999999" },
+      { user_id: 2, role_id: 2, first_name: "Admin", last_name: "User", email: "admin@campuspost.com", password: hash, phone: "099999998", university_id: 1 },
+      { user_id: 3, role_id: 1, first_name: "Samnang", last_name: "Sok", email: "samnang.sok@gmail.com", password: hash, phone: "012345678" },
+      { user_id: 4, role_id: 1, first_name: "Sreypov", last_name: "Chan", email: "sreypov.chan@gmail.com", password: hash, phone: "098765432" },
+      { user_id: 5, role_id: 1, first_name: "Piseth", last_name: "Keo", email: "piseth.keo@gmail.com", password: hash, phone: "077889900" },
+      { user_id: 6, role_id: 1, first_name: "Boramy", last_name: "Vannak", email: "boramy.vannak@gmail.com", password: hash, phone: "011223344" },
+      { user_id: 7, role_id: 1, first_name: "Rotha", last_name: "Chhoun", email: "rotha.chhoun@gmail.com", password: hash, phone: "085556677" },
+      { user_id: 8, role_id: 1, first_name: "Somaly", last_name: "Nguon", email: "somaly.nguon@gmail.com", password: hash, phone: "015998877" },
+      { user_id: 9, role_id: 1, first_name: "Mengleang", last_name: "Seng", email: "mengleang.seng@gmail.com", password: hash, phone: "069123456" },
+      { user_id: 10, role_id: 1, first_name: "Kalyan", last_name: "Ouk", email: "kalyan.ouk@gmail.com", password: hash, phone: "089776655" },
     ]);
-    console.log("Seeded 9 users.");
+    console.log("Seeded 10 users.");
 
     // ==========================================
     // APPLICATIONS
     // ==========================================
     const apps = await Application.bulkCreate([
-      { user_id: 2, scholarship_id: 1, university_id: 1, major_id: 1, status_id: 1, ref_no: "TECHO-CADT-001", admin_status: "pending" },
-      { user_id: 3, scholarship_id: 1, university_id: 1, major_id: 2, status_id: 1, ref_no: "TECHO-CADT-002", admin_status: "pending" },
-      { user_id: 4, scholarship_id: 2, university_id: 2, major_id: 6, status_id: 1, ref_no: "TECHO-AUPP-003", admin_status: "pending" },
-      { user_id: 5, scholarship_id: 4, university_id: 3, major_id: 17, status_id: 1, ref_no: "TECHO-ITC-004", admin_status: "pending" },
-      { user_id: 6, scholarship_id: 5, university_id: 4, major_id: 19, status_id: 1, ref_no: "TECHO-NUM-005", admin_status: "pending" },
-      { user_id: 7, scholarship_id: 3, university_id: 5, major_id: 14, status_id: 1, ref_no: "TECHO-RUPP-006", admin_status: "pending" },
-      { user_id: 8, scholarship_id: 6, university_id: 6, major_id: 22, status_id: 1, ref_no: "TECHO-PARA-007", admin_status: "pending" },
-      { user_id: 9, scholarship_id: 7, university_id: 7, major_id: 25, status_id: 1, ref_no: "TECHO-UC-008", admin_status: "pending" },
+      { user_id: 3, scholarship_id: 1, university_id: 1, major_id: 1, status_id: 1, ref_no: "TECHO-CADT-001", admin_status: "pending" },
+      { user_id: 4, scholarship_id: 1, university_id: 1, major_id: 2, status_id: 1, ref_no: "TECHO-CADT-002", admin_status: "pending" },
+      { user_id: 5, scholarship_id: 2, university_id: 2, major_id: 6, status_id: 1, ref_no: "TECHO-AUPP-003", admin_status: "pending" },
+      { user_id: 6, scholarship_id: 4, university_id: 3, major_id: 17, status_id: 1, ref_no: "TECHO-ITC-004", admin_status: "pending" },
+      { user_id: 7, scholarship_id: 5, university_id: 4, major_id: 19, status_id: 1, ref_no: "TECHO-NUM-005", admin_status: "pending" },
+      { user_id: 8, scholarship_id: 3, university_id: 5, major_id: 14, status_id: 1, ref_no: "TECHO-RUPP-006", admin_status: "pending" },
+      { user_id: 9, scholarship_id: 6, university_id: 6, major_id: 22, status_id: 1, ref_no: "TECHO-PARA-007", admin_status: "pending" },
+      { user_id: 10, scholarship_id: 7, university_id: 7, major_id: 25, status_id: 1, ref_no: "TECHO-UC-008", admin_status: "pending" },
     ]);
     console.log("Seeded 8 applications.");
 
@@ -368,8 +370,9 @@ async function seed() {
 
     console.log("\n=== Seed complete ===");
     console.log("All your real data has been restored.");
-    console.log("Login: samnang.sok@gmail.com / password123");
-    console.log("Admin: admin@campuspost.com / password123");
+    console.log("System Admin: sysadmin@campuspost.com / password123");
+    console.log("University Admin: admin@campuspost.com / password123");
+    console.log("Student: samnang.sok@gmail.com / password123");
     process.exit(0);
   } catch (error) {
     console.error("Seed failed:", error);

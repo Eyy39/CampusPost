@@ -1,22 +1,28 @@
-const { User, Role } = require('../models');
+const { User, Role, University } = require('../models');
+const bcrypt = require('bcrypt');
 
 exports.listUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      include: [{ model: Role, attributes: ['role_name'] }],
+      include: [
+        { model: Role, attributes: ['role_name'] },
+        { model: University, as: 'AssignedUniversity', attributes: ['university_id', 'name'], required: false },
+      ],
       attributes: { exclude: ['password'] },
-      order: [['created_at', 'DESC']],
+      order: [['createdAt', 'DESC']],
     });
     res.json(users);
   } catch (error) {
-    console.error('List users error:', error.message);
+    console.error('List users error:', error.message, error.stack);
     res.status(500).json({ message: 'Failed to load users' });
   }
 };
 
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: ['password'] },
+    });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -30,10 +36,24 @@ exports.getUserById = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
-    res.status(201).json(user);
+    const { password, confirmPassword, ...rest } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ ...rest, password: hashedPassword });
+    const userData = user.toJSON();
+    delete userData.password;
+    res.status(201).json(userData);
   } catch (error) {
-    res.status(400).json({ message: 'Invalid user payload' });
+    console.error('Create user error:', error.message, error.stack);
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ message: 'A user with this email already exists' });
+    }
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ message: error.errors.map(e => e.message).join(', ') });
+    }
+    res.status(400).json({ message: error.message || 'Invalid user payload' });
   }
 };
 
@@ -45,10 +65,25 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    await user.update(req.body);
-    res.json(user);
+    const { password, ...rest } = req.body;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await user.update({ ...rest, password: hashedPassword });
+    } else {
+      await user.update(rest);
+    }
+    const userData = user.toJSON();
+    delete userData.password;
+    res.json(userData);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to update user' });
+    console.error('Update user error:', error.message, error.stack);
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ message: 'A user with this email already exists' });
+    }
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ message: error.errors.map(e => e.message).join(', ') });
+    }
+    res.status(400).json({ message: error.message || 'Failed to update user' });
   }
 };
 
