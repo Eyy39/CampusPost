@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, DollarSign, CalendarDays, Building2, GraduationCap, Globe, Clock, ChevronRight, ExternalLink, Users, BookOpen, Phone, Award, Target, FileText } from 'lucide-react';
+import { ArrowLeft, Sparkles, DollarSign, CalendarDays, Building2, GraduationCap, Globe, Clock, ChevronRight, ExternalLink, Users, BookOpen, Phone, Award, Target, FileText, Laptop, Briefcase, Heart, Star, CheckCircle } from 'lucide-react';
 import { api } from '../utils/api';
 import Layout from '../components/Layout';
+
+const ICON_MAP = {
+  Laptop, GraduationCap, DollarSign, Briefcase, Building2, Users, Award,
+  FileText, Heart, Star, CheckCircle, Phone, Globe, BookOpen, Target,
+};
+
+const BenefitIcon = ({ name, size = 20, ...props }) => {
+  const Icon = ICON_MAP[name];
+  return Icon ? <Icon size={size} {...props} /> : null;
+};
 
 const TECHO_OFFICIAL = {
   title: 'Techo Digital Talent Scholarship 2026-2027',
   totalSpots: 600,
   benefits: [
-    { icon: '💻', text: '1 Laptop provided' },
-    { icon: '🎓', text: '100% tuition coverage until graduation' },
-    { icon: '💰', text: 'Tuition value from $3,100 to $24,700 USD' },
-    { icon: '💼', text: 'Career opportunities with high salary at ministries, institutions, or tech companies' },
-    { icon: '🏛️', text: 'MPTC support throughout your studies until graduation' },
+    { icon: 'Laptop', text: '1 Laptop provided' },
+    { icon: 'GraduationCap', text: '100% tuition coverage until graduation' },
+    { icon: 'DollarSign', text: 'Tuition value from $3,100 to $24,700 USD' },
+    { icon: 'Briefcase', text: 'Career opportunities with high salary at ministries, institutions, or tech companies' },
+    { icon: 'Building2', text: 'MPTC support throughout your studies until graduation' },
   ],
   requirements: [
     'Passed Bacc II (Grade 12) in the 2025-2026 academic year with grades A, B, or C',
@@ -244,7 +254,7 @@ export default function ScholarshipDetail() {
           <div style={{ display: 'grid', gap: 12 }}>
             {benefits.map((b, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '12px 16px', background: '#fffbeb', borderRadius: 12 }}>
-                <span style={{ fontSize: 20, lineHeight: 1 }}>{b.icon}</span>
+                <BenefitIcon name={b.icon} size={20} color="#b45309" />
                 <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{b.text}</div>
               </div>
             ))}
@@ -424,7 +434,7 @@ export default function ScholarshipDetail() {
         <div style={{ display: 'grid', gap: 12 }}>
           {TECHO_OFFICIAL.benefits.map((b, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '12px 16px', background: '#f0fdf4', borderRadius: 12 }}>
-              <span style={{ fontSize: 20, lineHeight: 1 }}>{b.icon}</span>
+              <BenefitIcon name={b.icon} size={20} color="#059669" />
               <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{b.text}</div>
             </div>
           ))}

@@ -64,8 +64,8 @@ export default function Hero() {
         <div className="hero-right">
           <div className="hero-image">
             <img
-              src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-              alt="Cambodian university campus with students"
+              src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Students researching university options together"
             />
           </div>
         </div>

@@ -68,7 +68,7 @@ export default function Signup() {
           <div
             className="signup-left-bg"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1523050854058-8df90110c7f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
+              backgroundImage: `url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
             }}
           />
           <div className="signup-left-overlay" />

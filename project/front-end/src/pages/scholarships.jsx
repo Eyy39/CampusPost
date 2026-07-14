@@ -257,7 +257,7 @@ export default function Scholarships() {
                 }
 
                 return (
-                  <div key={item.id} style={{ background: '#fff', borderRadius: 20, padding: 24, border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(15,23,42,0.04)' }}>
+                  <div key={item.id} onClick={() => navigate('/scholarships/' + item.id)} style={{ background: '#fff', borderRadius: 20, padding: 24, border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(15,23,42,0.04)', cursor: 'pointer' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 14 }}>
                       <div>
                         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#eff6ff', color: '#2563eb', padding: '6px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
@@ -267,6 +267,9 @@ export default function Scholarships() {
                         <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
                         <p style={{ color: '#64748b', margin: 0 }}>{item.provider}</p>
                       </div>
+                      <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
+                        View Details <ChevronRight size={16} />
+                      </button>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
                       <div style={{ background: '#f8fafc', borderRadius: 14, padding: 14 }}>

@@ -38,7 +38,7 @@ export default function Login() {
           <div
             className="login-left-bg"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
+              backgroundImage: `url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
             }}
           />
           <div className="login-left-overlay" />

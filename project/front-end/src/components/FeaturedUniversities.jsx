@@ -1,44 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Star } from 'lucide-react';
+import { api } from '../utils/api';
 
-const universities = [
-  {
-    name: 'Royal University of Phnom Penh',
-    location: 'Phnom Penh',
-    rating: 4.8,
-    reviews: 245,
-    tuition: '$1,200',
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    name: 'Institute of Technology of Cambodia',
-    location: 'Phnom Penh',
-    rating: 4.6,
-    reviews: 189,
-    tuition: '$1,500',
-    image: 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    name: 'National University of Management',
-    location: 'Phnom Penh',
-    rating: 4.5,
-    reviews: 156,
-    tuition: '$1,000',
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    name: 'University of Health Sciences',
-    location: 'Phnom Penh',
-    rating: 4.7,
-    reviews: 132,
-    tuition: '$1,800',
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-  },
-];
+const fallbackImage = 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
 
 export default function FeaturedUniversities() {
+  const navigate = useNavigate();
+  const [universities, setUniversities] = useState([]);
+  const sectionRef = React.useRef(null);
+
+  useEffect(() => {
+    api.get('/universities')
+      .then((data) => {
+        const mapped = data.slice(0, 4).map((u) => ({
+          id: u.university_id,
+          name: u.name,
+          image: u.logo || fallbackImage,
+          location: [u.city, u.country].filter(Boolean).join(', ') || 'Cambodia',
+          rating: u.ranking ? Math.max(1, 6 - u.ranking).toFixed(1) : '4.5',
+          tuition: u.Majors?.length
+            ? `$${Math.min(...u.Majors.map(m => Number(m.tuition_fee) || 0)).toLocaleString()}–${Math.max(...u.Majors.map(m => Number(m.tuition_fee) || 0)).toLocaleString()}/year`
+            : 'Contact for details',
+        }));
+        setUniversities(mapped);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!universities.length || !sectionRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    const els = sectionRef.current.querySelectorAll('.reveal');
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [universities]);
+
   return (
-    <section className="featured-section">
+    <section className="featured-section" ref={sectionRef}>
       <div className="container">
         <div className="section-header reveal">
           <h2>Featured Universities</h2>
@@ -46,7 +55,7 @@ export default function FeaturedUniversities() {
         </div>
         <div className="universities-grid">
           {universities.map((uni, index) => (
-            <div key={uni.name} className={`university-card reveal reveal-delay-${index + 1}`}>
+            <div key={uni.id || uni.name} className={`university-card reveal reveal-delay-${index + 1}`}>
               <div
                 className="university-card-image"
                 style={{ backgroundImage: `url('${uni.image}')` }}
@@ -72,14 +81,14 @@ export default function FeaturedUniversities() {
                     ))}
                   </div>
                   <span className="rating-text">
-                    {uni.rating} ({uni.reviews} reviews)
+                    {uni.rating}
                   </span>
                 </div>
                 <div className="university-card-footer">
                   <span className="tuition">
                     Tuition: <strong>{uni.tuition}</strong>/year
                   </span>
-                  <button className="detail-btn">Details</button>
+                  <button className="detail-btn" onClick={() => navigate('/universities')}>Details</button>
                 </div>
               </div>
             </div>
