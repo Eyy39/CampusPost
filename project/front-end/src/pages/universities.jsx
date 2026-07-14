@@ -26,7 +26,7 @@ export default function Universities() {
           location: [u.city, u.country].filter(Boolean).join(', ') || 'Cambodia',
           rating: u.ranking ? Math.max(1, 6 - u.ranking).toFixed(1) : '4.5',
           tuition: u.Majors?.length
-            ? `$${Math.min(...u.Majors.map(m => Number(m.tuition_fee) || 0)).toLocaleString()}–${Math.max(...u.Majors.map(m => Number(m.tuition_fee) || 0)).toLocaleString()}/year`
+            ? (() => { const min = Math.min(...u.Majors.map(m => Number(m.tuition_fee) || 0)); const max = Math.max(...u.Majors.map(m => Number(m.tuition_fee) || 0)); return min === max ? `$${min.toLocaleString()}/year` : `$${min.toLocaleString()}–${max.toLocaleString()}/year`; })()
             : 'Contact for details',
           topMajor: u.Majors?.[0]?.major_name || 'General Studies',
           type: 'Public University',

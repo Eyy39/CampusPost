@@ -5,6 +5,7 @@ import Login from "./pages/login.jsx";
 import Signup from "./pages/signup.jsx";
 import About from "./pages/about.jsx";
 import Universities from "./pages/universities.jsx";
+import UniversityDetail from "./pages/university-detail.jsx";
 import Scholarships from "./pages/scholarships.jsx";
 import ScholarshipDetail from "./pages/scholarship-detail.jsx";
 import Forum from "./pages/forum.jsx";
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
         <Route path="/universities" element={<Universities />} />
+        <Route path="/universities/:id" element={<UniversityDetail />} />
         <Route path="/scholarships" element={<Scholarships />} />
         <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
         <Route path="/forum" element={<Forum />} />

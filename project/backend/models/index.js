@@ -12,6 +12,7 @@ const ApplicantProfile = require("./ApplicantProfile");
 const AcademicInformation = require("./AcademicInformation");
 const ApplicationDocument = require("./ApplicationDocument");
 const Review = require("./Review");
+const Comment = require("./Comment");
 
 // Role -> User
 Role.hasMany(User, { foreignKey: "role_id" });
@@ -28,6 +29,14 @@ Application.belongsTo(User, { foreignKey: "user_id" });
 // User -> Review
 User.hasMany(Review, { foreignKey: "user_id" });
 Review.belongsTo(User, { foreignKey: "user_id" });
+
+// Review -> Comment
+Review.hasMany(Comment, { foreignKey: "review_id", as: "Comments" });
+Comment.belongsTo(Review, { foreignKey: "review_id" });
+
+// User -> Comment
+User.hasMany(Comment, { foreignKey: "user_id" });
+Comment.belongsTo(User, { foreignKey: "user_id" });
 
 // University -> Major
 University.hasMany(Major, { foreignKey: "university_id" });
@@ -99,4 +108,5 @@ module.exports = {
   AcademicInformation,
   ApplicationDocument,
   Review,
+  Comment,
 };

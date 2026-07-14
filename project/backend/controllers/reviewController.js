@@ -1,11 +1,18 @@
-const { Review, User, University } = require('../models');
+const { Review, User, University, Comment } = require('../models');
 
 exports.listReviews = async (req, res) => {
   try {
+    const where = req.query.university_id ? { university_id: req.query.university_id } : {};
     const reviews = await Review.findAll({
+      where,
       include: [
-        { model: User, attributes: ['first_name', 'last_name'] },
+        { model: User, attributes: ['user_id', 'first_name', 'last_name'] },
         { model: University, attributes: ['name'] },
+        {
+          model: Comment,
+          as: 'Comments',
+          include: [{ model: User, attributes: ['user_id', 'first_name', 'last_name'] }],
+        },
       ],
       order: [['createdAt', 'DESC']],
     });
@@ -17,12 +24,24 @@ exports.listReviews = async (req, res) => {
 };
 
 exports.createReview = async (req, res) => {
-	try {
-		const review = await Review.create(req.body);
-		res.status(201).json(review);
-	} catch (error) {
-		res.status(400).json({ message: 'Invalid review payload' });
-	}
+  try {
+    const review = await Review.create({
+      user_id: req.user.id,
+      university_id: req.body.university_id,
+      rating: req.body.rating,
+      comment: req.body.comment,
+    });
+    const full = await Review.findByPk(review.review_id, {
+      include: [
+        { model: User, attributes: ['user_id', 'first_name', 'last_name'] },
+        { model: Comment, as: 'Comments', include: [{ model: User, attributes: ['user_id', 'first_name', 'last_name'] }] },
+      ],
+    });
+    res.status(201).json(full);
+  } catch (error) {
+    console.error('Create review error:', error.message);
+    res.status(400).json({ message: error.message || 'Invalid review payload' });
+  }
 };
 
 exports.updateReview = async (req, res) => {

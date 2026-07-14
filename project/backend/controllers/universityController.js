@@ -1,4 +1,4 @@
-const { University, Major, User } = require('../models');
+const { University, Major, Scholarship, Review, Comment, User } = require('../models');
 
 exports.listUniversities = async (req, res) => {
   try {
@@ -21,6 +21,19 @@ exports.getUniversityById = async (req, res) => {
     const university = await University.findByPk(req.params.id, {
       include: [
         { model: Major, as: 'Majors' },
+        { model: Scholarship, as: 'Scholarships' },
+        {
+          model: Review,
+          as: 'Reviews',
+          include: [
+            { model: User, attributes: ['user_id', 'first_name', 'last_name'] },
+            {
+              model: Comment,
+              as: 'Comments',
+              include: [{ model: User, attributes: ['user_id', 'first_name', 'last_name'] }],
+            },
+          ],
+        },
         { model: User, as: 'Admins', attributes: ['user_id', 'first_name', 'last_name', 'email'], required: false },
       ],
     });

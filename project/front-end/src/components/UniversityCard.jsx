@@ -1,11 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Star, ArrowRight } from 'lucide-react';
 import './UniversityCard.css';
 
 export default function UniversityCard({ university }) {
-  const { name, image, location, rating, tuition, topMajor, type } = university;
+  const navigate = useNavigate();
+  const { id, name, image, location, rating, tuition, topMajor, type } = university;
 
   const badgeColor = type === 'Public University' ? '#F97316' : '#10B981';
+
+  const handleViewDetails = () => {
+    navigate(`/universities/${id}`);
+  };
 
   return (
     <article className="univ-card">
@@ -41,7 +47,7 @@ export default function UniversityCard({ university }) {
           </div>
         </div>
 
-        <button className="univ-card-btn">
+        <button className="univ-card-btn" onClick={handleViewDetails}>
           View Details
           <ArrowRight size={16} />
         </button>
