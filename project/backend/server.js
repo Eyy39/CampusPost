@@ -13,6 +13,7 @@ const applicationRoutes = require("./routes/applications");
 const reviewRoutes = require("./routes/reviews");
 const adminRoutes = require("./routes/admin");
 const universityAdminRoutes = require("./routes/universityAdmin");
+const uploadRoutes = require("./routes/upload");
 const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
@@ -54,6 +55,7 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/university-admin", universityAdminRoutes);
+app.use("/api/upload", authMiddleware, uploadRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
