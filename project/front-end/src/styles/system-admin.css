@@ -105,14 +105,14 @@ button { cursor: pointer; }
 }
 
 .sa-logout {
-  margin-top: auto; min-height: 38px; border: 0;
+  margin-top: auto; min-height: 40px; border: 0;
   border-radius: var(--sa-radius-md); padding: 0 14px;
   display: flex; align-items: center; gap: 11px;
-  background: transparent; color: rgba(226,232,240,0.7);
-  font-size: 13px; font-weight: 500;
+  background: rgba(239,68,68,0.10); color: #fca5a5;
+  font-size: 13px; font-weight: 600;
   transition: background 0.15s ease, color 0.15s ease;
 }
-.sa-logout:hover { background: rgba(239,68,68,0.12); color: #fca5a5; }
+.sa-logout:hover { background: rgba(239,68,68,0.22); color: #f87171; }
 
 /* Mobile */
 .sa-mobile-toggle {
@@ -410,7 +410,7 @@ button { cursor: pointer; }
   display: grid; place-items: center; padding: 20px;
 }
 .sa-modal {
-  width: min(100%, 440px); background: #fff;
+  width: 100%; max-width: 440px; background: #fff;
   border-radius: var(--sa-radius-lg); padding: 24px;
   box-shadow: 0 16px 48px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
   display: grid; gap: 16px;

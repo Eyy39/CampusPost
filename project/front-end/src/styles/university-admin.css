@@ -37,9 +37,9 @@
 .ua-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .ua-detail-section { display: flex; flex-direction: column; gap: 10px; }
 .ua-detail-section-title { font-size: 14px; font-weight: 700; color: var(--sa-text); border-bottom: 1px solid var(--sa-border); padding-bottom: 8px; }
-.ua-detail-row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
-.ua-detail-row dt { color: var(--sa-muted); font-weight: 600; }
-.ua-detail-row dd { margin: 0; font-weight: 600; color: var(--sa-text); text-align: right; }
+.ua-detail-row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 0; border-bottom: none; }
+.ua-detail-row dt { color: var(--sa-muted); font-weight: 600; min-width: auto; font-size: 13px; }
+.ua-detail-row dd { margin: 0; font-weight: 600; color: var(--sa-text); text-align: right; font-size: 13px; }
 .ua-note-box {
   background: var(--sa-surface-soft);
   border: 1px solid var(--sa-border);
