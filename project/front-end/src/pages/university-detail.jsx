@@ -271,8 +271,8 @@ export default function UniversityDetail() {
           image: data.logo || FALLBACK_IMAGE,
           location: [data.city, data.country].filter(Boolean).join(', ') || 'Cambodia',
           address: data.address || null,
-          ranking: data.ranking || null,
-          acceptanceRate: data.acceptance_rate || null,
+          // ranking: data.ranking || null,
+          // acceptanceRate: data.acceptance_rate || null,
           rating: avgRating || (data.ranking ? Math.max(1, 6 - data.ranking).toFixed(1) : '4.5'),
           tuition: data.Majors?.length
             ? (minTuition === maxTuition
@@ -285,7 +285,7 @@ export default function UniversityDetail() {
           description: data.description || 'A premier educational institution dedicated to academic excellence.',
           website: data.website || null,
           phone: data.phone || null,
-          email: data.email || null,
+          // email: data.email || null,
         });
         setLoading(false);
       })
