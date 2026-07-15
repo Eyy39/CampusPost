@@ -5,6 +5,7 @@ exports.listUniversities = async (req, res) => {
     const universities = await University.findAll({
       include: [
         { model: Major, as: 'Majors' },
+        { model: Scholarship, as: 'Scholarships', attributes: ['scholarship_id', 'title'] },
         { model: User, as: 'Admins', attributes: ['user_id', 'first_name', 'last_name', 'email'], required: false },
       ],
       order: [['ranking', 'ASC']],

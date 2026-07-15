@@ -200,10 +200,56 @@ export default function UniversityDetail() {
   const [error, setError] = useState(null);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState(null);
 
   useEffect(() => {
     setIsLoggedIn(Boolean(localStorage.getItem('campuspost_token')));
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('campuspost_token');
+    if (token && id) {
+      api.get(`/favorites/check/${id}`).then((data) => {
+        setIsFavorite(data.isFavorite);
+        setFavoriteId(data.favorite_id);
+      }).catch(() => {});
+    }
+  }, [id]);
+
+  const toggleFavorite = async () => {
+    console.log('toggleFavorite called, isFavorite:', isFavorite, 'favoriteId:', favoriteId);
+    const token = localStorage.getItem('campuspost_token');
+    console.log('Token exists:', !!token);
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    if (isFavorite && favoriteId) {
+      try {
+        console.log('Removing favorite:', favoriteId);
+        await api.delete(`/favorites/${favoriteId}`);
+        setIsFavorite(false);
+        setFavoriteId(null);
+        console.log('Favorite removed successfully');
+      } catch (err) {
+        console.error('Failed to remove favorite:', err);
+        alert('Failed to remove favorite. Please try again.');
+      }
+    } else {
+      try {
+        console.log('Adding favorite, university_id:', parseInt(id));
+        const result = await api.post('/favorites', { university_id: parseInt(id) });
+        console.log('Favorite added:', result);
+        setIsFavorite(true);
+        setFavoriteId(result.favorite_id);
+      } catch (err) {
+        console.error('Failed to add favorite:', err);
+        alert('Failed to save favorite: ' + err.message);
+      }
+    }
+  };
 
   const fetchUniversity = () => {
     api.get(`/universities/${id}`)
@@ -595,8 +641,18 @@ export default function UniversityDetail() {
             <div className="detail-sidebar-card detail-sidebar-apply">
               <h3>Apply Now</h3>
               <p>Start your application to {university.name} today.</p>
-              <button className="detail-apply-btn">
+              <button className="detail-apply-btn" onClick={() => navigate('/application')}>
                 Start Your Application
+              </button>
+            </div>
+
+            <div className="detail-sidebar-card">
+              <button
+                className={`detail-favorite-btn ${isFavorite ? 'active' : ''}`}
+                onClick={toggleFavorite}
+              >
+                <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
+                {isFavorite ? 'Saved to Favorites' : 'Save to Favorites'}
               </button>
             </div>
 

@@ -1,0 +1,4 @@
+◇ injected env (7) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Connected to MySQL database: campuspost_db
+Server running on http://localhost:4000

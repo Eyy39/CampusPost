@@ -180,24 +180,59 @@
   transform: rotate(45deg);
 }
 
-.filter-rating-labels {
+.filter-star-rating {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
 }
 
-.filter-rating-labels span {
-  padding: 4px 14px;
-  border-radius: 9999px;
+.filter-star-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #D1D5DB;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-star-btn:hover {
+  color: #FBBF24;
+  transform: scale(1.1);
+}
+
+.filter-star-btn.active {
+  color: #F59E0B;
+}
+
+.filter-star-clear {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  margin-left: 8px;
+  cursor: pointer;
+  color: #6B7280;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6B7280;
-  background: #F3F4F6;
-  transition: all 0.25s ease;
+  transition: color 0.2s ease;
 }
 
-.filter-rating-labels span.active {
-  background: #2563EB;
-  color: #FFFFFF;
+.filter-star-clear:hover {
+  color: #2563EB;
+}
+
+.filter-star-display {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #F59E0B;
+  padding: 6px 12px;
+  background: #FFFBEB;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 4px;
 }
 
 .filter-apply-btn {

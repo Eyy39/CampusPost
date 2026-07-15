@@ -42,6 +42,35 @@
   letter-spacing: 0.02em;
 }
 
+.univ-card-favorite {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #9CA3AF;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+
+.univ-card-favorite:hover {
+  background: #FFFFFF;
+  color: #EF4444;
+  transform: scale(1.1);
+}
+
+.univ-card-favorite.active {
+  color: #EF4444;
+  background: #FFFFFF;
+}
+
 .univ-card-body {
   padding: 20px;
   display: flex;

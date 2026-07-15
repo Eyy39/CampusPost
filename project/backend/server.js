@@ -88,7 +88,6 @@ async function start() {
     await sequelize.authenticate();
     console.log(`Connected to MySQL database: ${process.env.DB_NAME}`);
     await sequelize.sync();
-    await sequelize.sync({ alter: true });
     await ensureUserColumns();
 
     app.listen(port, () => {

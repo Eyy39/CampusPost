@@ -232,3 +232,114 @@
     grid-column: 1 !important;
   }
 }
+
+.profile-favorites-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-fav-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #f7faff;
+  border: 1px solid #e4ecf8;
+  transition: all 0.2s ease;
+}
+
+.profile-fav-card:hover {
+  border-color: #c8d6ec;
+  box-shadow: 0 4px 12px rgba(15, 43, 90, 0.06);
+}
+
+.profile-fav-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-fav-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-fav-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-fav-info h3 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.profile-fav-info h3:hover {
+  color: #2563EB;
+}
+
+.profile-fav-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.profile-fav-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.profile-fav-tuition {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2563EB;
+}
+
+.profile-fav-actions {
+  flex-shrink: 0;
+}
+
+.profile-fav-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-fav-remove:hover {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+@media (max-width: 640px) {
+  .profile-fav-card {
+    flex-wrap: wrap;
+  }
+
+  .profile-fav-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

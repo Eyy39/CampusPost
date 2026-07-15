@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { UserCircle2, Mail, Phone, CalendarDays, Edit3, Save, X, CheckCircle, Camera } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UserCircle2, Mail, Phone, CalendarDays, Edit3, Save, X, CheckCircle, Camera, Heart, MapPin, Star, Trash2 } from 'lucide-react';
 import Layout from '../components/Layout';
 import { api } from '../utils/api';
 import { saveAuthSession } from '../api/auth';
@@ -8,13 +9,23 @@ import '../styles/profile.css';
 const API_BASE = "http://localhost:4000/api";
 
 export default function Profile() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ first_name: '', last_name: '', phone: '' });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [loadingFavs, setLoadingFavs] = useState(true);
   const fileInputRef = useRef(null);
+
+  const fetchFavorites = () => {
+    api.get('/favorites').then((data) => {
+      setFavorites(data);
+      setLoadingFavs(false);
+    }).catch(() => setLoadingFavs(false));
+  };
 
   useEffect(() => {
     const savedUser = localStorage.getItem('campuspost_user');
@@ -28,7 +39,17 @@ export default function Profile() {
       setForm({ first_name: user.first_name || '', last_name: user.last_name || '', phone: user.phone || '' });
       localStorage.setItem('campuspost_user', JSON.stringify(user));
     }).catch(() => {});
+    fetchFavorites();
   }, []);
+
+  const removeFavorite = async (favoriteId) => {
+    try {
+      await api.delete(`/favorites/${favoriteId}`);
+      setFavorites(prev => prev.filter(f => f.favorite_id !== favoriteId));
+    } catch (err) {
+      alert('Failed to remove favorite. Please try again.');
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -185,6 +206,55 @@ export default function Profile() {
                 )}
               </div>
             </div>
+          </section>
+
+          <section className="profile-panel" style={{ gridColumn: '1 / -1' }}>
+            <h2 style={{ margin: '0 0 16px' }}>
+              <Heart size={18} style={{ display: 'inline', verticalAlign: 'text-bottom', marginRight: 8, color: '#EF4444' }} />
+              Saved Universities
+            </h2>
+            {loadingFavs ? (
+              <div style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>Loading favorites...</div>
+            ) : favorites.length === 0 ? (
+              <div style={{ padding: 24, textAlign: 'center', color: '#94a3b8' }}>
+                No saved universities yet. Browse universities and click the heart icon to save them here.
+              </div>
+            ) : (
+              <div className="profile-favorites-grid">
+                {favorites.map((fav) => {
+                  const uni = fav.University;
+                  if (!uni) return null;
+                  const fees = uni.Majors?.map(m => Number(m.tuition_fee) || 0) || [];
+                  const minFee = fees.length ? Math.min(...fees) : 0;
+                  const maxFee = fees.length ? Math.max(...fees) : 0;
+                  const tuitionDisplay = fees.length
+                    ? (minFee === maxFee ? `$${minFee.toLocaleString()}/year` : `$${minFee.toLocaleString()}–$${maxFee.toLocaleString()}/year`)
+                    : 'Contact for details';
+                  const rating = uni.ranking ? Math.max(1, 6 - uni.ranking).toFixed(1) : '4.5';
+
+                  return (
+                    <div key={fav.favorite_id} className="profile-fav-card">
+                      <div className="profile-fav-image">
+                        <img src={uni.logo || 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'} alt={uni.name} />
+                      </div>
+                      <div className="profile-fav-info">
+                        <h3 onClick={() => navigate(`/universities/${uni.university_id}`)}>{uni.name}</h3>
+                        <div className="profile-fav-meta">
+                          <span><MapPin size={13} /> {[uni.city, uni.country].filter(Boolean).join(', ') || 'Cambodia'}</span>
+                          <span><Star size={13} fill="#F59E0B" stroke="#F59E0B" /> {rating}</span>
+                        </div>
+                        <div className="profile-fav-tuition">{tuitionDisplay}</div>
+                      </div>
+                      <div className="profile-fav-actions">
+                        <button className="profile-fav-remove" onClick={() => removeFavorite(fav.favorite_id)} title="Remove from favorites">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </section>
         </div>
       </div>

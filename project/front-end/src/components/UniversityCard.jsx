@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Star, ArrowRight } from 'lucide-react';
+import { MapPin, Star, ArrowRight, Heart } from 'lucide-react';
 import './UniversityCard.css';
 
-export default function UniversityCard({ university }) {
+export default function UniversityCard({ university, isFavorite, onToggleFavorite }) {
   const navigate = useNavigate();
   const { id, name, image, location, rating, tuition, topMajor, type } = university;
 
@@ -13,6 +13,13 @@ export default function UniversityCard({ university }) {
     navigate(`/universities/${id}`);
   };
 
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(id);
+    }
+  };
+
   return (
     <article className="univ-card">
       <div className="univ-card-image">
@@ -20,6 +27,15 @@ export default function UniversityCard({ university }) {
         <span className="univ-card-badge" style={{ background: badgeColor }}>
           {type}
         </span>
+        {onToggleFavorite && (
+          <button
+            className={`univ-card-favorite ${isFavorite ? 'active' : ''}`}
+            onClick={handleFavoriteClick}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+          </button>
+        )}
       </div>
 
       <div className="univ-card-body">

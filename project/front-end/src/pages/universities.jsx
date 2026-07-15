@@ -14,23 +14,34 @@ export default function Universities() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState('Highest Rated');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({ name: '', tuition: 15000, major: '', minRating: 0 });
+  const [favorites, setFavorites] = useState({});
   const perPage = 6;
 
   useEffect(() => {
     api.get('/universities')
       .then((data) => {
-        const mapped = data.map((u) => ({
-          id: u.university_id,
-          name: u.name,
-          image: u.logo || 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-          location: [u.city, u.country].filter(Boolean).join(', ') || 'Cambodia',
-          rating: u.ranking ? Math.max(1, 6 - u.ranking).toFixed(1) : '4.5',
-          tuition: u.Majors?.length
-            ? (() => { const min = Math.min(...u.Majors.map(m => Number(m.tuition_fee) || 0)); const max = Math.max(...u.Majors.map(m => Number(m.tuition_fee) || 0)); return min === max ? `$${min.toLocaleString()}/year` : `$${min.toLocaleString()}–${max.toLocaleString()}/year`; })()
-            : 'Contact for details',
-          topMajor: u.Majors?.[0]?.major_name || 'General Studies',
-          type: 'Public University',
-        }));
+        const mapped = data.map((u) => {
+          const fees = u.Majors?.map(m => Number(m.tuition_fee) || 0) || [];
+          const tuitionMin = fees.length ? Math.min(...fees) : 0;
+          const tuitionMax = fees.length ? Math.max(...fees) : 0;
+          const majorNames = u.Majors?.map(m => m.major_name.toLowerCase()) || [];
+          return {
+            id: u.university_id,
+            name: u.name,
+            image: u.logo || 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            location: [u.city, u.country].filter(Boolean).join(', ') || 'Cambodia',
+            rating: u.ranking ? Math.max(1, 6 - u.ranking).toFixed(1) : '4.5',
+            tuition: fees.length
+              ? (tuitionMin === tuitionMax ? `$${tuitionMin.toLocaleString()}/year` : `$${tuitionMin.toLocaleString()}–${tuitionMax.toLocaleString()}/year`)
+              : 'Contact for details',
+            tuitionMin,
+            tuitionMax,
+            majorNames,
+            topMajor: u.Majors?.[0]?.major_name || 'General Studies',
+            type: 'Public University',
+          };
+        });
         setUniversities(mapped);
         setLoading(false);
       })
@@ -38,9 +49,55 @@ export default function Universities() {
         setError(err.message);
         setLoading(false);
       });
+
+    const token = localStorage.getItem('campuspost_token');
+    if (token) {
+      api.get('/favorites').then((data) => {
+        const favMap = {};
+        data.forEach(f => { favMap[f.university_id] = f.favorite_id; });
+        setFavorites(favMap);
+      }).catch(() => {});
+    }
   }, []);
 
-  const sorted = [...universities].sort((a, b) => {
+  const toggleFavorite = async (universityId) => {
+    const token = localStorage.getItem('campuspost_token');
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
+
+    const existingFavId = favorites[universityId];
+    if (existingFavId) {
+      try {
+        await api.delete(`/favorites/${existingFavId}`);
+        setFavorites(prev => {
+          const next = { ...prev };
+          delete next[universityId];
+          return next;
+        });
+      } catch (err) {
+        alert('Failed to remove favorite. Please try again.');
+      }
+    } else {
+      try {
+        const result = await api.post('/favorites', { university_id: universityId });
+        setFavorites(prev => ({ ...prev, [universityId]: result.favorite_id }));
+      } catch (err) {
+        alert('Failed to save favorite. Please try again.');
+      }
+    }
+  };
+
+  const filtered = universities.filter((u) => {
+    if (filters.name.trim() && !u.name.toLowerCase().includes(filters.name.trim().toLowerCase())) return false;
+    if (u.tuitionMin > filters.tuition) return false;
+    if (filters.major && !u.majorNames.some(m => m.includes(filters.major.toLowerCase()))) return false;
+    if (filters.minRating > 0 && parseFloat(u.rating) < filters.minRating) return false;
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
     if (sortBy === 'Name A-Z') return a.name.localeCompare(b.name);
     if (sortBy === 'Lowest Tuition') return a.tuition.localeCompare(b.tuition);
     return b.rating - a.rating;
@@ -102,7 +159,7 @@ export default function Universities() {
                 <p>
                   {loading
                     ? 'Loading...'
-                    : `Showing ${sorted.length} universities found in Cambodia`}
+                    : `Showing ${sorted.length} universities found`}
                 </p>
               </div>
               <div className="univ-header-right">
@@ -127,7 +184,7 @@ export default function Universities() {
 
             <div className="univ-layout">
               <div className={`univ-sidebar${mobileFilterOpen ? ' open' : ''}`}>
-                <FilterSidebar />
+                <FilterSidebar onApply={(f) => { setFilters(f); setCurrentPage(1); }} />
               </div>
 
               <div
@@ -152,7 +209,12 @@ export default function Universities() {
                   <>
                     <div className="univ-cards-grid">
                       {paged.map((uni) => (
-                        <UniversityCard key={uni.id} university={uni} />
+                        <UniversityCard
+                          key={uni.id}
+                          university={uni}
+                          isFavorite={!!favorites[uni.id]}
+                          onToggleFavorite={toggleFavorite}
+                        />
                       ))}
                     </div>
 

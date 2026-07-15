@@ -43,7 +43,7 @@ University.hasMany(Major, { foreignKey: "university_id" });
 Major.belongsTo(University, { foreignKey: "university_id" });
 
 // University -> Scholarship
-University.hasMany(Scholarship, { foreignKey: "university_id" });
+University.hasMany(Scholarship, { foreignKey: "university_id", as: "Scholarships" });
 Scholarship.belongsTo(University, { foreignKey: "university_id" });
 
 // User -> University (university admin assignment)
