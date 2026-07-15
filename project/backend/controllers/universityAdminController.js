@@ -10,7 +10,9 @@ exports.dashboard = async (req, res) => {
     const university_id = await getAdminUniversityId(req);
     if (!university_id) return res.status(403).json({ message: 'No university assigned' });
 
+    const { Op } = require('sequelize');
     const where = { university_id };
+    const whereNoDraft = { university_id, admin_status: { [Op.ne]: 'draft' } };
 
     const [
       totalApplications,
@@ -21,13 +23,13 @@ exports.dashboard = async (req, res) => {
       recentApplications,
       university,
     ] = await Promise.all([
-      Application.count({ where }),
+      Application.count({ where: whereNoDraft }),
       Application.count({ where: { ...where, admin_status: 'pending' } }),
       Application.count({ where: { ...where, admin_status: 'approved' } }),
       Application.count({ where: { ...where, admin_status: 'rejected' } }),
       Scholarship.count({ where }),
       Application.findAll({
-        where,
+        where: whereNoDraft,
         order: [['application_id', 'DESC']],
         limit: 5,
         include: [
@@ -144,8 +146,9 @@ exports.listApplications = async (req, res) => {
     const university_id = await getAdminUniversityId(req);
     if (!university_id) return res.status(403).json({ message: 'No university assigned' });
 
+    const { Op } = require('sequelize');
     const applications = await Application.findAll({
-      where: { university_id },
+      where: { university_id, admin_status: { [Op.ne]: 'draft' } },
       order: [['application_id', 'DESC']],
       include: [
         { model: User, attributes: ['first_name', 'last_name', 'email'] },

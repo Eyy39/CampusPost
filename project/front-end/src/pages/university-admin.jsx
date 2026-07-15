@@ -449,13 +449,12 @@ function DashboardView({ stats, navigate }) {
                   <th>Applicant</th>
                   <th>Program</th>
                   <th>Scholarship</th>
-                  <th>Date</th>
-                  <th>Status</th>
+                <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {(stats.recentApplications || []).length === 0 && (
-                  <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--sa-muted)", padding: 24 }}>No applications yet.</td></tr>
+                  <tr><td colSpan={4} style={{ textAlign: "center", color: "var(--sa-muted)", padding: 24 }}>No applications yet.</td></tr>
                 )}
                 {(stats.recentApplications || []).map((app, idx) => (
                   <tr key={app.application_id}>
@@ -470,7 +469,6 @@ function DashboardView({ stats, navigate }) {
                     </td>
                     <td>{app.Major?.major_name || "—"}</td>
                     <td>{app.Scholarship?.title || "—"}</td>
-                    <td>{formatDate(app.createdAt)}</td>
                     <td><StatusPill status={app.admin_status || "pending"} /></td>
                   </tr>
                 ))}
@@ -675,14 +673,13 @@ function ApplicationsView({ applications, onView, onApprove, onReject, onToast }
                 <th>Ref No</th>
                 <th>Program</th>
                 <th>Scholarship</th>
-                <th>Applied</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {paged.length === 0 && (
-                <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--sa-muted)", padding: 24 }}>No applications found.</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: "center", color: "var(--sa-muted)", padding: 24 }}>No applications found.</td></tr>
               )}
               {paged.map((app, idx) => {
                 const user = app.User || {};
@@ -702,7 +699,6 @@ function ApplicationsView({ applications, onView, onApprove, onReject, onToast }
                     <td>{app.ref_no || "—"}</td>
                     <td>{app.Major?.major_name || "—"}</td>
                     <td style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{app.Scholarship?.title || "—"}</td>
-                    <td>{formatDate(app.createdAt)}</td>
                     <td><StatusPill status={appStatus} /></td>
                     <td>
                       <div className="sa-row-actions">

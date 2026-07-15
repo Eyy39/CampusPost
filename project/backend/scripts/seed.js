@@ -347,12 +347,23 @@ async function seed() {
     // ==========================================
     // USER ACCOUNTS
     // ==========================================
+    const hash = await bcrypt.hash("password123", 10);
+
+    const [sysadmin] = await User.findOrCreate({
+      where: { email: "sysadmin@campuspost.com" },
+      defaults: { user_id: 1, role_id: 3, first_name: "System", last_name: "Admin", password: hash, phone: "099999999" },
+    });
+    console.log("System admin ensured: sysadmin@campuspost.com");
+
+    const [uniAdmin] = await User.findOrCreate({
+      where: { email: "admin@campuspost.com" },
+      defaults: { user_id: 2, role_id: 2, first_name: "Admin", last_name: "User", password: hash, phone: "099999998", university_id: 1 },
+    });
+    console.log("University admin ensured: admin@campuspost.com");
+
     const existingUsers = await User.count();
-    if (existingUsers === 0) {
-      const hash = await bcrypt.hash("password123", 10);
+    if (existingUsers <= 2) {
       await User.bulkCreate([
-        { user_id: 1, role_id: 3, first_name: "System", last_name: "Admin", email: "sysadmin@campuspost.com", password: hash, phone: "099999999" },
-        { user_id: 2, role_id: 2, first_name: "Admin", last_name: "User", email: "admin@campuspost.com", password: hash, phone: "099999998", university_id: 1 },
         { user_id: 3, role_id: 1, first_name: "Samnang", last_name: "Sok", email: "samnang.sok@gmail.com", password: hash, phone: "012345678" },
         { user_id: 4, role_id: 1, first_name: "Sreypov", last_name: "Chan", email: "sreypov.chan@gmail.com", password: hash, phone: "098765432" },
         { user_id: 5, role_id: 1, first_name: "Piseth", last_name: "Keo", email: "piseth.keo@gmail.com", password: hash, phone: "077889900" },
@@ -362,9 +373,9 @@ async function seed() {
         { user_id: 9, role_id: 1, first_name: "Mengleang", last_name: "Seng", email: "mengleang.seng@gmail.com", password: hash, phone: "069123456" },
         { user_id: 10, role_id: 1, first_name: "Kalyan", last_name: "Ouk", email: "kalyan.ouk@gmail.com", password: hash, phone: "089776655" },
       ]);
-      console.log("Seeded 10 users.");
+      console.log("Seeded sample users.");
     } else {
-      console.log("Users already exist, skipping.");
+      console.log("Users already exist, skipping sample users.");
     }
 
     // ==========================================
