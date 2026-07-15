@@ -2,7 +2,9 @@ const { Scholarship, University } = require('../models');
 
 exports.listScholarships = async (req, res) => {
   try {
+    const where = req.query.university_id ? { university_id: req.query.university_id } : {};
     const scholarships = await Scholarship.findAll({
+      where,
       include: [{ model: University, as: 'University', attributes: ['name'] }],
       order: [['deadline', 'ASC']],
     });

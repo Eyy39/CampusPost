@@ -48,7 +48,7 @@ export default function Universities() {
             location:
               [u.city, u.country].filter(Boolean).join(", ") || "Cambodia",
             city: (u.city || "").toLowerCase(),
-            rating: u.ranking ? Math.max(1, 6 - u.ranking).toFixed(1) : "4.5",
+            rating: u.avgRating ? Number(u.avgRating).toFixed(1) : "0.0",
             tuitionFee: minFee,
             tuition: fees.length
               ? minFee === maxFee

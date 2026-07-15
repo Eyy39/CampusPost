@@ -1,12 +1,17 @@
-const { University, Major, Scholarship, Review, Comment, User } = require('../models');
+const { University, Major, Scholarship, sequelize } = require('../models');
 
 exports.listUniversities = async (req, res) => {
   try {
     const universities = await University.findAll({
+      attributes: {
+        include: [
+          [sequelize.literal('(SELECT ROUND(AVG(rating), 1) FROM Review WHERE Review.university_id = University.university_id)'), 'avgRating'],
+          [sequelize.literal('(SELECT COUNT(*) FROM Review WHERE Review.university_id = University.university_id)'), 'reviewCount'],
+        ],
+      },
       include: [
-        { model: Major, as: 'Majors' },
-        { model: Scholarship, as: 'Scholarships', attributes: ['scholarship_id', 'title'] },
-        { model: User, as: 'Admins', attributes: ['user_id', 'first_name', 'last_name', 'email'], required: false },
+        { model: Major, as: 'Majors', separate: true },
+        { model: Scholarship, as: 'Scholarships', attributes: ['scholarship_id', 'title'], separate: true },
       ],
       order: [['ranking', 'ASC']],
     });
@@ -19,25 +24,7 @@ exports.listUniversities = async (req, res) => {
 
 exports.getUniversityById = async (req, res) => {
   try {
-    const university = await University.findByPk(req.params.id, {
-      include: [
-        { model: Major, as: 'Majors' },
-        { model: Scholarship, as: 'Scholarships' },
-        {
-          model: Review,
-          as: 'Reviews',
-          include: [
-            { model: User, attributes: ['user_id', 'first_name', 'last_name'] },
-            {
-              model: Comment,
-              as: 'Comments',
-              include: [{ model: User, attributes: ['user_id', 'first_name', 'last_name'] }],
-            },
-          ],
-        },
-        { model: User, as: 'Admins', attributes: ['user_id', 'first_name', 'last_name', 'email'], required: false },
-      ],
-    });
+    const university = await University.findByPk(req.params.id);
     if (!university) {
       return res.status(404).json({ message: 'University not found' });
     }
