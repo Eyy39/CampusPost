@@ -56,6 +56,17 @@ exports.createApplication = async (req, res) => {
 
     const user_id = req.user.id;
 
+    if (scholarship_id) {
+      const existing = await Application.findOne({
+        where: { user_id, scholarship_id },
+        transaction: t,
+      });
+      if (existing) {
+        await t.rollback();
+        return res.status(409).json({ message: 'You have already applied to this scholarship.' });
+      }
+    }
+
     const application = await Application.create({
       user_id,
       scholarship_id: scholarship_id || null,
@@ -64,6 +75,9 @@ exports.createApplication = async (req, res) => {
       status_id: 1,
       admin_status: admin_status || 'draft',
     }, { transaction: t });
+
+    const ref_no = `APP-${String(application.application_id).padStart(5, '0')}`;
+    await application.update({ ref_no }, { transaction: t });
 
     if (profile) {
       await ApplicantProfile.create({

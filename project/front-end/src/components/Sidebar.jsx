@@ -62,7 +62,7 @@ export default function Sidebar({ currentStep, formData }) {
             "National ID / Passport",
             "High School Transcript",
             "Bac II Certification",
-            "Your Photo",
+            "Photo",
           ].map((doc, i, arr) => (
             <div key={doc} className={i < arr.length - 1 ? "doc-item" : "doc-item-last"}>
               <DocumentIcon /> {doc}

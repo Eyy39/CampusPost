@@ -131,6 +131,10 @@ export default function ApplicationDashboard() {
 
   const isCADT = data.university.includes("CADT");
 
+  const photoPreview = data.documents.passportPhoto?.file
+    ? URL.createObjectURL(data.documents.passportPhoto.file)
+    : null;
+
   const cadtFaculties = ["Institute of Digital Technology (IDT)"];
   const cadtMajors = {
     "Institute of Digital Technology (IDT)": [
@@ -234,9 +238,41 @@ export default function ApplicationDashboard() {
     return match ? match.scholarship_id : null;
   };
 
-  const buildApiPayload = () => {
+  const API_BASE = "http://localhost:4000/api";
+
+  const uploadFileToImageKit = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const token = localStorage.getItem("campuspost_token");
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    if (!res.ok) throw new Error("File upload failed");
+    const result = await res.json();
+    return result.url;
+  };
+
+  const buildApiPayload = async () => {
     const uniId = findUniId(data.university);
     const matchedMajor = majorsList.find((m) => m.major_name === data.major);
+
+    const docEntries = Object.entries(data.documents).filter(([, v]) => v);
+    const documents = await Promise.all(
+      docEntries.map(async ([key, val]) => {
+        let fileUrl = val.name || "";
+        if (val.file) {
+          try {
+            fileUrl = await uploadFileToImageKit(val.file);
+          } catch (e) {
+            console.error("Upload failed for", key, e);
+          }
+        }
+        return { document_type: key, file_url: fileUrl };
+      })
+    );
+
     return {
       user_id: getUserId(),
       scholarship_id: findScholarshipId(uniId),
@@ -260,12 +296,7 @@ export default function ApplicationDashboard() {
         english_proficiency: data.englishProficiency,
         awards: data.awards,
       },
-      documents: Object.entries(data.documents)
-        .filter(([, v]) => v)
-        .map(([key, val]) => ({
-          document_type: key,
-          file_url: val.name || "",
-        })),
+      documents,
     };
   };
 
@@ -291,7 +322,7 @@ export default function ApplicationDashboard() {
     saveDraftToDB(entry.id, { ...data, id: entry.id });
 
     try {
-      const payload = buildApiPayload();
+      const payload = await buildApiPayload();
       let res;
       if (serverAppId) {
         res = await api.put(`/applications/${serverAppId}`, payload);
@@ -322,7 +353,7 @@ export default function ApplicationDashboard() {
     setSubmitting(true);
 
     try {
-      const payload = buildApiPayload();
+      const payload = await buildApiPayload();
       let res;
       if (serverAppId) {
         res = await api.put(`/applications/${serverAppId}`, {
@@ -355,7 +386,8 @@ export default function ApplicationDashboard() {
       saveDraftToDB(entry.id, { ...data, id: entry.id, confirmed: true });
     } catch (err) {
       console.error("Submit failed:", err);
-      alert("Failed to submit application. Please try again.");
+      const msg = err?.response?.data?.message || err?.message || "Failed to submit application. Please try again.";
+      alert(msg);
     } finally {
       setSubmitting(false);
     }
@@ -398,7 +430,7 @@ export default function ApplicationDashboard() {
         if (!data.documents.diploma)
           errs.diploma = "Diploma / Graduation Certificate is required";
         if (!data.documents.passportPhoto)
-          errs.passportPhoto = "Your photo is required";
+          errs.passportPhoto = "Photo is required";
         break;
     }
     setErrors(errs);
@@ -442,7 +474,7 @@ export default function ApplicationDashboard() {
     { key: "nationalId", label: "National ID / Passport" },
     { key: "transcript", label: "High School Transcript" },
     { key: "diploma", label: "Diploma / Graduation Certificate" },
-    { key: "passportPhoto", label: "Your Photo" },
+    { key: "passportPhoto", label: "Photo" },
     { key: "englishCert", label: "English Certificate (optional)" },
   ];
 
@@ -467,14 +499,38 @@ export default function ApplicationDashboard() {
           Fields marked with <span style={{ color: "#E53E3E" }}>*</span> are
           required
         </div>
-        <Field label="Full Name" required error={errors.fullName}>
-          <input
-            className={`input ${errors.fullName ? "input-error" : ""}`}
-            placeholder="e.g. Sopheak Vann"
-            value={data.fullName}
-            onChange={set("fullName")}
-          />
-        </Field>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+          <div style={{ flex: 1 }}>
+            <Field label="Full Name" required error={errors.fullName}>
+              <input
+                className={`input ${errors.fullName ? "input-error" : ""}`}
+                placeholder="e.g. Sopheak Vann"
+                value={data.fullName}
+                onChange={set("fullName")}
+              />
+            </Field>
+          </div>
+          <div style={{ flexShrink: 0, marginTop: 6 }}>
+            <label className="label">Photo</label>
+            <div style={{
+              width: 90,
+              height: 110,
+              borderRadius: 8,
+              border: '2px dashed #d1d5db',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              background: photoPreview ? 'transparent' : '#f9fafb',
+            }}>
+              {photoPreview ? (
+                <img src={photoPreview} alt="Your photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: 11, color: '#9ca3af', textAlign: 'center', padding: 4 }}>Upload photo in Step 4</span>
+              )}
+            </div>
+          </div>
+        </div>
         <Field label="Gender" required error={errors.gender}>
           <select
             className={`select ${errors.gender ? "input-error" : ""}`}

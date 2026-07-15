@@ -295,6 +295,7 @@ export default function MyApplications() {
               <table className="table">
                 <thead>
                   <tr>
+                    <th className="th">Ref No</th>
                     <th className="th">University</th>
                     <th className="th">Major</th>
                     <th className="th">Submission Date</th>
@@ -305,6 +306,7 @@ export default function MyApplications() {
                 <tbody>
                   {paged.map((app) => (
                     <tr key={app.application_id}>
+                      <td className="td" style={{ fontWeight: 600, color: '#0b4f9c' }}>{app.ref_no || '—'}</td>
                       <td className="td">
                         <div className="uni-cell">
                           <div className="uni-logo">{app.initials}</div>

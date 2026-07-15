@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
-import { Search, SlidersHorizontal, ChevronDown, Star } from 'lucide-react';
-import './FilterSidebar.css';
+import React, { useState } from "react";
+import {
+  Search,
+  SlidersHorizontal,
+  ChevronDown,
+  Star,
+  MapPin,
+} from "lucide-react";
+import "./FilterSidebar.css";
 
-export default function FilterSidebar({ onApply }) {
-  const [name, setName] = useState('');
-  const [tuition, setTuition] = useState(15000);
-  const [major, setMajor] = useState('');
+export default function FilterSidebar({ onApply, onFilter }) {
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [tuition, setTuition] = useState(25000);
+  const [major, setMajor] = useState("");
+  const [scholarship, setScholarship] = useState(false);
   const [minRating, setMinRating] = useState(0);
 
   const handleApply = (e) => {
     e.preventDefault();
+    const filters = { name, location, tuition, major, scholarship, minRating };
+    if (onFilter) {
+      onFilter(filters);
+      return;
+    }
     if (onApply) {
-      onApply({ name, tuition, major, minRating });
+      onApply(filters);
     }
   };
 
@@ -37,13 +50,29 @@ export default function FilterSidebar({ onApply }) {
         </div>
 
         <div className="filter-group">
-          <label>Tuition Range (up to)</label>
-          <div className="filter-range-display">$0 — ${tuition.toLocaleString()}</div>
+          <label>Location</label>
+          <div className="filter-input-wrapper">
+            <MapPin size={16} />
+            <select
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            >
+              <option value="">All Cambodia</option>
+              <option value="phnom penh">Phnom Penh</option>
+              <option value="siem reap">Siem Reap</option>
+              <option value="battambang">Battambang</option>
+            </select>
+            <ChevronDown size={16} className="filter-select-icon" />
+          </div>
+          <label>Tuition Range</label>
+          <div className="filter-range-display">
+            $0 — ${tuition.toLocaleString()}
+          </div>
           <div className="filter-range-wrapper">
             <input
               type="range"
               min={0}
-              max={15000}
+              max={25000}
               step={500}
               value={tuition}
               onChange={(e) => setTuition(Number(e.target.value))}
@@ -59,14 +88,10 @@ export default function FilterSidebar({ onApply }) {
               <option value="">All Programs</option>
               <option value="software">Software Engineering</option>
               <option value="data">Data Science</option>
-              <option value="cybersecurity">Cybersecurity</option>
-              <option value="artificial intelligence">Artificial Intelligence</option>
-              <option value="computer science">Computer Science</option>
-              <option value="information technology">Information Technology</option>
+              <option value="business">Business</option>
               <option value="engineering">Engineering</option>
+              <option value="it">Information Technology</option>
               <option value="telecommunication">Telecommunications</option>
-              <option value="digital">Digital Arts & Media</option>
-              <option value="management">Business & Management</option>
             </select>
             <ChevronDown size={16} className="filter-select-icon" />
           </div>
@@ -79,11 +104,14 @@ export default function FilterSidebar({ onApply }) {
               <button
                 key={star}
                 type="button"
-                className={`filter-star-btn ${minRating >= star ? 'active' : ''}`}
+                className={`filter-star-btn ${minRating >= star ? "active" : ""}`}
                 onClick={() => setMinRating(minRating === star ? 0 : star)}
-                aria-label={`${star} star${star > 1 ? 's' : ''}`}
+                aria-label={`${star} star${star > 1 ? "s" : ""}`}
               >
-                <Star size={20} fill={minRating >= star ? 'currentColor' : 'none'} />
+                <Star
+                  size={20}
+                  fill={minRating >= star ? "currentColor" : "none"}
+                />
               </button>
             ))}
             {minRating > 0 && (

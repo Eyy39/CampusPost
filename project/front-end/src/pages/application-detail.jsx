@@ -147,7 +147,7 @@ export default function ApplicationDetail() {
     { key: "nationalId", label: "National ID / Passport" },
     { key: "transcript", label: "High School Transcript" },
     { key: "diploma", label: "Diploma / Graduation Certificate" },
-    { key: "passportPhoto", label: "Your Photo" },
+    { key: "passportPhoto", label: "Photo" },
   ];
 
   const getDocUrl = (docType) => {
@@ -244,11 +244,10 @@ export default function ApplicationDetail() {
               <h2 className="ad-section-title">Uploaded Documents</h2>
               <div className="ad-documents-grid">
                 {docTypes.map((doc) => {
-                  const ok = !!getDocUrl(doc.key);
                   const url = getDocUrl(doc.key);
                   return (
                     <div key={doc.key} className="ad-doc-item">
-                      {ok ? (
+                      {url ? (
                         <>
                           <CheckCircle size={16} className="ad-doc-check" /> {doc.label}
                           <button className="ad-doc-view" onClick={() => setPreviewDoc({ url, label: doc.label })}>
@@ -268,19 +267,32 @@ export default function ApplicationDetail() {
       </div>
     </Layout>
 
-    {previewDoc && (
-      <div className="ad-preview-overlay" onClick={() => setPreviewDoc(null)}>
-        <div className="ad-preview-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="ad-preview-header">
-            <span className="ad-preview-title">{previewDoc.label}</span>
-            <button className="ad-preview-close" onClick={() => setPreviewDoc(null)}>
-              <X size={18} />
+    {previewDoc && (() => {
+      const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(previewDoc.url);
+      if (isImage) {
+        return (
+          <div className="ad-preview-fullscreen" onClick={() => setPreviewDoc(null)}>
+            <button className="ad-preview-fullscreen-close" onClick={() => setPreviewDoc(null)}>
+              <X size={24} />
             </button>
+            <img src={previewDoc.url} alt={previewDoc.label} className="ad-preview-fullscreen-img" />
           </div>
-          <iframe src={previewDoc.url} className="ad-preview-frame" title={previewDoc.label} />
+        );
+      }
+      return (
+        <div className="ad-preview-overlay" onClick={() => setPreviewDoc(null)}>
+          <div className="ad-preview-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ad-preview-header">
+              <span className="ad-preview-title">{previewDoc.label}</span>
+              <button className="ad-preview-close" onClick={() => setPreviewDoc(null)}>
+                <X size={18} />
+              </button>
+            </div>
+            <iframe src={previewDoc.url} className="ad-preview-frame" title={previewDoc.label} />
+          </div>
         </div>
-      </div>
-    )}
+      );
+    })()}
   </>
   );
 }
