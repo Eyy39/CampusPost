@@ -138,7 +138,7 @@ export default function Scholarships() {
                           <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
                           <p style={{ color: '#475569', margin: '4px 0 0' }}>CADT-only scholarship for students who failed Techo or finished high school over 1 year ago. Women get 50% extra discount.</p>
                         </div>
-                        <button style={{ background: '#f59e0b', color: '#fff', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
+                        <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 12, padding: '10px 16px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
                           View Details <ChevronRight size={16} />
                         </button>
                       </div>
@@ -205,7 +205,7 @@ export default function Scholarships() {
                           <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
                           <p style={{ color: '#475569', margin: '4px 0 0' }}>{item.description}</p>
                         </div>
-                        <button style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
+                        <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 12, padding: '10px 16px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
                           View Details <ChevronRight size={16} />
                         </button>
                       </div>
@@ -267,7 +267,7 @@ export default function Scholarships() {
                         <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
                         <p style={{ color: '#64748b', margin: 0 }}>{item.provider}</p>
                       </div>
-                      <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 999, padding: '10px 16px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
+                      <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 12, padding: '10px 16px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
                         View Details <ChevronRight size={16} />
                       </button>
                     </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "../components/Layout";
 import DeleteModal from "../components/DeleteModal";
 import EmptyState from "../components/EmptyState";
@@ -347,7 +348,7 @@ export default function MyApplications() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  Previous
+                  <ChevronLeft size={16} />
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (p) => (
@@ -365,7 +366,7 @@ export default function MyApplications() {
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
-                  Next
+                  <ChevronRight size={16} />
                 </button>
               </div>
             )}

@@ -143,36 +143,36 @@
 }
 
 .page-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 10px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid #f0f2f5;
+  color: #a0aec0;
   font-size: 0.813rem;
-  font-weight: 600;
-  color: #1F2937;
-  background: #FFFFFF;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.25s ease;
   font-family: inherit;
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #2563EB;
-  color: #2563EB;
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
 .page-btn.active {
-  background: #2563EB;
-  border-color: #2563EB;
-  color: #FFFFFF;
+  background-color: #2563eb;
+  border: none;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .page-btn.active:hover {
-  background: #1E3A8A;
-  border-color: #1E3A8A;
+  background-color: #1e40af;
 }
 
 .page-btn:disabled {

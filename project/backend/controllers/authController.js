@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const imagekit = require('../config/imagekit');
 
 exports.register = async (req, res) => {
   try {
@@ -157,4 +158,28 @@ exports.logout = (req, res) => {
     res.json({
         message: "Logout successful"
     });
+};
+
+exports.updateProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const result = await imagekit.upload({
+      file: req.file.buffer,
+      fileName: `profile_${user.user_id}_${Date.now()}`,
+      folder: "campuspost/profiles"
+    });
+    await user.update({ profile_picture: result.url });
+    const userData = user.toJSON();
+    delete userData.password;
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update profile picture" });
+  }
 };

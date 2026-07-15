@@ -393,15 +393,36 @@ button { cursor: pointer; }
 .sa-review-actions { display: flex; flex-wrap: wrap; gap: 4px; }
 
 /* ─── Pagination ─── */
-.sa-pagination { display: flex; justify-content: flex-end; gap: 4px; padding: 12px 16px; }
+.sa-pagination { display: flex; justify-content: flex-end; gap: 6px; padding: 12px 16px; }
 .sa-page-btn {
-  min-width: 32px; height: 32px; border: 1px solid var(--sa-border);
-  background: var(--sa-surface); color: var(--sa-text-secondary); border-radius: var(--sa-radius-sm);
-  display: grid; place-items: center; font-weight: 600; font-size: 12.5px; cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid #f0f2f5;
+  color: #a0aec0;
+  font-weight: 500;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.sa-page-btn.active { background: var(--sa-primary); color: #fff; border-color: var(--sa-primary); }
-.sa-page-btn:hover:not(.active):not(:disabled) { background: var(--sa-surface-soft); }
-.sa-page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.sa-page-btn.active {
+  background-color: #2563eb;
+  border: none;
+  color: #ffffff;
+  font-weight: bold;
+}
+.sa-page-btn:hover:not(.active):not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+.sa-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 /* ─── Modals ─── */
 .sa-modal-backdrop {
