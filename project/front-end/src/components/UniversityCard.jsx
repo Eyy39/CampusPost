@@ -23,7 +23,7 @@ export default function UniversityCard({ university, isFavorite, onToggleFavorit
   return (
     <article className="univ-card">
       <div className="univ-card-image">
-        <img src={image} alt={name} loading="lazy" />
+        <img src={image} alt={name} loading="lazy" onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'; }} />
         <span className="univ-card-badge" style={{ background: badgeColor }}>
           {type}
         </span>
