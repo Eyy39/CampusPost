@@ -10,7 +10,7 @@ export function Navbar({ activePage }) {
   const links = [
     { label: "Find Universities", path: "/universities" },
     { label: "Scholarships", path: "/scholarships" },
-    { label: "Forum", path: "/forum" },
+    // { label: "Forum", path: "/forum" },
     { label: "About", path: "/about" },
     { label: "My Applications", path: "/my-applications" },
   ];

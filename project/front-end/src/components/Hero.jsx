@@ -23,7 +23,7 @@ export default function Hero() {
             Start your higher education journey today.
           </p>
 
-          <div className="hero-buttons">
+          {/* <div className="hero-buttons">
             <button className="btn btn-primary">
               Search Universities
               <Search size={18} />
@@ -32,17 +32,17 @@ export default function Hero() {
               Explore Scholarships
               <ArrowRight size={18} />
             </button>
-          </div>
+          </div> */}
 
-          <div className="hero-search">
+          {/* <div className="hero-search">
             <div className="hero-search-field">
               <Search size={18} />
               <input
                 type="text"
                 placeholder="Search by university or major..."
               />
-            </div>
-            <div className="hero-search-field">
+            </div> */}
+            {/* <div className="hero-search-field">
               <MapPin size={18} />
               <select defaultValue="">
                 <option value="" disabled>All Provinces</option>
@@ -53,12 +53,12 @@ export default function Hero() {
                 <option value="prey-veng">Prey Veng</option>
                 <option value="takeo">Takeo</option>
               </select>
-            </div>
-            <button className="hero-search-btn">
+            </div> */}
+            {/* <button className="hero-search-btn">
               <Search size={18} />
               Search
             </button>
-          </div>
+          </div> */}
         </div>
 
         <div className="hero-right">

@@ -37,7 +37,7 @@ export default function Home() {
         <FeaturedUniversities />
         <ScholarshipSection />
         <ProgramSection />
-        <Testimonials />
+        {/* <Testimonials /> */}
         <CTA />
       </main>
     </Layout>

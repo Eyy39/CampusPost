@@ -8,7 +8,7 @@ import Universities from "./pages/universities.jsx";
 import UniversityDetail from "./pages/university-detail.jsx";
 import Scholarships from "./pages/scholarships.jsx";
 import ScholarshipDetail from "./pages/scholarship-detail.jsx";
-import Forum from "./pages/forum.jsx";
+// import Forum from "./pages/forum.jsx";
 import ApplicationDashboard from "./pages/application";
 import MyApplications from "./pages/myapplications";
 import ApplicationDetail from "./pages/application-detail";
@@ -29,7 +29,7 @@ export default function App() {
         <Route path="/universities/:id" element={<UniversityDetail />} />
         <Route path="/scholarships" element={<Scholarships />} />
         <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
-        <Route path="/forum" element={<Forum />} />
+        {/* <Route path="/forum" element={<Forum />} /> */}
         <Route path="/application" element={<ApplicationDashboard />} />
         <Route path="/my-applications" element={<MyApplications />} />
         <Route path="/application/:id" element={<ApplicationDetail />} />
