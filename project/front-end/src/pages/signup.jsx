@@ -170,7 +170,7 @@ export default function Signup() {
               </button>
             </form>
 
-            <div className="signup-divider">
+            {/* <div className="signup-divider">
               <span>OR SIGN UP WITH</span>
             </div>
 
@@ -190,7 +190,7 @@ export default function Signup() {
                 </svg>
                 Facebook
               </button>
-            </div>
+            </div> */}
 
             <p className="signup-bottom-text">
               Already have an account? <Link to="/login">Sign In</Link>

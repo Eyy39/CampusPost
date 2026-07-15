@@ -108,11 +108,11 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="login-divider">
+            {/* <div className="login-divider">
               <span>Or continue with</span>
-            </div>
+            </div> */}
 
-            <div className="login-social">
+            {/* <div className="login-social">
               <button className="login-social-btn login-social-google">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -128,7 +128,7 @@ export default function Login() {
                 </svg>
                 Facebook
               </button>
-            </div>
+            </div> */}
 
             <p className="login-signup-text">
               Don't have an account? <Link to="/signup">Create one</Link>
