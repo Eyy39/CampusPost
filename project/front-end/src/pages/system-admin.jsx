@@ -1205,7 +1205,8 @@ export default function SystemAdmin() {
         };
         if (form.password) payload.password = form.password;
         const updated = await api.put(`/users/${adminModal.admin.user_id}`, payload);
-        setAdmins((current) => current.map((a) => a.user_id === adminModal.admin.user_id ? { ...a, ...updated } : a));
+        const updatedUni = universities.find((u) => u.university_id === universityId) || null;
+        setAdmins((current) => current.map((a) => a.user_id === adminModal.admin.user_id ? { ...a, ...updated, AssignedUniversity: updatedUni } : a));
         pushToast("success", `${form.first_name} ${form.last_name} updated`, "Admin account updated successfully.");
       } else {
         const created = await api.post("/users", {

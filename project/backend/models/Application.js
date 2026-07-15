@@ -44,6 +44,9 @@ const Application = sequelize.define('Application', {
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
+  indexes: [
+    { unique: true, fields: ['user_id', 'university_id', 'major_id'] },
+  ],
 });
 
 module.exports = Application;
