@@ -194,17 +194,17 @@
   opacity: 0.5;
 }
 .btn-secondary {
-  background-color: transparent;
-  border: 1px solid #0F766E;
+  background-color: #F0F4F8;
+  border: 1px solid #D7E4F2;
   border-radius: 14px;
-  padding: 10px 22px;
-  font-size: 14px;
+  padding: 14px 28px;
+  font-size: 16px;
   font-weight: 600;
-  color: #0F766E;
+  color: #334155;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   transition: all 0.2s;
 }
 .upload-card {

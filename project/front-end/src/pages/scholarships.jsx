@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BadgeCheck, CalendarDays, DollarSign, Sparkles, Building2, ChevronRight, Users, Award } from 'lucide-react';
+import { BadgeCheck, CalendarDays, DollarSign, Sparkles, ChevronRight, Users, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import Layout from '../components/Layout';
+import '../styles/scholarships.css';
 
 export default function Scholarships() {
   const navigate = useNavigate();
@@ -24,9 +25,9 @@ export default function Scholarships() {
               grouped['techo'] = {
                 id: 'techo',
                 title: 'Techo Digital Talent Scholarship 2026-2027',
-                titleEn: 'Techo Digital Talent Scholarship 2026-2027',
                 description: '100% Scholarship + Laptop | 600 spots across 7 universities',
                 tag: 'Fully Funded',
+                tagType: 'blue',
                 amount: '100% Tuition + Laptop',
                 totalSpots: 0,
                 deadline: null,
@@ -51,14 +52,12 @@ export default function Scholarships() {
                 id: 'special-cadt',
                 title: s.title,
                 description: s.description,
-                tag: '50% Tuition',
+                tag: 'Special',
+                tagType: 'amber',
                 amount: '50% Tuition',
                 totalSpots: s.spots || 0,
                 deadline: s.deadline,
                 provider: s.University?.name || 'CADT',
-                eligibility: s.eligibility,
-                registrationUrl: s.registration_url,
-                contactInfo: s.contact_info,
               };
             }
           } else {
@@ -72,6 +71,7 @@ export default function Scholarships() {
                 : 'Ongoing',
               level: s.eligibility || 'All levels',
               tag: Number(s.amount) >= 2500 ? 'Fully Funded' : Number(s.amount) >= 1500 ? 'Merit Based' : 'Need Based',
+              tagType: Number(s.amount) >= 2500 ? 'blue' : Number(s.amount) >= 1500 ? 'blue' : 'slate',
             });
           }
         });
@@ -87,218 +87,198 @@ export default function Scholarships() {
 
   return (
     <Layout activePage="Scholarships">
-      <main style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: 96, paddingBottom: 80 }}>
-        <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#dcfce7', color: '#166534', padding: '8px 12px', borderRadius: 999, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
-              <Sparkles size={16} />
-              Scholarships
-            </div>
-            <h1 style={{ fontSize: '2.4rem', lineHeight: 1.15, color: '#0f172a', marginBottom: 14 }}>
-              Find funding opportunities for your study journey.
-            </h1>
-            <p style={{ fontSize: '1.02rem', color: '#475569', lineHeight: 1.8 }}>
-              Explore verified scholarships, compare benefits, and stay ahead of deadlines with CampusPost.
-            </p>
-          </div>
+      <main className="sp">
+        <section className="sp-content">
+          <div className="sp-container">
+            {loading ? (
+              <div className="sp-loading">
+                <div className="sp-loading-spinner" />
+                <p>Loading scholarships...</p>
+              </div>
+            ) : error ? (
+              <div className="sp-error">{error}</div>
+            ) : scholarships.length === 0 ? (
+              <div className="sp-empty">No scholarships available yet.</div>
+            ) : (
+              <div className="sp-grid">
+                {scholarships.map((item) => {
+                  const deadlineDate = item.deadline ? new Date(item.deadline) : null;
+                  const now = new Date();
+                  const daysLeft = deadlineDate ? Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24)) : null;
+                  const uniCount = item.universities?.length || 0;
 
-          {loading ? (
-            <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>Loading scholarships...</div>
-          ) : error ? (
-            <div style={{ padding: 40, textAlign: 'center', color: '#ef4444' }}>{error}</div>
-          ) : scholarships.length === 0 ? (
-            <div style={{ padding: 40, textAlign: 'center', color: '#64748b' }}>No scholarships available yet.</div>
-          ) : (
-            <div style={{ display: 'grid', gap: 20 }}>
-              {scholarships.map((item) => {
-                const uniCount = item.universities?.length || 0;
-                if (item.id === 'special-cadt') {
-                  const deadlineDate = item.deadline ? new Date(item.deadline) : null;
-                  const now = new Date();
-                  const daysLeft = deadlineDate ? Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24)) : null;
+                  const tagColor = item.tagType || 'slate';
+
+                  if (item.id === 'special-cadt') {
+                    return (
+                      <div
+                        key={item.id}
+                        className={`sp-card sp-card-amber`}
+                        onClick={() => navigate('/scholarships/' + item.id)}
+                      >
+                        <div className="sp-card-top">
+                          <div className="sp-card-info">
+                            <span className="sp-tag sp-tag-amber">
+                              <Award size={12} />
+                              {item.tag}
+                            </span>
+                            <h3>{item.title}</h3>
+                            <p className="sp-card-provider">CADT-only scholarship for students who failed Techo or finished high school over 1 year ago. Women get 50% extra discount.</p>
+                          </div>
+                          <button className="sp-card-btn">
+                            View Details
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                        <div className="sp-card-stats">
+                          <div className="sp-card-stat">
+                            <DollarSign size={15} />
+                            <div>
+                              <span className="sp-card-stat-label">Benefit</span>
+                              <span className="sp-card-stat-value">Multiple Tiers</span>
+                            </div>
+                          </div>
+                          <div className="sp-card-stat">
+                            <Users size={15} />
+                            <div>
+                              <span className="sp-card-stat-label">Spots</span>
+                              <span className="sp-card-stat-value">{item.totalSpots} at CADT</span>
+                            </div>
+                          </div>
+                          {deadlineDate && (
+                            <div className="sp-card-stat">
+                              <CalendarDays size={15} />
+                              <div>
+                                <span className="sp-card-stat-label">Deadline</span>
+                                <span className={`sp-card-stat-value ${daysLeft <= 30 ? 'sp-deadline-soon' : ''}`}>
+                                  {deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                  {daysLeft > 0 && (
+                                    <span className={`sp-days-left ${daysLeft <= 30 ? 'sp-days-urgent' : ''}`}>
+                                      ({daysLeft}d left)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (uniCount > 0) {
+                    return (
+                      <div
+                        key={item.id}
+                        className={`sp-card sp-card-${tagColor}`}
+                        onClick={() => navigate('/scholarships/' + item.id)}
+                      >
+                        <div className="sp-card-top">
+                          <div className="sp-card-info">
+                            <span className={`sp-tag sp-tag-${tagColor}`}>
+                              <Sparkles size={12} />
+                              {item.tag}
+                            </span>
+                            <h3>{item.title}</h3>
+                            <p className="sp-card-provider">{item.description}</p>
+                          </div>
+                          <button className="sp-card-btn">
+                            View Details
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                        <div className="sp-card-stats">
+                          <div className="sp-card-stat">
+                            <DollarSign size={15} />
+                            <div>
+                              <span className="sp-card-stat-label">Benefit</span>
+                              <span className="sp-card-stat-value">{item.amount}</span>
+                            </div>
+                          </div>
+                          <div className="sp-card-stat">
+                            <Users size={15} />
+                            <div>
+                              <span className="sp-card-stat-label">Spots</span>
+                              <span className="sp-card-stat-value">{item.totalSpots} across {uniCount} unis</span>
+                            </div>
+                          </div>
+                          {deadlineDate && (
+                            <div className="sp-card-stat">
+                              <CalendarDays size={15} />
+                              <div>
+                                <span className="sp-card-stat-label">Deadline</span>
+                                <span className={`sp-card-stat-value ${daysLeft <= 30 ? 'sp-deadline-soon' : ''}`}>
+                                  {deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                  {daysLeft > 0 && (
+                                    <span className={`sp-days-left ${daysLeft <= 30 ? 'sp-days-urgent' : ''}`}>
+                                      ({daysLeft}d left)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="sp-card-unis">
+                          {item.universities.map((uni) => (
+                            <span key={uni.id} className="sp-uni-tag">
+                              {uni.name.split('(')[0].trim()} ({uni.spots})
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
                   return (
                     <div
                       key={item.id}
+                      className={`sp-card sp-card-${tagColor}`}
                       onClick={() => navigate('/scholarships/' + item.id)}
-                      style={{
-                        background: '#fff',
-                        borderRadius: 20,
-                        padding: 28,
-                        border: '2px solid #fef3c7',
-                        boxShadow: '0 10px 30px rgba(15,23,42,0.04)',
-                        cursor: 'pointer',
-                      }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
-                        <div style={{ flex: 1, minWidth: 300 }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fef3c7', color: '#92400e', padding: '6px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                            <Award size={14} />
-                            Special Opportunity
-                          </div>
-                          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
-                          <p style={{ color: '#475569', margin: '4px 0 0' }}>CADT-only scholarship for students who failed Techo or finished high school over 1 year ago. Women get 50% extra discount.</p>
-                        </div>
-                        <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 12, padding: '10px 16px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
-                          View Details <ChevronRight size={16} />
-                        </button>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
-                        <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#92400e', marginBottom: 6 }}>
-                            <DollarSign size={16} />
-                            <span style={{ fontWeight: 700 }}>Benefit</span>
-                          </div>
-                          <div style={{ color: '#0f172a', fontWeight: 700 }}>Multiple Tiers</div>
-                          <div style={{ fontSize: 12, color: '#92400e', marginTop: 2 }}>Women get 50% extra discount</div>
-                        </div>
-                        <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#92400e', marginBottom: 6 }}>
-                            <Users size={16} />
-                            <span style={{ fontWeight: 700 }}>Total Spots</span>
-                          </div>
-                          <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.totalSpots} spots at CADT</div>
-                        </div>
-                        <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#92400e', marginBottom: 6 }}>
-                            <CalendarDays size={16} />
-                            <span style={{ fontWeight: 700 }}>Deadline</span>
-                          </div>
-                          <div style={{ color: daysLeft !== null && daysLeft <= 30 ? '#dc2626' : '#0f172a', fontWeight: 700 }}>
-                            {deadlineDate
-                              ? deadlineDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-                              : 'Rolling'
-                            }
-                            {daysLeft !== null && daysLeft > 0 && (
-                              <span style={{ fontSize: 12, fontWeight: 600, marginLeft: 6, color: daysLeft <= 30 ? '#dc2626' : '#059669' }}>
-                                ({daysLeft} days left)
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
-                if (uniCount > 0) {
-                  const deadlineDate = item.deadline ? new Date(item.deadline) : null;
-                  const now = new Date();
-                  const daysLeft = deadlineDate ? Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24)) : null;
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => navigate('/scholarships/' + item.id)}
-                      style={{
-                        background: '#fff',
-                        borderRadius: 20,
-                        padding: 28,
-                        border: '2px solid #dcfce7',
-                        boxShadow: '0 10px 30px rgba(15,23,42,0.04)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
-                        <div style={{ flex: 1, minWidth: 300 }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#dcfce7', color: '#166534', padding: '6px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                            <Sparkles size={14} />
+                      <div className="sp-card-top">
+                        <div className="sp-card-info">
+                          <span className={`sp-tag sp-tag-${tagColor}`}>
+                            <BadgeCheck size={12} />
                             {item.tag}
-                          </div>
-                          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
-                          <p style={{ color: '#475569', margin: '4px 0 0' }}>{item.description}</p>
+                          </span>
+                          <h3>{item.title}</h3>
+                          <p className="sp-card-provider">{item.provider}</p>
                         </div>
-                        <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 12, padding: '10px 16px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
-                          View Details <ChevronRight size={16} />
+                        <button className="sp-card-btn">
+                          View Details
+                          <ChevronRight size={16} />
                         </button>
                       </div>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
-                        <div style={{ background: '#f0fdf4', borderRadius: 14, padding: 14 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#166534', marginBottom: 6 }}>
-                            <DollarSign size={16} />
-                            <span style={{ fontWeight: 700 }}>Benefit</span>
-                          </div>
-                          <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.amount}</div>
-                        </div>
-                        <div style={{ background: '#f0fdf4', borderRadius: 14, padding: 14 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#166534', marginBottom: 6 }}>
-                            <Users size={16} />
-                            <span style={{ fontWeight: 700 }}>Total Spots</span>
-                          </div>
-                          <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.totalSpots} across {uniCount} universities</div>
-                        </div>
-                        <div style={{ background: '#f0fdf4', borderRadius: 14, padding: 14 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#166534', marginBottom: 6 }}>
-                            <CalendarDays size={16} />
-                            <span style={{ fontWeight: 700 }}>Deadline</span>
-                          </div>
-                          <div style={{ color: daysLeft !== null && daysLeft <= 30 ? '#dc2626' : '#0f172a', fontWeight: 700 }}>
-                            {deadlineDate
-                              ? deadlineDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-                              : 'Rolling'
-                            }
-                            {daysLeft !== null && daysLeft > 0 && (
-                              <span style={{ fontSize: 12, fontWeight: 600, marginLeft: 6, color: daysLeft <= 30 ? '#dc2626' : '#059669' }}>
-                                ({daysLeft} days left)
-                              </span>
-                            )}
+                      <div className="sp-card-stats">
+                        <div className="sp-card-stat">
+                          <DollarSign size={15} />
+                          <div>
+                            <span className="sp-card-stat-label">Amount</span>
+                            <span className="sp-card-stat-value">{item.amount}</span>
                           </div>
                         </div>
-                      </div>
-
-                      {/* University list preview */}
-                      <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                        {item.universities.map((uni) => (
-                          <span key={uni.id} style={{ background: '#f1f5f9', color: '#475569', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>
-                            {uni.name.split('(')[0].trim()} ({uni.spots})
-                          </span>
-                        ))}
+                        <div className="sp-card-stat">
+                          <CalendarDays size={15} />
+                          <div>
+                            <span className="sp-card-stat-label">Deadline</span>
+                            <span className="sp-card-stat-value">{item.deadline}</span>
+                          </div>
+                        </div>
+                        <div className="sp-card-stat">
+                          <BadgeCheck size={15} />
+                          <div>
+                            <span className="sp-card-stat-label">Level</span>
+                            <span className="sp-card-stat-value">{item.level}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
-                }
-
-                return (
-                  <div key={item.id} onClick={() => navigate('/scholarships/' + item.id)} style={{ background: '#fff', borderRadius: 20, padding: 24, border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(15,23,42,0.04)', cursor: 'pointer' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 14 }}>
-                      <div>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#eff6ff', color: '#2563eb', padding: '6px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                          <BadgeCheck size={14} />
-                          {item.tag}
-                        </div>
-                        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{item.title}</h3>
-                        <p style={{ color: '#64748b', margin: 0 }}>{item.provider}</p>
-                      </div>
-                      <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 12, padding: '10px 16px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6, alignSelf: 'flex-start' }}>
-                        View Details <ChevronRight size={16} />
-                      </button>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16 }}>
-                      <div style={{ background: '#f8fafc', borderRadius: 14, padding: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', marginBottom: 6 }}>
-                          <DollarSign size={16} />
-                          <span style={{ fontWeight: 700 }}>Amount</span>
-                        </div>
-                        <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.amount}</div>
-                      </div>
-                      <div style={{ background: '#f8fafc', borderRadius: 14, padding: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', marginBottom: 6 }}>
-                          <CalendarDays size={16} />
-                          <span style={{ fontWeight: 700 }}>Deadline</span>
-                        </div>
-                        <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.deadline}</div>
-                      </div>
-                      <div style={{ background: '#f8fafc', borderRadius: 14, padding: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', marginBottom: 6 }}>
-                          <BadgeCheck size={16} />
-                          <span style={{ fontWeight: 700 }}>Level</span>
-                        </div>
-                        <div style={{ color: '#0f172a', fontWeight: 700 }}>{item.level}</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                })}
+              </div>
+            )}
+          </div>
         </section>
       </main>
     </Layout>

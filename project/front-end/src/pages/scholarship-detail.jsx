@@ -382,7 +382,7 @@ export default function ScholarshipDetail() {
     <div>
       {/* Hero Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #059669, #10b981)',
+        background: 'linear-gradient(135deg, #1E40AF, #3B82F6)',
         borderRadius: 24, padding: 40, color: '#fff', marginBottom: 32,
         position: 'relative', overflow: 'hidden',
       }}>
@@ -405,22 +405,22 @@ export default function ScholarshipDetail() {
       {/* Quick Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16, marginBottom: 32 }}>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-          <Users size={24} color="#059669" style={{ marginBottom: 8 }} />
+          <Users size={24} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>600</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Total Spots</div>
         </div>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-          <Building2 size={24} color="#059669" style={{ marginBottom: 8 }} />
+          <Building2 size={24} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>7</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Universities</div>
         </div>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-          <BookOpen size={24} color="#059669" style={{ marginBottom: 8 }} />
+          <BookOpen size={24} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>25</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Programs</div>
         </div>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-          <DollarSign size={24} color="#059669" style={{ marginBottom: 8 }} />
+          <DollarSign size={24} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.5rem' }}>100%</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Tuition Coverage</div>
         </div>
@@ -428,13 +428,13 @@ export default function ScholarshipDetail() {
 
       {/* Benefits */}
       <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#059669', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E40AF', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
           <Award size={20} /> Scholarship Benefits
         </h3>
         <div style={{ display: 'grid', gap: 12 }}>
           {TECHO_OFFICIAL.benefits.map((b, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '12px 16px', background: '#f0fdf4', borderRadius: 12 }}>
-              <BenefitIcon name={b.icon} size={20} color="#059669" />
+            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '12px 16px', background: '#EFF6FF', borderRadius: 12 }}>
+              <BenefitIcon name={b.icon} size={20} color="#1E40AF" />
               <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{b.text}</div>
             </div>
           ))}
@@ -443,13 +443,13 @@ export default function ScholarshipDetail() {
 
       {/* Requirements */}
       <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#059669', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E40AF', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
           <Target size={20} /> Eligibility Requirements
         </h3>
         <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
           {TECHO_OFFICIAL.requirements.map((r, i) => (
             <li key={i} style={{ padding: '10px 0', color: '#334155', display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 14, borderBottom: i < TECHO_OFFICIAL.requirements.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-              <span style={{ color: '#059669', fontWeight: 700, minWidth: 20 }}>{i + 1}.</span>
+              <span style={{ color: '#1E40AF', fontWeight: 700, minWidth: 20 }}>{i + 1}.</span>
               {r}
             </li>
           ))}
@@ -458,7 +458,7 @@ export default function ScholarshipDetail() {
 
       {/* Exam Info */}
       <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#059669', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E40AF', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
           <FileText size={20} /> Entrance Exam
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -493,7 +493,7 @@ export default function ScholarshipDetail() {
           const daysLeft = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
           return (
             <div key={uni.id} style={{
-              background: '#fff', borderRadius: 20, border: isOpen ? '2px solid #10b981' : '1px solid #e2e8f0',
+              background: '#fff', borderRadius: 20, border: isOpen ? '2px solid #1E40AF' : '1px solid #e2e8f0',
               overflow: 'hidden', transition: 'border 0.2s',
             }}>
               <div
@@ -502,14 +502,14 @@ export default function ScholarshipDetail() {
               >
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                    <Building2 size={18} color="#059669" />
+                    <Building2 size={18} color="#1E40AF" />
                     <span style={{ fontWeight: 700, color: '#0f172a', fontSize: 15 }}>{uni.name}</span>
                   </div>
                   <div style={{ color: '#64748b', fontSize: 13, paddingLeft: 28 }}>{uni.nameKh}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ background: '#dcfce7', color: '#166534', padding: '4px 10px', borderRadius: 8, fontSize: 13, fontWeight: 700 }}>
+                    <div style={{ background: '#DBEAFE', color: '#1E40AF', padding: '4px 10px', borderRadius: 8, fontSize: 13, fontWeight: 700 }}>
                       {uni.spots} spots
                     </div>
                     <div style={{ fontSize: 12, color: daysLeft > 0 ? '#64748b' : '#ef4444', marginTop: 4 }}>
@@ -523,11 +523,11 @@ export default function ScholarshipDetail() {
               {isOpen && (
                 <div style={{ padding: '0 24px 24px', borderTop: '1px solid #f1f5f9' }}>
                   <div style={{ marginTop: 16 }}>
-                    <h4 style={{ fontSize: 14, fontWeight: 700, color: '#059669', marginBottom: 10 }}>Available Programs ({uni.programs.length})</h4>
+                    <h4 style={{ fontSize: 14, fontWeight: 700, color: '#1E40AF', marginBottom: 10 }}>Available Programs ({uni.programs.length})</h4>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                       {uni.programs.map((p, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '6px 10px', background: '#f0fdf4', borderRadius: 8, fontSize: 13, color: '#334155' }}>
-                          <span style={{ color: '#10b981', fontWeight: 700 }}>&#8226;</span>
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '6px 10px', background: '#EFF6FF', borderRadius: 8, fontSize: 13, color: '#334155' }}>
+                          <span style={{ color: '#3B82F6', fontWeight: 700 }}>&#8226;</span>
                           {p}
                         </div>
                       ))}
@@ -536,14 +536,14 @@ export default function ScholarshipDetail() {
 
                   <div style={{ marginTop: 14, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#475569' }}>
-                      <CalendarDays size={16} color="#059669" style={{ marginTop: 2 }} />
+                      <CalendarDays size={16} color="#1E40AF" style={{ marginTop: 2 }} />
                       <div>
                         <div style={{ fontWeight: 600, color: '#0f172a' }}>Deadline</div>
                         <div>{new Date(uni.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#475569' }}>
-                      <FileText size={16} color="#059669" style={{ marginTop: 2 }} />
+                      <FileText size={16} color="#1E40AF" style={{ marginTop: 2 }} />
                       <div>
                         <div style={{ fontWeight: 600, color: '#0f172a' }}>Entrance Exam</div>
                         <div>{uni.examSubjects}</div>
@@ -552,7 +552,7 @@ export default function ScholarshipDetail() {
                   </div>
 
                   <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#475569' }}>
-                    <Phone size={16} color="#059669" style={{ marginTop: 2 }} />
+                    <Phone size={16} color="#1E40AF" style={{ marginTop: 2 }} />
                     <div>
                       <div style={{ fontWeight: 600, color: '#0f172a' }}>Contact</div>
                       <div>{uni.contact}</div>
@@ -563,7 +563,7 @@ export default function ScholarshipDetail() {
                     <button
                       onClick={() => navigate('/application')}
                       style={{
-                        background: '#10b981', color: '#fff', border: 'none', borderRadius: 999,
+                        background: '#1E40AF', color: '#fff', border: 'none', borderRadius: 999,
                         padding: '10px 20px', fontWeight: 700, cursor: 'pointer', fontSize: 13,
                         display: 'inline-flex', alignItems: 'center', gap: 6,
                       }}
@@ -612,7 +612,7 @@ export default function ScholarshipDetail() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              background: '#10b981', color: '#fff', border: 'none', borderRadius: 999,
+              background: '#1E40AF', color: '#fff', border: 'none', borderRadius: 999,
               padding: '12px 28px', fontWeight: 700, cursor: 'pointer', fontSize: 14,
               display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none',
             }}
@@ -636,12 +636,12 @@ export default function ScholarshipDetail() {
   const renderSingle = () => (
     <div>
       <div style={{
-        background: 'linear-gradient(135deg, #059669, #10b981)',
+        background: 'linear-gradient(135deg, #1E40AF, #3B82F6)',
         borderRadius: 24, padding: 40, color: '#fff', marginBottom: 32,
       }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.2)', padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
           <Sparkles size={14} />
-          Techo Scholarship
+          Scholarship
         </div>
         <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: 8, lineHeight: 1.2 }}>{apiData.title}</h1>
         <p style={{ fontSize: '1rem', opacity: 0.9 }}>{apiData.provider}</p>
@@ -649,17 +649,17 @@ export default function ScholarshipDetail() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 16, marginBottom: 32 }}>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0' }}>
-          <DollarSign size={20} color="#059669" style={{ marginBottom: 8 }} />
+          <DollarSign size={20} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>{apiData.amount}</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Scholarship Benefit</div>
         </div>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0' }}>
-          <CalendarDays size={20} color="#059669" style={{ marginBottom: 8 }} />
+          <CalendarDays size={20} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>{apiData.deadline}</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Deadline</div>
         </div>
         <div style={{ background: '#fff', borderRadius: 16, padding: 20, border: '1px solid #e2e8f0' }}>
-          <Users size={20} color="#059669" style={{ marginBottom: 8 }} />
+          <Users size={20} color="#1E40AF" style={{ marginBottom: 8 }} />
           <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>{apiData.spots} spots</div>
           <div style={{ fontSize: 13, color: '#64748b' }}>Available</div>
         </div>
@@ -667,11 +667,11 @@ export default function ScholarshipDetail() {
 
       {apiData.programs.length > 0 && (
         <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#059669', marginBottom: 16 }}>Available Programs</h3>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E40AF', marginBottom: 16 }}>Available Programs</h3>
           <div style={{ display: 'grid', gap: 6 }}>
             {apiData.programs.map((p, i) => (
-              <div key={i} style={{ padding: '8px 12px', background: '#f0fdf4', borderRadius: 8, fontSize: 14, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: '#10b981', fontWeight: 700 }}>&#8226;</span>
+              <div key={i} style={{ padding: '8px 12px', background: '#EFF6FF', borderRadius: 8, fontSize: 14, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ color: '#3B82F6', fontWeight: 700 }}>&#8226;</span>
                 {p}
               </div>
             ))}
@@ -680,7 +680,7 @@ export default function ScholarshipDetail() {
       )}
 
       <div style={{ background: '#fff', borderRadius: 20, padding: 28, border: '1px solid #e2e8f0', marginBottom: 24 }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#059669', marginBottom: 12 }}>About This Scholarship</h3>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E40AF', marginBottom: 12 }}>About This Scholarship</h3>
         <p style={{ color: '#475569', lineHeight: 1.8, fontSize: 14 }}>{apiData.description}</p>
         <p style={{ color: '#475569', lineHeight: 1.8, fontSize: 14, marginTop: 8 }}><strong>Eligibility:</strong> {apiData.eligibility}</p>
         {apiData.examSubjects && (
@@ -695,7 +695,7 @@ export default function ScholarshipDetail() {
         <button
           onClick={() => navigate('/application')}
           style={{
-            background: '#10b981', color: '#fff', border: 'none', borderRadius: 999,
+            background: '#1E40AF', color: '#fff', border: 'none', borderRadius: 999,
             padding: '12px 28px', fontWeight: 700, cursor: 'pointer', fontSize: 14,
             display: 'inline-flex', alignItems: 'center', gap: 8,
           }}

@@ -32,6 +32,10 @@ const ApplicantProfile = sequelize.define('ApplicantProfile', {
     type: DataTypes.STRING(20),
     allowNull: true,
   },
+  parent_number: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+  },
   city: {
     type: DataTypes.STRING(100),
     allowNull: true,

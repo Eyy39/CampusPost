@@ -6,6 +6,6 @@ export function getRoleRedirectPath(roleId) {
       return '/system-admin';
     case 1:
     default:
-      return '/';
+      return '/home';
   }
 }

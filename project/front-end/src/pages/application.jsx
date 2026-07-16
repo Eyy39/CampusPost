@@ -284,6 +284,7 @@ export default function ApplicationDashboard() {
         date_of_birth: data.dateOfBirth,
         email: data.email,
         phone: data.phone,
+        parent_number: data.parentPhone,
         city: data.city,
         address: data.address,
       },
@@ -499,9 +500,7 @@ export default function ApplicationDashboard() {
           Fields marked with <span style={{ color: "#E53E3E" }}>*</span> are
           required
         </div>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-          <div style={{ flex: 1 }}>
-            <Field label="Full Name" required error={errors.fullName}>
+        <Field label="Full Name" required error={errors.fullName}>
               <input
                 className={`input ${errors.fullName ? "input-error" : ""}`}
                 placeholder="e.g. Sopheak Vann"
@@ -509,28 +508,6 @@ export default function ApplicationDashboard() {
                 onChange={set("fullName")}
               />
             </Field>
-          </div>
-          <div style={{ flexShrink: 0, marginTop: 6 }}>
-            <label className="label">Photo</label>
-            <div style={{
-              width: 90,
-              height: 110,
-              borderRadius: 8,
-              border: '2px dashed #d1d5db',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              background: photoPreview ? 'transparent' : '#f9fafb',
-            }}>
-              {photoPreview ? (
-                <img src={photoPreview} alt="Your photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <span style={{ fontSize: 11, color: '#9ca3af', textAlign: 'center', padding: 4 }}>Upload photo in Step 4</span>
-              )}
-            </div>
-          </div>
-        </div>
         <Field label="Gender" required error={errors.gender}>
           <select
             className={`select ${errors.gender ? "input-error" : ""}`}
@@ -1304,6 +1281,18 @@ export default function ApplicationDashboard() {
 
         {step < 6 && (
           <div className="main main-padding">
+            <button
+              onClick={() => navigate('/scholarships')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 10,
+                color: '#334155', cursor: 'pointer', padding: '12px 20px',
+                fontWeight: 600, marginBottom: 20, fontSize: 16,
+              }}
+            >
+              <BackArrow /> Back
+            </button>
+
             <div className="header-section">
               <h1 className="title">2026 Academic Enrollment</h1>
               <p className="subtitle">Undergraduate Application</p>

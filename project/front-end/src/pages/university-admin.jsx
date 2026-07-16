@@ -624,6 +624,8 @@ function ApplicationsView({ applications, onView, onApprove, onReject, onToast }
 
   const filtered = useMemo(() => {
     return applications.filter((app) => {
+      const appStatus = app.admin_status || "pending";
+      if (appStatus === "draft") return false;
       const user = app.User || {};
       const name = `${user.first_name || ""} ${user.last_name || ""}`.toLowerCase();
       const email = (user.email || "").toLowerCase();
@@ -631,7 +633,6 @@ function ApplicationsView({ applications, onView, onApprove, onReject, onToast }
       const major = (app.Major?.major_name || "").toLowerCase();
       const searchable = `${name} ${email} ${ref} ${major}`.toLowerCase();
       const matchesQuery = searchable.includes(query.toLowerCase());
-      const appStatus = app.admin_status || "pending";
       const matchesStatus = statusFilter === "All Statuses" || appStatus === statusFilter.toLowerCase();
       return matchesQuery && matchesStatus;
     });

@@ -1,0 +1,282 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── Base ── */
+.sp {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8fafc;
+  min-height: 100vh;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.sp-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.sp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── States ── */
+.sp-loading {
+  padding: 60px 0;
+  text-align: center;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.sp-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: sp-spin 0.7s linear infinite;
+}
+
+@keyframes sp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.sp-error {
+  padding: 40px;
+  text-align: center;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.sp-empty {
+  padding: 40px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* ── Grid ── */
+.sp-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Card Base ── */
+.sp-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+/* ── Card Colors ── */
+.sp-card-blue {
+  border-left-color: #2563eb;
+  background: linear-gradient(135deg, #f0f7ff 0%, #fff 40%);
+}
+
+.sp-card-slate {
+  border-left-color: #cbd5e1;
+  background: #fff;
+}
+
+.sp-card-amber {
+  border-left-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fff 40%);
+  border: 2px solid #fef3c7;
+}
+
+/* ── Card Top ── */
+.sp-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sp-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-card-info h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.sp-card-provider {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.sp-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.sp-card-btn:hover {
+  background: #1d4ed8;
+}
+
+/* ── Tags ── */
+.sp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.sp-tag-blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.sp-tag-slate {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.sp-tag-amber {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ── Stats Row ── */
+.sp-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sp-card-stat {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.sp-card-blue .sp-card-stat {
+  background: #eff6ff;
+}
+
+.sp-card-amber .sp-card-stat {
+  background: #fffbeb;
+}
+
+.sp-card-stat svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.sp-card-stat div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sp-card-stat-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sp-card-blue .sp-card-stat-label { color: #3b82f6; }
+.sp-card-amber .sp-card-stat-label { color: #d97706; }
+
+.sp-card-stat-value {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sp-deadline-soon {
+  color: #dc2626 !important;
+}
+
+.sp-days-left {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  margin-left: 4px;
+  color: #059669;
+}
+
+.sp-days-urgent {
+  color: #dc2626;
+}
+
+/* ── University Tags ── */
+.sp-card-unis {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sp-uni-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .sp-card-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .sp-card-top {
+    flex-direction: column;
+  }
+
+  .sp-card-btn {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
