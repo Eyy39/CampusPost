@@ -18,6 +18,9 @@
 .logo-accent {
   color: #8BB8F0;
 }
+.logo-gradient {
+  color: #fff;
+}
 .nav-actions {
   display: flex;
   align-items: center;

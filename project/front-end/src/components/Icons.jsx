@@ -1,11 +1,16 @@
 import React from "react";
 
-export function LogoIcon() {
+export function LogoIcon({ size = 24 }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#8BB8F0" />
-      <path d="M2 17L12 22L22 17" stroke="#8BB8F0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 12L12 17L22 12" stroke="#8BB8F0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Graduation Cap */}
+      <path d="M16 4L4 10L16 16L28 10L16 4Z" fill="#fff" />
+      <path d="M7 12V20C7 20 10 24 16 24C22 24 25 20 25 20V12" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M28 10V20" stroke="#8BB8F0" strokeWidth="1.5" strokeLinecap="round" />
+      {/* Open Book */}
+      <path d="M6 22C6 22 9 20 16 20C23 20 26 22 26 22" stroke="#8BB8F0" strokeWidth="2" strokeLinecap="round" />
+      <path d="M6 25C6 25 9 23 16 23C23 23 26 25 26 25" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="16" y1="20" x2="16" y2="25" stroke="#8BB8F0" strokeWidth="1.5" />
     </svg>
   );
 }

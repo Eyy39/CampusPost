@@ -30,8 +30,8 @@ export function Navbar({ activePage }) {
         style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: -6, cursor: "pointer" }}
         onClick={() => navigate("/")}
       >
-        <LogoIcon />
-        <div className="logo">Campus<span className="logo-accent">Post</span></div>
+        <LogoIcon size={28} />
+        <div className="logo"><span className="logo-gradient">Campus</span><span className="logo-accent">Post</span></div>
       </div>
       <div className="nav-actions">
         <ul className="nav-links">
@@ -68,7 +68,7 @@ export function Footer() {
     <footer className="footer">
       <div className="footer-inner footer-grid">
         <div>
-          <div className="footer-logo">Campus<span style={{ color: "#8BB8F0" }}>Post</span></div>
+          <div className="footer-logo"><span className="logo-gradient">Campus</span><span style={{ color: "#8BB8F0" }}>Post</span></div>
           <p className="footer-text">
             Helping Cambodian students compare universities, scholarships, and complete university applications in one platform.
           </p>

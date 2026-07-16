@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
+import { LogoIcon } from './Icons';
 
 const defaultLinks = [
   { label: 'Find Universities', to: '/universities' },
@@ -32,10 +33,8 @@ export default function Navbar({ links: customLinks, simple, noSearch, rightCont
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="navbar-inner">
           <Link to="/" className="navbar-logo">
-            <span className="logo-icon">
-              <GraduationCap size={20} />
-            </span>
-            CampusPost
+            <LogoIcon size={24} />
+            <span className="logo-gradient">Campus</span><span className="logo-accent">Post</span>
           </Link>
 
           <ul className="navbar-links">
